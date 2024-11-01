@@ -14,13 +14,13 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
-@Route("") // Startseite der Anwendung
+@Route("")
 public class MainView extends Div {
     public MainView() {
         // Hauptüberschrift
         add(new H1("Praktikumsformular"));
 
-        // Container für Studentendaten mit Stil für bessere Trennung
+
         Div studentendatenContainer = new Div();
         studentendatenContainer.getStyle().set("padding", "20px");
         studentendatenContainer.getStyle().set("border", "1px solid #ccc");
@@ -33,7 +33,7 @@ public class MainView extends Div {
         H2 studentendatenHeader = new H2("Studentendaten");
         studentendatenLayout.add(studentendatenHeader);
 
-        // Helper-Methode zur Erstellung von Pflichtfeldern mit Sternchen
+        //Sternchen
         TextField name = createRequiredTextField("Name des Studenten / der Studentin *");
         TextField vorname = createRequiredTextField("Vorname *");
         TextField matrikelnummer = createRequiredTextField("Matrikelnummer *");
@@ -50,7 +50,7 @@ public class MainView extends Div {
         Checkbox ausnahmezulassung = new Checkbox("Antrag auf Ausnahmezulassung");
         DatePicker unterschriftDatum = createRequiredDatePicker("Unterschrift und Datum *");
 
-        // Setze zwei Spalten für das Layout der Studentendaten
+        //Layout der Studentendaten
         studentendatenLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
                 new FormLayout.ResponsiveStep("500px", 2)
@@ -64,7 +64,7 @@ public class MainView extends Div {
 
         studentendatenContainer.add(studentendatenLayout);
 
-        // Container für die Daten der Ausbildungsstelle mit Stil für bessere Trennung
+
         Div praktikumsdatenContainer = new Div();
         praktikumsdatenContainer.getStyle().set("padding", "20px");
         praktikumsdatenContainer.getStyle().set("border", "1px solid #ccc");
@@ -91,7 +91,7 @@ public class MainView extends Div {
         DatePicker bestaetigungDatum = createRequiredDatePicker("Bestätigung der Ausbildungsstelle (Datum) *");
         TextField stempel = createRequiredTextField("Firmenstempel *");
 
-        // Setze zwei Spalten für das Layout der Praktikumsdaten
+
         praktikumsdatenLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
                 new FormLayout.ResponsiveStep("500px", 2)
@@ -104,7 +104,7 @@ public class MainView extends Div {
 
         praktikumsdatenContainer.add(praktikumsdatenLayout);
 
-        // Pflichtfeldhinweis über dem Absenden-Button hinzufügen
+
         Paragraph pflichtfeldHinweis = new Paragraph("* Pflichtfeld");
         pflichtfeldHinweis.getStyle().set("color", "red");
         pflichtfeldHinweis.getStyle().set("font-size", "0.9em");
