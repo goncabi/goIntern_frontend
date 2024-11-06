@@ -1,0 +1,75 @@
+/* Zentrale Container-Klasse für die Ansicht */
+.view-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #f06, #f79);
+}
+
+/* Formular-Container */
+.form-container {
+    width: 400px;
+    padding: 30px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Header-Titel im Formular */
+.form-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Eingabefelder */
+.text-field {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Button-Stile */
+.button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    background-color: #ff4081;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #e03570;
+}
+
+/* Link-Stil */
+.link {
+    color: #ff4081;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+/* Zusätzliche Hinweise unter dem Formular */
+.form-footer {
+    font-size: 14px;
+    color: #666;
+    margin-top: 20px;
+}
+
