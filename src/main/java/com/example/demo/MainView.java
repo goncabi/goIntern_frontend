@@ -3,6 +3,7 @@ package com.example.demo;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -16,12 +17,14 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
 @Route("") // Startseite der Anwendung
+@CssImport("./styles.css") // Lädt die styles.css-Datei aus src/main/frontend
 public class MainView extends Div {
+
     public MainView() {
         // Hauptüberschrift
         add(new H1("Praktikumsformular"));
 
-        // Stil für bessere Trennung
+        // Container für Studentendaten
         Div studentendatenContainer = new Div();
         studentendatenContainer.getStyle().set("padding", "20px");
         studentendatenContainer.getStyle().set("border", "1px solid #ccc");
@@ -29,12 +32,12 @@ public class MainView extends Div {
         studentendatenContainer.getStyle().set("margin-bottom", "20px");
         studentendatenContainer.getStyle().set("background-color", "#f9f9f9");
 
-        // Layout für die Studentendaten
+        // Layout für Studentendaten
         FormLayout studentendatenLayout = new FormLayout();
         H2 studentendatenHeader = new H2("Studentendaten");
         studentendatenLayout.add(studentendatenHeader);
 
-        // Erstellung von Pflichtfeldern mit Sternchen
+        // Pflichtfelder für Studentendaten
         TextField name = createRequiredTextField("Name des Studenten / der Studentin *");
         TextField vorname = createRequiredTextField("Vorname *");
         TextField matrikelnummer = createRequiredTextField("Matrikelnummer *");
@@ -47,29 +50,26 @@ public class MainView extends Div {
         TextField betreuer = createRequiredTextField("Vorgeschlagener Praktikumsbetreuer (an der HTW) *");
         TextField semester = createRequiredTextField("Semester (SoSe / WS) *");
         TextField lehrveranstaltung = createRequiredTextField("Titel der praxisbegleitenden Lehrveranstaltung *");
-
-        // Fehlende Leistungsnachweise als optionales Feld (kein Sternchen mehr)
         TextArea fehlendeNachweise = new TextArea("Fehlende Leistungsnachweise (falls vorhanden)");
 
-        // Ausnahmezulassung Checkbox
+        // Ausnahmezulassung Checkbox und Notizfeld
         Checkbox ausnahmezulassung = new Checkbox("Antrag auf Ausnahmezulassung");
         TextArea ausnahmeBegruendung = new TextArea("Begründung für Ausnahmezulassung");
-        ausnahmeBegruendung.setVisible(false); // Notizfeld zunächst ausblenden
+        ausnahmeBegruendung.setVisible(false);
 
-
+        // Event-Listener für Checkbox
         ausnahmezulassung.addValueChangeListener(event ->
                 ausnahmeBegruendung.setVisible(event.getValue())
         );
 
         DatePicker unterschriftDatum = createRequiredDatePicker("Unterschrift und Datum *");
 
-
+        // Layout für Studentendaten konfigurieren
         studentendatenLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
                 new FormLayout.ResponsiveStep("500px", 2)
         );
 
-        // Felder der Studentendaten hinzufügen
         studentendatenLayout.add(name, vorname, matrikelnummer, geburtsdatum,
                 adresseStrasse, adressePLZ, adresseOrt,
                 telefonnummer, email, betreuer, semester, lehrveranstaltung,
@@ -77,19 +77,19 @@ public class MainView extends Div {
 
         studentendatenContainer.add(studentendatenLayout);
 
-        // Stil für bessere Trennung
+        // Container für Praktikumsdaten
         Div praktikumsdatenContainer = new Div();
         praktikumsdatenContainer.getStyle().set("padding", "20px");
         praktikumsdatenContainer.getStyle().set("border", "1px solid #ccc");
         praktikumsdatenContainer.getStyle().set("border-radius", "8px");
         praktikumsdatenContainer.getStyle().set("background-color", "#f9f9f9");
 
-        // Layout für die Daten der Ausbildungsstelle
+        // Layout für Praktikumsdaten
         FormLayout praktikumsdatenLayout = new FormLayout();
         H2 praktikumsdatenHeader = new H2("Daten der Ausbildungsstelle");
         praktikumsdatenLayout.add(praktikumsdatenHeader);
 
-        // Praktikumsdaten Felder mit Pflichtfeldkennzeichen
+        // Pflichtfelder für Praktikumsdaten
         TextField firma = createRequiredTextField("Name der Ausbildungsstelle (Firma oder Institution) *");
         TextField firmaStrasse = createRequiredTextField("Straße der Ausbildungsstelle *");
         TextField firmaPLZ = createRequiredTextField("PLZ der Ausbildungsstelle *");
@@ -104,7 +104,7 @@ public class MainView extends Div {
         DatePicker bestaetigungDatum = createRequiredDatePicker("Bestätigung der Ausbildungsstelle (Datum) *");
         TextField stempel = createRequiredTextField("Firmenstempel *");
 
-
+        // Layout für Praktikumsdaten konfigurieren
         praktikumsdatenLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
                 new FormLayout.ResponsiveStep("500px", 2)
@@ -117,17 +117,15 @@ public class MainView extends Div {
 
         praktikumsdatenContainer.add(praktikumsdatenLayout);
 
-        // Pflichtfeldhinweis über dem Absenden-Button hinzufügen
+        // Pflichtfeldhinweis und Absenden-Button
         Paragraph pflichtfeldHinweis = new Paragraph("* Pflichtfeld");
         pflichtfeldHinweis.getStyle().set("color", "red");
         pflichtfeldHinweis.getStyle().set("font-size", "0.9em");
         pflichtfeldHinweis.getStyle().set("margin-top", "20px");
         praktikumsdatenContainer.add(pflichtfeldHinweis);
 
-        // Absenden-Button
         Button absendenButton = new Button("Absenden");
         absendenButton.getStyle().set("margin-top", "10px");
-        absendenButton.getStyle().set("display", "block");
         absendenButton.addClickListener(e -> {
             boolean isValid = true;
             isValid &= validateField(name);
@@ -157,84 +155,83 @@ public class MainView extends Div {
             isValid &= validateField(bestaetigungDatum);
             isValid &= validateField(stempel);
 
+            // Überprüfen, ob die Checkbox ausgewählt ist und das Textfeld leer ist
+            if (ausnahmezulassung.getValue()) {
+                isValid &= validateField(ausnahmeBegruendung);
+            }
+
             if (!isValid) {
                 Notification.show("Bitte alle Pflichtfelder ausfüllen!", 3000, Notification.Position.MIDDLE);
             }
         });
-        praktikumsdatenContainer.add(absendenButton);
 
-
-        add(studentendatenContainer, praktikumsdatenContainer);
+        add(studentendatenContainer, praktikumsdatenContainer, absendenButton);
     }
 
+    // Helper-Methoden zur Erstellung von Feldern mit Pflichtfeld-Markierung
     private TextField createRequiredTextField(String label) {
-        TextField field = new TextField(label);
-        return field;
+        return new TextField(label);
     }
 
     private NumberField createRequiredNumberField(String label) {
-        NumberField field = new NumberField(label);
-        return field;
+        return new NumberField(label);
     }
 
     private EmailField createRequiredEmailField(String label) {
-        EmailField field = new EmailField(label);
-        return field;
+        return new EmailField(label);
     }
 
     private DatePicker createRequiredDatePicker(String label) {
-        DatePicker field = new DatePicker(label);
-        return field;
+        return new DatePicker(label);
     }
 
     private TextArea createRequiredTextArea(String label) {
-        TextArea field = new TextArea(label);
-        return field;
+        return new TextArea(label);
     }
 
-    // Validierungs-Helper-Methode für Pflichtfelder
+    // Validierungsmethoden für Pflichtfelder
     private boolean validateField(TextField field) {
         if (field.isEmpty()) {
-            field.getStyle().set("border-color", "red");
+            field.addClassName("mandatory-field");
             return false;
         }
-        field.getStyle().remove("border-color");
+        field.removeClassName("mandatory-field");
         return true;
     }
 
     private boolean validateField(NumberField field) {
         if (field.isEmpty()) {
-            field.getStyle().set("border-color", "red");
+            field.addClassName("mandatory-field");
             return false;
         }
-        field.getStyle().remove("border-color");
+        field.removeClassName("mandatory-field");
         return true;
     }
 
     private boolean validateField(EmailField field) {
         if (field.isEmpty()) {
-            field.getStyle().set("border-color", "red");
+            field.addClassName("mandatory-field");
             return false;
         }
-        field.getStyle().remove("border-color");
+        field.removeClassName("mandatory-field");
         return true;
     }
 
     private boolean validateField(DatePicker field) {
         if (field.isEmpty()) {
-            field.getStyle().set("border-color", "red");
+            field.addClassName("mandatory-field");
             return false;
         }
-        field.getStyle().remove("border-color");
+        field.removeClassName("mandatory-field");
         return true;
     }
 
     private boolean validateField(TextArea field) {
         if (field.isEmpty()) {
-            field.getStyle().set("border-color", "red");
+            field.addClassName("mandatory-field");
             return false;
         }
-        field.getStyle().remove("border-color");
+        field.removeClassName("mandatory-field");
         return true;
     }
 }

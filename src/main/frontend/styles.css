@@ -1,0 +1,7 @@
+.mandatory-field input,
+.mandatory-field textarea,
+.mandatory-field [part="input-field"],
+.mandatory-field [part="value"] {
+    background-color: rgba(255, 0, 0, 0.2); /* Heller Rotton für das gesamte Eingabefeld */
+    border-radius: 4px; /* Abgerundete Ecken */
+}
