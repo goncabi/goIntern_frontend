@@ -14,13 +14,13 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
-@Route("")
+@Route("") // Startseite der Anwendung
 public class MainView extends Div {
     public MainView() {
         // Hauptüberschrift
         add(new H1("Praktikumsformular"));
 
-
+        //  für bessere Trennung
         Div studentendatenContainer = new Div();
         studentendatenContainer.getStyle().set("padding", "20px");
         studentendatenContainer.getStyle().set("border", "1px solid #ccc");
@@ -33,7 +33,7 @@ public class MainView extends Div {
         H2 studentendatenHeader = new H2("Studentendaten");
         studentendatenLayout.add(studentendatenHeader);
 
-        //Sternchen
+        //Erstellung von Pflichtfeldern mit Sternchen
         TextField name = createRequiredTextField("Name des Studenten / der Studentin *");
         TextField vorname = createRequiredTextField("Vorname *");
         TextField matrikelnummer = createRequiredTextField("Matrikelnummer *");
@@ -46,11 +46,23 @@ public class MainView extends Div {
         TextField betreuer = createRequiredTextField("Vorgeschlagener Praktikumsbetreuer (an der HTW) *");
         TextField semester = createRequiredTextField("Semester (SoSe / WS) *");
         TextField lehrveranstaltung = createRequiredTextField("Titel der praxisbegleitenden Lehrveranstaltung *");
-        TextArea fehlendeNachweise = createRequiredTextArea("Fehlende Leistungsnachweise (falls vorhanden) *");
+
+        // Fehlende Leistungsnachweise als optionales Feld (kein Sternchen mehr)
+        TextArea fehlendeNachweise = new TextArea("Fehlende Leistungsnachweise (falls vorhanden)");
+
+        // Ausnahmezulassung Checkbox und Notizfeld
         Checkbox ausnahmezulassung = new Checkbox("Antrag auf Ausnahmezulassung");
+        TextArea ausnahmeBegruendung = new TextArea("Begründung für Ausnahmezulassung");
+        ausnahmeBegruendung.setVisible(false); // Notizfeld zunächst ausblenden
+
+
+        ausnahmezulassung.addValueChangeListener(event ->
+                ausnahmeBegruendung.setVisible(event.getValue())
+        );
+
         DatePicker unterschriftDatum = createRequiredDatePicker("Unterschrift und Datum *");
 
-        //Layout der Studentendaten
+
         studentendatenLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
                 new FormLayout.ResponsiveStep("500px", 2)
@@ -60,11 +72,11 @@ public class MainView extends Div {
         studentendatenLayout.add(name, vorname, matrikelnummer, geburtsdatum,
                 adresseStrasse, adressePLZ, adresseOrt,
                 telefonnummer, email, betreuer, semester, lehrveranstaltung,
-                fehlendeNachweise, ausnahmezulassung, unterschriftDatum);
+                fehlendeNachweise, ausnahmezulassung, ausnahmeBegruendung, unterschriftDatum);
 
         studentendatenContainer.add(studentendatenLayout);
 
-
+        // Ausbildungsstelle mit Stil für bessere Trennung
         Div praktikumsdatenContainer = new Div();
         praktikumsdatenContainer.getStyle().set("padding", "20px");
         praktikumsdatenContainer.getStyle().set("border", "1px solid #ccc");
@@ -104,24 +116,23 @@ public class MainView extends Div {
 
         praktikumsdatenContainer.add(praktikumsdatenLayout);
 
-
+        // Pflichtfeldhinweis
         Paragraph pflichtfeldHinweis = new Paragraph("* Pflichtfeld");
         pflichtfeldHinweis.getStyle().set("color", "red");
         pflichtfeldHinweis.getStyle().set("font-size", "0.9em");
         pflichtfeldHinweis.getStyle().set("margin-top", "20px");
         praktikumsdatenContainer.add(pflichtfeldHinweis);
 
-        // Absenden-Button am Ende hinzufügen und zentrieren
+        // Absenden-Button
         Button absendenButton = new Button("Absenden");
         absendenButton.getStyle().set("margin-top", "10px");
         absendenButton.getStyle().set("display", "block");
         praktikumsdatenContainer.add(absendenButton);
 
-        // Container zum Hauptlayout hinzufügen
+
         add(studentendatenContainer, praktikumsdatenContainer);
     }
 
-    // Helper-Methode zur Erstellung von Textfeldern mit Pflichtfeldkennzeichen ohne setRequiredIndicatorVisible
     private TextField createRequiredTextField(String label) {
         TextField field = new TextField(label);
         return field;
