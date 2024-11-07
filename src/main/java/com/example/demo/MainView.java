@@ -8,6 +8,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -20,7 +21,7 @@ public class MainView extends Div {
         // Hauptüberschrift
         add(new H1("Praktikumsformular"));
 
-        //  für bessere Trennung
+        // Stil für bessere Trennung
         Div studentendatenContainer = new Div();
         studentendatenContainer.getStyle().set("padding", "20px");
         studentendatenContainer.getStyle().set("border", "1px solid #ccc");
@@ -33,7 +34,7 @@ public class MainView extends Div {
         H2 studentendatenHeader = new H2("Studentendaten");
         studentendatenLayout.add(studentendatenHeader);
 
-        //Erstellung von Pflichtfeldern mit Sternchen
+        // Erstellung von Pflichtfeldern mit Sternchen
         TextField name = createRequiredTextField("Name des Studenten / der Studentin *");
         TextField vorname = createRequiredTextField("Vorname *");
         TextField matrikelnummer = createRequiredTextField("Matrikelnummer *");
@@ -50,7 +51,7 @@ public class MainView extends Div {
         // Fehlende Leistungsnachweise als optionales Feld (kein Sternchen mehr)
         TextArea fehlendeNachweise = new TextArea("Fehlende Leistungsnachweise (falls vorhanden)");
 
-        // Ausnahmezulassung Checkbox und Notizfeld
+        // Ausnahmezulassung Checkbox
         Checkbox ausnahmezulassung = new Checkbox("Antrag auf Ausnahmezulassung");
         TextArea ausnahmeBegruendung = new TextArea("Begründung für Ausnahmezulassung");
         ausnahmeBegruendung.setVisible(false); // Notizfeld zunächst ausblenden
@@ -76,7 +77,7 @@ public class MainView extends Div {
 
         studentendatenContainer.add(studentendatenLayout);
 
-        // Ausbildungsstelle mit Stil für bessere Trennung
+        // Stil für bessere Trennung
         Div praktikumsdatenContainer = new Div();
         praktikumsdatenContainer.getStyle().set("padding", "20px");
         praktikumsdatenContainer.getStyle().set("border", "1px solid #ccc");
@@ -116,7 +117,7 @@ public class MainView extends Div {
 
         praktikumsdatenContainer.add(praktikumsdatenLayout);
 
-        // Pflichtfeldhinweis
+        // Pflichtfeldhinweis über dem Absenden-Button hinzufügen
         Paragraph pflichtfeldHinweis = new Paragraph("* Pflichtfeld");
         pflichtfeldHinweis.getStyle().set("color", "red");
         pflichtfeldHinweis.getStyle().set("font-size", "0.9em");
@@ -127,6 +128,39 @@ public class MainView extends Div {
         Button absendenButton = new Button("Absenden");
         absendenButton.getStyle().set("margin-top", "10px");
         absendenButton.getStyle().set("display", "block");
+        absendenButton.addClickListener(e -> {
+            boolean isValid = true;
+            isValid &= validateField(name);
+            isValid &= validateField(vorname);
+            isValid &= validateField(matrikelnummer);
+            isValid &= validateField(adresseStrasse);
+            isValid &= validateField(adressePLZ);
+            isValid &= validateField(adresseOrt);
+            isValid &= validateField(email);
+            isValid &= validateField(betreuer);
+            isValid &= validateField(semester);
+            isValid &= validateField(lehrveranstaltung);
+            isValid &= validateField(telefonnummer);
+            isValid &= validateField(geburtsdatum);
+            isValid &= validateField(unterschriftDatum);
+            isValid &= validateField(firma);
+            isValid &= validateField(firmaStrasse);
+            isValid &= validateField(firmaPLZ);
+            isValid &= validateField(firmaOrt);
+            isValid &= validateField(ansprechpartner);
+            isValid &= validateField(telefonAnsprechpartner);
+            isValid &= validateField(emailAnsprechpartner);
+            isValid &= validateField(praktikumVon);
+            isValid &= validateField(praktikumBis);
+            isValid &= validateField(abteilung);
+            isValid &= validateField(taetigkeit);
+            isValid &= validateField(bestaetigungDatum);
+            isValid &= validateField(stempel);
+
+            if (!isValid) {
+                Notification.show("Bitte alle Pflichtfelder ausfüllen!", 3000, Notification.Position.MIDDLE);
+            }
+        });
         praktikumsdatenContainer.add(absendenButton);
 
 
@@ -156,5 +190,51 @@ public class MainView extends Div {
     private TextArea createRequiredTextArea(String label) {
         TextArea field = new TextArea(label);
         return field;
+    }
+
+    // Validierungs-Helper-Methode für Pflichtfelder
+    private boolean validateField(TextField field) {
+        if (field.isEmpty()) {
+            field.getStyle().set("border-color", "red");
+            return false;
+        }
+        field.getStyle().remove("border-color");
+        return true;
+    }
+
+    private boolean validateField(NumberField field) {
+        if (field.isEmpty()) {
+            field.getStyle().set("border-color", "red");
+            return false;
+        }
+        field.getStyle().remove("border-color");
+        return true;
+    }
+
+    private boolean validateField(EmailField field) {
+        if (field.isEmpty()) {
+            field.getStyle().set("border-color", "red");
+            return false;
+        }
+        field.getStyle().remove("border-color");
+        return true;
+    }
+
+    private boolean validateField(DatePicker field) {
+        if (field.isEmpty()) {
+            field.getStyle().set("border-color", "red");
+            return false;
+        }
+        field.getStyle().remove("border-color");
+        return true;
+    }
+
+    private boolean validateField(TextArea field) {
+        if (field.isEmpty()) {
+            field.getStyle().set("border-color", "red");
+            return false;
+        }
+        field.getStyle().remove("border-color");
+        return true;
     }
 }
