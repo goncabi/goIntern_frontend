@@ -17,7 +17,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
 @Route("") // Startseite der Anwendung
-@CssImport("./styles.css") // Lädt die styles.css-Datei aus src/main/frontend
+@CssImport("./styles.css")
 public class MainView extends Div {
 
     public MainView() {
@@ -64,10 +64,9 @@ public class MainView extends Div {
 
         DatePicker unterschriftDatum = createRequiredDatePicker("Unterschrift und Datum *");
 
-        // Layout für Studentendaten konfigurieren
+        // Layout für Studentendaten konfigurieren (ein Feld pro Zeile)
         studentendatenLayout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("0", 1),
-                new FormLayout.ResponsiveStep("500px", 2)
+                new FormLayout.ResponsiveStep("0", 1) // 1 Spalte auf allen Bildschirmgrößen
         );
 
         studentendatenLayout.add(name, vorname, matrikelnummer, geburtsdatum,
@@ -104,10 +103,9 @@ public class MainView extends Div {
         DatePicker bestaetigungDatum = createRequiredDatePicker("Bestätigung der Ausbildungsstelle (Datum) *");
         TextField stempel = createRequiredTextField("Firmenstempel *");
 
-        // Layout für Praktikumsdaten konfigurieren
+        // Layout für Praktikumsdaten konfigurieren (ein Feld pro Zeile)
         praktikumsdatenLayout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("0", 1),
-                new FormLayout.ResponsiveStep("500px", 2)
+                new FormLayout.ResponsiveStep("0", 1) // 1 Spalte auf allen Bildschirmgrößen
         );
 
         praktikumsdatenLayout.add(firma, firmaStrasse, firmaPLZ, firmaOrt,
@@ -168,7 +166,6 @@ public class MainView extends Div {
         add(studentendatenContainer, praktikumsdatenContainer, absendenButton);
     }
 
-    // Helper-Methoden zur Erstellung von Feldern mit Pflichtfeld-Markierung
     private TextField createRequiredTextField(String label) {
         return new TextField(label);
     }
