@@ -1,7 +1,9 @@
 package com.example.demo;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -15,10 +17,18 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.button.Button;
+
+import javax.swing.*;
+import java.awt.*;
 
 @Route("") // Startseite der Anwendung
 @CssImport("./styles.css")
 public class MainView extends Div {
+
+    private boolean gespeichert = false;
 
     public MainView() {
         // Hauptüberschrift
@@ -115,21 +125,21 @@ public class MainView extends Div {
 
         praktikumsdatenContainer.add(praktikumsdatenLayout);
 
-        // Pflichtfeldhinweis
+
         Paragraph pflichtfeldHinweis = new Paragraph("* Pflichtfeld");
         pflichtfeldHinweis.getStyle().set("color", "red");
         pflichtfeldHinweis.getStyle().set("font-size", "0.9em");
         pflichtfeldHinweis.getStyle().set("margin-top", "20px");
         praktikumsdatenContainer.add(pflichtfeldHinweis);
 
-        //Buttons für SPeichern und Absenden
-        Button speichernButton = new Button("Speichern");
+
+        Button speichernButton = new Button("Speichern"); // Buttons für Speichern und Absenden
         speichernButton.addClassName("button");
         speichernButton.addClassName("speichern-button");
 
         speichernButton.addClickListener(e -> {
             Notification.show("Gespeichert", 3000, Notification.Position.TOP_CENTER);
-            boolean gespeichert = true;
+            gespeichert = true;
         });
 
 
@@ -139,6 +149,21 @@ public class MainView extends Div {
 
         Div buttonContainer = new Div(speichernButton, absendenButton);
         buttonContainer.addClassName("button-container"); //hinzufügen asu css
+
+        //Zurück Button
+        Button zurueckButton = new Button("Zurück", buttonClickEvent -> {
+            if (!gespeichert) {
+                ConfirmDialog dialog = new ConfirmDialog();
+                dialog.setHeader("Daten nicht gespeichert");
+                dialog.setText("Möchten Sie die Seite wirklich verlassen?");
+                dialog.setConfirmButton("Ja", e -> UI.getCurrent().navigate("startseite")); // Übergang Antragsübersicht (Platzhalter)
+                dialog.setCancelButton("Nein", e -> dialog.close());
+                dialog.open();
+            } else {
+                UI.getCurrent().navigate("startseite");
+            }
+        });
+        zurueckButton.addClassName("zurueck-button");
 
         absendenButton.addClickListener(e -> {
             boolean isValid = true;
@@ -180,10 +205,10 @@ public class MainView extends Div {
                 Notification.show("Antrag erfolgreich eingereicht", 3000, Notification.Position.TOP_CENTER);
             }
 
-
         });
 
-        add(studentendatenContainer, praktikumsdatenContainer, buttonContainer);
+
+        add(studentendatenContainer, praktikumsdatenContainer, buttonContainer, zurueckButton);
     }
 
     private TextField createRequiredTextField(String label) {
