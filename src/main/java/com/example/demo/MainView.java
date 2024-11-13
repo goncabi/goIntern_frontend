@@ -64,7 +64,7 @@ public class MainView extends Div {
 
         DatePicker unterschriftDatum = createRequiredDatePicker("Unterschrift und Datum *");
 
-        // Layout für Studentendaten konfigurieren (ein Feld pro Zeile)
+        // Layout für Studentendaten konfigurieren
         studentendatenLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1) // 1 Spalte auf allen Bildschirmgrößen
         );
