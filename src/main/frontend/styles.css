@@ -39,22 +39,43 @@ form-layout {
     width: 100%;
     margin-bottom: 15px;
 }
+/*Container für Button für Anordnung*/
+.button-container{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
 
-/* Stil für den Absenden-Button */
-button {
-    display: block;
-    margin: 20px auto;
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1em;
+}
+/* Stil für Buttons */
+
+.button {
+    padding: 15px;
+    font-size: 16px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    flex-grow: 1; /* gleichmäßige Verteilung */
 }
 
-button:hover {
-    background-color: #218838;
+.speichern-button {
+    background-color: #f8f9fa;
+    color: royalblue;
+}
+
+.speichern-button:hover {
+    background-color: #e2e6ea;
+}
+
+.absenden-button {
+    background: #dc3545;
+    color: white;
+}
+
+.absenden-button:hover {
+    background-color: #c82333;
 }
 
 /* Container-Stil für die Sektionen  */

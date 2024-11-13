@@ -122,8 +122,18 @@ public class MainView extends Div {
         pflichtfeldHinweis.getStyle().set("margin-top", "20px");
         praktikumsdatenContainer.add(pflichtfeldHinweis);
 
+        Button speichernButton = new Button("Speichern");
+        speichernButton.addClassName("button");
+        speichernButton.addClassName("speichern-button");
+
         Button absendenButton = new Button("Absenden");
-        absendenButton.getStyle().set("margin-top", "10px");
+        absendenButton.addClassName("button");
+        absendenButton.addClassName("absenden-button");
+
+        Div buttonContainer = new Div(speichernButton, absendenButton);
+        buttonContainer.addClassName("button-container"); //hinzufügen asu css
+
+        absendenButton.addClassName("absenden-button");
         absendenButton.addClickListener(e -> {
             boolean isValid = true;
             isValid &= validateField(name);
@@ -161,9 +171,10 @@ public class MainView extends Div {
             if (!isValid) {
                 Notification.show("Bitte alle Pflichtfelder ausfüllen!", 3000, Notification.Position.MIDDLE);
             }
+
         });
 
-        add(studentendatenContainer, praktikumsdatenContainer, absendenButton);
+        add(studentendatenContainer, praktikumsdatenContainer, buttonContainer);
     }
 
     private TextField createRequiredTextField(String label) {
