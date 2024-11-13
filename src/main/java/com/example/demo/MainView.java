@@ -115,16 +115,23 @@ public class MainView extends Div {
 
         praktikumsdatenContainer.add(praktikumsdatenLayout);
 
-        // Pflichtfeldhinweis und Absenden-Button
+        // Pflichtfeldhinweis
         Paragraph pflichtfeldHinweis = new Paragraph("* Pflichtfeld");
         pflichtfeldHinweis.getStyle().set("color", "red");
         pflichtfeldHinweis.getStyle().set("font-size", "0.9em");
         pflichtfeldHinweis.getStyle().set("margin-top", "20px");
         praktikumsdatenContainer.add(pflichtfeldHinweis);
 
+        //Buttons für SPeichern und Absenden
         Button speichernButton = new Button("Speichern");
         speichernButton.addClassName("button");
         speichernButton.addClassName("speichern-button");
+
+        speichernButton.addClickListener(e -> {
+            Notification.show("Gespeichert", 3000, Notification.Position.TOP_CENTER);
+            boolean gespeichert = true;
+        });
+
 
         Button absendenButton = new Button("Absenden");
         absendenButton.addClassName("button");
@@ -133,7 +140,6 @@ public class MainView extends Div {
         Div buttonContainer = new Div(speichernButton, absendenButton);
         buttonContainer.addClassName("button-container"); //hinzufügen asu css
 
-        absendenButton.addClassName("absenden-button");
         absendenButton.addClickListener(e -> {
             boolean isValid = true;
             isValid &= validateField(name);
@@ -170,7 +176,10 @@ public class MainView extends Div {
 
             if (!isValid) {
                 Notification.show("Bitte alle Pflichtfelder ausfüllen!", 3000, Notification.Position.MIDDLE);
+            } else {
+                Notification.show("Antrag erfolgreich eingereicht", 3000, Notification.Position.TOP_CENTER);
             }
+
 
         });
 
