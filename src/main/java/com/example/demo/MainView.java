@@ -151,13 +151,16 @@ public class MainView extends Div {
         buttonContainer.addClassName("button-container"); //hinzufügen asu css
 
         //Zurück Button
-        Button zurueckButton = new Button("Zurück", buttonClickEvent -> {
+        //Button zurueckButton = new Button("Zurück", buttonClickEvent -> {
+
+        Button zurueckButton = new Button( new Icon(VaadinIcon.ARROW_LEFT));
+        zurueckButton.addClickListener(e -> {
             if (!gespeichert) {
                 ConfirmDialog dialog = new ConfirmDialog();
                 dialog.setHeader("Daten nicht gespeichert");
                 dialog.setText("Möchten Sie die Seite wirklich verlassen?");
-                dialog.setConfirmButton("Ja", e -> UI.getCurrent().navigate("startseite")); // Übergang Antragsübersicht (Platzhalter)
-                dialog.setCancelButton("Nein", e -> dialog.close());
+                dialog.setConfirmButton("Ja", confirmEvent -> UI.getCurrent().navigate("startseite")); // Übergang Antragsübersicht (Platzhalter)
+                dialog.setCancelButton("Nein", cancelEvent -> dialog.close());
                 dialog.open();
             } else {
                 UI.getCurrent().navigate("startseite");
