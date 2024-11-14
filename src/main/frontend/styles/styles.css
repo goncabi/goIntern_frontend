@@ -1,11 +1,11 @@
-/* Zentrale Container-Klasse für die Ansicht */
+/* Hintergrund und Container */
 .view-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background: linear-gradient(135deg, #f06, #f79);
+    background: linear-gradient(135deg, #ff0080, #ff80bf);
 }
 
 /* Formular-Container */
@@ -18,7 +18,7 @@
     text-align: center;
 }
 
-/* Header-Titel im Formular */
+/* Titel im Formular */
 .form-title {
     font-size: 24px;
     font-weight: bold;
@@ -40,7 +40,6 @@
 .button {
     width: 100%;
     padding: 12px;
-    margin: 10px 0;
     background-color: #ff4081;
     border: none;
     color: #fff;
@@ -55,21 +54,33 @@
     background-color: #e03570;
 }
 
-/* Link-Stil */
-.link {
-    color: #ff4081;
-    font-size: 14px;
-    text-decoration: none;
+/* Link-Stil für Passwort vergessen */
+.link, .forgot-password-link {
+    color: #ff0080;
+    text-decoration: underline;
+    font-size: 0.9em;
 }
 
-.link:hover {
+.link:hover, .forgot-password-link:hover {
+    color: #ff4da6;
     text-decoration: underline;
 }
 
-/* Zusätzliche Hinweise unter dem Formular */
-.form-footer {
-    font-size: 14px;
-    color: #666;
-    margin-top: 20px;
+/* Container für Sicherheitsfragen */
+.reset-container {
+    width: 400px;
+    padding: 30px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
+
+.security-questions-section h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #333; /* Passe die Farbe an, falls nötig */
+}
+
 

@@ -3,17 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrieren</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles/styles.css">
+    <title>Registrierung</title>
 </head>
 <body>
-<div class="register-container">
-    <h2>Registrieren</h2>
-    <input type="text" placeholder="Nutzername">
-    <input type="password" placeholder="Passwort">
-    <input type="password" placeholder="Passwort bestätigen">
-    <button>Registrieren</button>
-    <a href="#">Schon ein Konto? Jetzt einloggen</a>
+<div class="registration-container">
+    <h2>Registrierung</h2>
+    <form>
+        <label for="username">Nutzername:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Passwort:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="confirmPassword">Passwort bestätigen:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+        <!-- Sicherheitsfragen Abschnitt -->
+        <h3>Sicherheitsfragen:</h3>
+
+        <label for="question1">1. Was ist dein Lieblingsbuch?</label>
+        <input type="text" id="question1" name="question1" required>
+
+        <label for="question2">2. Wie lautet der Name deines ersten Haustiers?</label>
+        <input type="text" id="question2" name="question2" required>
+
+        <label for="question3">3. In welcher Stadt wurdest du geboren?</label>
+        <input type="text" id="question3" name="question3" required>
+
+        <button type="submit">Registrieren</button>
+    </form>
 </div>
 </body>
 </html>

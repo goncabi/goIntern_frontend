@@ -2,6 +2,7 @@ package com.example.application.views.login;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -33,7 +34,12 @@ public class LoginView extends VerticalLayout {
         Button loginButton = new Button("Login");
         loginButton.addClassName("button");
 
-        formContainer.add(title, usernameField, passwordField, loginButton);
+        // "Passwort vergessen?" Link hinzufügen und auf die Wiederherstellungsseite verlinken
+        Anchor forgotPasswordLink = new Anchor("passwort-vergessen", "Passwort vergessen?");
+        forgotPasswordLink.addClassName("link");
+
+
+        formContainer.add(title, usernameField, passwordField, loginButton, forgotPasswordLink);
         add(formContainer);
     }
 }
