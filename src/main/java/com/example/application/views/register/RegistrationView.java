@@ -4,11 +4,15 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.dependency.CssImport;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Route("register")
 @CssImport("./styles/styles.css")
@@ -35,6 +39,10 @@ public class RegistrationView extends VerticalLayout {
         confirmPasswordField.setPlaceholder("Passwort bestätigen");
         confirmPasswordField.addClassName("text-field");
 
+        // Div für die Fehlermeldungen
+        Div errorContainer = new Div();
+        errorContainer.addClassName("error-container");
+
         // Sicherheitsfragen Überschrift
         H3 securityQuestionsTitle = new H3("Sicherheitsfragen:");
         securityQuestionsTitle.addClassName("form-title");
@@ -52,9 +60,63 @@ public class RegistrationView extends VerticalLayout {
         Button registerButton = new Button("Registrieren");
         registerButton.addClassName("button");
 
+        // Logik für den Registrieren-Button
+        registerButton.addClickListener(event -> {
+            String password = passwordField.getValue();
+            List<String> errors = validatePassword(password);
+
+            if (!errors.isEmpty()) {
+                // Lösche vorherige Fehler und zeige neue an
+                errorContainer.removeAll();
+                passwordField.addClassName("invalid-field");
+                for (String error : errors) {
+                    Div errorMessage = new Div();
+                    errorMessage.setText(error);
+                    errorMessage.addClassName("error-message");
+                    errorContainer.add(errorMessage);
+                }
+            } else {
+                // Passwort ist gültig, Registrierung fortsetzen
+                passwordField.removeClassName("invalid-field");
+                errorContainer.removeAll(); // Löscht alte Fehlermeldungen
+                Notification.show("Registrierung erfolgreich!", 3000, Notification.Position.MIDDLE);
+            }
+        });
+
         // Hinzufügen aller Komponenten zum Formular
-        formContainer.add(title, usernameField, passwordField, confirmPasswordField, securityQuestionsTitle, question1Field, question2Field, question3Field, registerButton);
+        formContainer.add(
+                title,
+                usernameField,
+                passwordField,
+                errorContainer, // Fehlercontainer unter dem Passwortfeld
+                confirmPasswordField,
+                securityQuestionsTitle,
+                question1Field,
+                question2Field,
+                question3Field,
+                registerButton
+        );
+
         add(formContainer);
     }
-}
 
+    // Methode zur Validierung des Passworts
+    private List<String> validatePassword(String password) {
+        List<String> errors = new ArrayList<>();
+
+        if (!password.matches(".*[A-Z].*")) {
+            errors.add("Mindestens ein Großbuchstabe erforderlich. (A-Z)");
+        }
+        if (!password.matches(".*\\d.*")) {
+            errors.add("Mindestens eine Zahl erforderlich. (0-9)");
+        }
+        if (!password.matches(".*[!?§/'@#$%^&*()].*")) {
+            errors.add("Mindestens ein Sonderzeichen erforderlich.(!?§/'@#$%^&*())");
+        }
+        if (password.length() < 8) {
+            errors.add("Mindestens 8 Zeichen erforderlich.");
+        }
+
+        return errors;
+    }
+}

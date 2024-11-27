@@ -83,4 +83,34 @@
     color: #333; /* Passe die Farbe an, falls nötig */
 }
 
+/* Fehlercontainer */
+.error-container {
+    margin-top: 10px;
+    color: #e74c3c; /* Dezentes Rot für Fehlermeldungen */
+    font-size: 0.95em;
+    text-align: left; /* Linksbündige Fehlermeldungen */
+}
+
+/* Fehlernachricht */
+.error-message {
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #fce4e4; /* Heller roter Hintergrund */
+    border-left: 4px solid #e74c3c; /* Linker Rand in kräftigem Rot */
+    border-radius: 4px;
+}
+
+/* Invalides Eingabefeld */
+.invalid-field {
+    border: 2px solid #e74c3c; /* Kräftiger roter Rahmen */
+    background-color: #fce4e4; /* Heller roter Hintergrund */
+    transition: background-color 0.3s, border 0.3s; /* Sanfter Übergang */
+}
+
+/* Zusatz für Hover-Effekt beim Button */
+.button:hover {
+    background-color: #d7335b; /* Etwas dunkleres Rot beim Hover */
+}
+
+
 
