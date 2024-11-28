@@ -59,13 +59,13 @@ public class RegistrationView extends VerticalLayout {
 
 
         // Sicherheitsfragen Felder
-        TextField question1Field = new TextField("1. Was ist dein Lieblingsbuch?");
+        TextField question1Field = new TextField("1. Wie lautet dein Geburtsort?");
         question1Field.addClassName("text-field");
 
-        TextField question2Field = new TextField("2. Wie lautet der Name deines ersten Haustiers?");
+        TextField question2Field = new TextField("2. Was war dein erstes Haustier?");
         question2Field.addClassName("text-field");
 
-        TextField question3Field = new TextField("3. In welcher Stadt wurdest du geboren?");
+        TextField question3Field = new TextField("3. Wie lautet der Name deiner Grundschule?");
         question3Field.addClassName("text-field");
 
         // Registrieren-Button
