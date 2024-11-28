@@ -2,15 +2,19 @@ package com.example.application.views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Route;
 
 @Route("")
 public class Startseite extends VerticalLayout {
+
+    private boolean antragVorhanden = false;
 
     public Startseite() {
         // Überschrift hinzufügen
@@ -54,5 +58,61 @@ public class Startseite extends VerticalLayout {
 
         // Komponenten zur Seite hinzufügen
         add(header, newRequestButton, hintLabel, settingsDialog);
+
+
+        //Container für "Mein Antrag"-Feld
+        Div meinAntragContainer = new Div();
+        meinAntragContainer.getStyle()
+                .set("border", "1px solid #ccc")
+                .set("border-radius", "8px")
+                .set("padding", "16px")
+                .set("background-color", "#f9f9f9")
+                .set("box-shadow", "0px 4px 6px rgba(0, 0, 0, 0.1)")
+                .set("margin-top", "10px")
+                .set("width", "80%")
+                .set("max-width", "600px");
+
+//Überschrift
+        H2 meinAntragHeading = new H2("Mein Antrag");
+        meinAntragHeading.getStyle()
+                .set("margin", "0")
+                .set("margin-bottom", "10px");
+
+//Buttons für Bearbeiten und Löschen
+        Button bearbeitenButton = new Button("Bearbeiten");
+        bearbeitenButton.addClickListener(event -> {
+            if (!antragVorhanden) {
+                Notification.show("Noch kein Antrag vorhanden!", 3000, Notification.Position.TOP_CENTER);
+            } else {
+                getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+            }
+        });
+
+        Button loeschenButton = new Button("Löschen");
+        loeschenButton.addClickListener(event -> { // PopUp Bestätigung: Löschen
+            Dialog confirmDialog = new Dialog();
+            confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
+
+            Button jaButton = new Button("Ja", eventYes -> {
+                antragVorhanden = false;
+                confirmDialog.close();
+                Notification.show("Antrag gelöscht.", 3000, Notification.Position.TOP_CENTER);
+            });
+
+            Button neinButton = new Button("Nein", eventNo -> confirmDialog.close());
+            confirmDialog.add(new HorizontalLayout(jaButton, neinButton));
+            confirmDialog.open();
+        });
+
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
+        buttonLayout.setSpacing(true); //buttons nebeneiander anordnen
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        buttonLayout.setAlignItems(FlexComponent.Alignment.END);
+
+
+        meinAntragContainer.add(meinAntragHeading, buttonLayout);
+        add(meinAntragContainer);
     }
-}
+
+    }
