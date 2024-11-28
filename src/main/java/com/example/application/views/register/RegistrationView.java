@@ -11,43 +11,54 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.dependency.CssImport;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Route("register")
 @CssImport("./styles/styles.css")
 public class RegistrationView extends VerticalLayout {
 
     public RegistrationView() {
-        addClassName("view-container");
+        // Hauptcontainer mit einer zentrierten Ansicht
+        addClassName("scrollable-view");
 
+        // Formularcontainer
         Div formContainer = new Div();
         formContainer.addClassName("form-container");
 
+        // Überschrift
         H1 title = new H1("Registrieren");
         title.addClassName("form-title");
 
+        // Nutzername Feld
         TextField usernameField = new TextField();
         usernameField.setPlaceholder("Nutzername");
         usernameField.addClassName("text-field");
 
+        // Fehlernachricht für Nutzername
+        Div usernameError = new Div();
+        usernameError.setText("Nutzername muss im Format s0XXXXXX sein.");
+        usernameError.addClassName("error-message");
+        usernameError.setVisible(false); // Standardmäßig unsichtbar
+
+        // Passwort Feld
         PasswordField passwordField = new PasswordField();
         passwordField.setPlaceholder("Passwort");
         passwordField.addClassName("text-field");
 
+        // Fehlercontainer für Passwort
+        Div passwordErrors = new Div();
+        passwordErrors.addClassName("error-container");
+        passwordErrors.setVisible(false); // Standardmäßig unsichtbar
+
+        // Passwort bestätigen Feld
         PasswordField confirmPasswordField = new PasswordField();
         confirmPasswordField.setPlaceholder("Passwort bestätigen");
         confirmPasswordField.addClassName("text-field");
 
-        // Div für die Fehlermeldungen
-        Div errorContainer = new Div();
-        errorContainer.addClassName("error-container");
-
-        // Sicherheitsfragen Überschrift
+        // Sicherheitsfragen Titel
         H3 securityQuestionsTitle = new H3("Sicherheitsfragen:");
         securityQuestionsTitle.addClassName("form-title");
 
-        // Sicherheitsfragen mit nur den Nummern 1, 2 und 3
+
+        // Sicherheitsfragen Felder
         TextField question1Field = new TextField("1. Was ist dein Lieblingsbuch?");
         question1Field.addClassName("text-field");
 
@@ -57,66 +68,64 @@ public class RegistrationView extends VerticalLayout {
         TextField question3Field = new TextField("3. In welcher Stadt wurdest du geboren?");
         question3Field.addClassName("text-field");
 
+        // Registrieren-Button
         Button registerButton = new Button("Registrieren");
         registerButton.addClassName("button");
 
         // Logik für den Registrieren-Button
         registerButton.addClickListener(event -> {
-            String password = passwordField.getValue();
-            List<String> errors = validatePassword(password);
+            boolean isValid = true;
 
-            if (!errors.isEmpty()) {
-                // Lösche vorherige Fehler und zeige neue an
-                errorContainer.removeAll();
-                passwordField.addClassName("invalid-field");
-                for (String error : errors) {
-                    Div errorMessage = new Div();
-                    errorMessage.setText(error);
-                    errorMessage.addClassName("error-message");
-                    errorContainer.add(errorMessage);
-                }
+            // Nutzername Validierung
+            if (!usernameField.getValue().matches("s0\\d{6}")) {
+                usernameError.setVisible(true);
+                usernameField.addClassName("invalid-field");
+                isValid = false;
             } else {
-                // Passwort ist gültig, Registrierung fortsetzen
+                usernameError.setVisible(false);
+                usernameField.removeClassName("invalid-field");
+            }
+
+            // Passwort Validierung
+            // Passwort Validierung
+            passwordErrors.removeAll(); // Alle vorherigen Fehler entfernen
+            if (!passwordField.getValue().matches("(?=.*[A-Z])(?=.*\\d)(?=.*[!?§/'@#$%^&*()]).{8,}")) {
+                Div error1 = new Div();
+                error1.setText("Mindestens ein Großbuchstabe erforderlich. (A-Z)");
+                error1.addClassName("error-message"); // Gleicher Stil wie beim Nutzernamen
+
+                Div error2 = new Div();
+                error2.setText("Mindestens eine Zahl erforderlich. (0-9)");
+                error2.addClassName("error-message");
+
+                Div error3 = new Div();
+                error3.setText("Mindestens ein Sonderzeichen erforderlich. (!?§/'@#$%^&*())");
+                error3.addClassName("error-message");
+
+                Div error4 = new Div();
+                error4.setText("Mindestens 8 Zeichen erforderlich.");
+                error4.addClassName("error-message");
+
+                passwordErrors.add(error1, error2, error3, error4);
+                passwordErrors.setVisible(true);
+                passwordField.addClassName("invalid-field");
+                isValid = false;
+            } else {
+                passwordErrors.setVisible(false);
                 passwordField.removeClassName("invalid-field");
-                errorContainer.removeAll(); // Löscht alte Fehlermeldungen
+            }
+
+
+            // Registrierungserfolg
+            if (isValid) {
                 Notification.show("Registrierung erfolgreich!", 3000, Notification.Position.MIDDLE);
             }
         });
 
-        // Hinzufügen aller Komponenten zum Formular
-        formContainer.add(
-                title,
-                usernameField,
-                passwordField,
-                errorContainer, // Fehlercontainer unter dem Passwortfeld
-                confirmPasswordField,
-                securityQuestionsTitle,
-                question1Field,
-                question2Field,
-                question3Field,
-                registerButton
-        );
+        // Formular-Layout
+        formContainer.add(title, usernameField, usernameError, passwordField, passwordErrors,
+                confirmPasswordField, securityQuestionsTitle, question1Field, question2Field, question3Field, registerButton);
 
         add(formContainer);
-    }
-
-    // Methode zur Validierung des Passworts
-    private List<String> validatePassword(String password) {
-        List<String> errors = new ArrayList<>();
-
-        if (!password.matches(".*[A-Z].*")) {
-            errors.add("Mindestens ein Großbuchstabe erforderlich. (A-Z)");
-        }
-        if (!password.matches(".*\\d.*")) {
-            errors.add("Mindestens eine Zahl erforderlich. (0-9)");
-        }
-        if (!password.matches(".*[!?§/'@#$%^&*()].*")) {
-            errors.add("Mindestens ein Sonderzeichen erforderlich.(!?§/'@#$%^&*())");
-        }
-        if (password.length() < 8) {
-            errors.add("Mindestens 8 Zeichen erforderlich.");
-        }
-
-        return errors;
     }
 }
