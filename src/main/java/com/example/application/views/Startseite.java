@@ -80,7 +80,7 @@ public class Startseite extends VerticalLayout {
 
 //Buttons für Bearbeiten und Löschen
         Button bearbeitenButton = new Button("Bearbeiten");
-        bearbeitenButton.addClickListener(event -> {
+        bearbeitenButton.addClickListener(event -> { //PopUp Funktion
             if (!antragVorhanden) {
                 Notification.show("Noch kein Antrag vorhanden!", 3000, Notification.Position.TOP_CENTER);
             } else {
@@ -89,17 +89,17 @@ public class Startseite extends VerticalLayout {
         });
 
         Button loeschenButton = new Button("Löschen");
-        loeschenButton.addClickListener(event -> { // PopUp Bestätigung: Löschen
+        loeschenButton.addClickListener(event -> { // Warnungsfenster fürs Löschen
             Dialog confirmDialog = new Dialog();
             confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
 
-            Button jaButton = new Button("Ja", eventYes -> {
+            Button jaButton = new Button("Ja", eventJa -> {
                 antragVorhanden = false;
                 confirmDialog.close();
                 Notification.show("Antrag gelöscht.", 3000, Notification.Position.TOP_CENTER);
             });
 
-            Button neinButton = new Button("Nein", eventNo -> confirmDialog.close());
+            Button neinButton = new Button("Nein", eventNein -> confirmDialog.close());
             confirmDialog.add(new HorizontalLayout(jaButton, neinButton));
             confirmDialog.open();
         });
