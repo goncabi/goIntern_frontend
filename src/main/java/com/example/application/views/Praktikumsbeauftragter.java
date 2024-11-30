@@ -1,14 +1,17 @@
 package com.example.application.views;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Route("Praktikumsbeauftragter")
+@Route("praktikumsbeauftragter")
 public class Praktikumsbeauftragter extends VerticalLayout {
 
     public Praktikumsbeauftragter() {
@@ -26,9 +29,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         // Spalte für den "Genehmigen"-Button
         grid.addComponentColumn(antrag -> {
             Button genehmigenButton = new Button("Genehmigen", event -> {
-                antrag.setStatus("Genehmigt");
-                grid.getDataProvider().refreshItem(antrag);
-                // Optional: Logik zum Speichern des Status
+                // Zeige Bestätigungsdialog an
+                Dialog dialog = createConfirmationDialog(antrag, grid);
+                dialog.open();
             });
             return genehmigenButton;
         }).setHeader("Aktionen");
@@ -36,7 +39,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         add(grid);
     }
 
-    // Liste der Praktikumsanträge sind nur Beispiele
+    // Liste der Praktikumsanträge mit Beispielen
     private List<Praktikumsantrag> getPraktikumsantraege() {
         List<Praktikumsantrag> antraege = new ArrayList<>();
         antraege.add(new Praktikumsantrag("Max Mustermann", "123456", "Offen"));
@@ -79,5 +82,31 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         public void setStatus(String status) {
             this.status = status;
         }
+    }
+
+    // Erstellung eins Bestätigungsdialogs
+    private Dialog createConfirmationDialog(Praktikumsantrag antrag, Grid<Praktikumsantrag> grid) {
+        Dialog dialog = new Dialog();
+
+        // Frage
+        Span message = new Span("Möchten Sie den Antrag von " + antrag.getName() + " wirklich genehmigen?");
+
+        // Buttons
+        Button yesButton = new Button("Ja", event -> {
+            antrag.setStatus("Genehmigt");
+            grid.getDataProvider().refreshItem(antrag);
+            dialog.close();
+        });
+
+        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
+
+        // Layout für die Buttons
+        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
+
+
+        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
+        dialog.add(dialogLayout);
+
+        return dialog;
     }
 }
