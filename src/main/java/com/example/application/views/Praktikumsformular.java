@@ -130,6 +130,15 @@ public class Praktikumsformular extends Div {
         speichernButton.addClassName("speichern-button");
 
         Button absendenButton = new Button("Absenden");
+        absendenButton.addClassName("button");
+        absendenButton.addClassName("absenden-button");
+
+        Div buttonContainer = new Div(speichernButton, absendenButton);
+        buttonContainer.addClassName("button-container"); //hinzufügen asu css
+
+
+
+
 
         absendenButton.addClickListener(e -> {
             boolean isValid = true;
@@ -170,7 +179,7 @@ public class Praktikumsformular extends Div {
             }
         });
 
-        add(studentendatenContainer, praktikumsdatenContainer, absendenButton);
+        add(studentendatenContainer, praktikumsdatenContainer, buttonContainer);
     }
 
     private TextField createRequiredTextField(String label) {

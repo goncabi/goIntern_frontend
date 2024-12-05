@@ -40,34 +40,55 @@ form-layout {
     margin-bottom: 15px;
 }
 
-/* Stil für Buttons */
-.button {
-    padding: 15px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+/*Container für Button für Anordnung*/
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
 
-.speichern-button {
-    background-color: #f8f9fa;
-    color: royalblue;
-}
+    /* Stil für Buttons */
 
-.speichern-button:hover {
-    background-color: #e2e6ea;
+    .button {
+        padding: 15px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .speichern-button {
+        background-color: #f8f9fa;
+        color: royalblue;
+    }
+
+    .speichern-button:hover {
+        background-color: #e2e6ea;
+
+        .absende-button {
+            background: #dc3545;
+            color: white;
+        }
+
+        .absenden-button:hover {
+            background-color: #c82333;
+        }
 
 
-    /* Container-Stil für die Sektionen  */
+        /* Container-Stil für die Sektionen  */
 
-    div[style*="padding: 20px;"] {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-        margin-bottom: 20px;
+        div[style*="padding: 20px;"] {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
     }
 
 }
