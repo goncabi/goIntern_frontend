@@ -14,6 +14,18 @@ h1 {
     margin-bottom: 20px;
 }
 
+.zurueck-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: none;
+    color: black;
+    cursor: pointer;
+    font-size: 20px;
+
+}
+
+
 /* Sektion-Überschrift */
 h2 {
     margin-top: 20px;
@@ -67,10 +79,11 @@ form-layout {
     .speichern-button {
         background-color: #f8f9fa;
         color: black;
+        border: #333333;
     }
 
     .speichern-button:hover {
-        background-color: #e2e6ea;
+        background-color: #f9f9f9;
 
         .absende-button {
             background: #dc3545;
