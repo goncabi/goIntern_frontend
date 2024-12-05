@@ -43,11 +43,14 @@ form-layout {
 /*Container für Button für Anordnung*/
 .button-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     gap: 10px;
     margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 10px;
+    width: auto;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+
 
     /* Stil für Buttons */
 
@@ -57,11 +60,13 @@ form-layout {
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        width: auto;
+
     }
 
     .speichern-button {
         background-color: #f8f9fa;
-        color: royalblue;
+        color: black;
     }
 
     .speichern-button:hover {
