@@ -129,6 +129,12 @@ public class Praktikumsformular extends Div {
         speichernButton.addClassName("button");
         speichernButton.addClassName("speichern-button");
 
+        speichernButton.addClickListener(e -> {
+            Notification.show("Gespeichert", 3000, Notification.Position.TOP_CENTER);
+            boolean gespeichert = true;
+        });
+
+
         Button absendenButton = new Button("Absenden");
         absendenButton.addClassName("button");
         absendenButton.addClassName("absenden-button");
