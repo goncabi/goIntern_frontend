@@ -20,16 +20,51 @@ public class Startseite extends VerticalLayout {
         // Überschrift hinzufügen
         H1 title = new H1("Willkommen auf der Startseite!");
 
-        // Einstellungen-Button oben rechts
-        Button settingsButton = new Button(VaadinIcon.COG.create());
-        settingsButton.getElement().getStyle().set("position", "absolute")
-                .set("top", "10px")
-                .set("right", "10px");
-
         // Popup-Dialog für Einstellungen
         Dialog settingsDialog = new Dialog();
         settingsDialog.setWidth("200px");
         settingsDialog.setHeight("100px");
+
+        // Layout Titel und Buttons (Glocke & Einstellungen)
+        HorizontalLayout headerButtons = new HorizontalLayout();
+        headerButtons.setSpacing(true);
+        headerButtons.setAlignItems(Alignment.CENTER);
+
+        // Nachrichtenglocke-Button
+        Button notificationBellButton = new Button(VaadinIcon.BELL.create());
+        notificationBellButton.addClickListener(event -> {
+            Dialog notificationDialog = new Dialog();
+            notificationDialog.setWidth("300px");
+            notificationDialog.setHeight("200px");
+
+            // Placeholder für Nachrichtenliste
+            VerticalLayout notificationLayout = new VerticalLayout();
+            notificationLayout.setSpacing(true);
+            notificationLayout.setPadding(true);
+
+            // Abrufen der Nachrichten
+            boolean hasNotifications = false;
+            if (hasNotifications) {
+                notificationLayout.add(new Span("Nachricht 1"), new Span("Nachricht 2"));
+            } else {
+                notificationLayout.add(new Span("Keine Nachrichten vorhanden."));
+            }
+
+            notificationDialog.add(notificationLayout);
+            notificationDialog.open();
+        });
+
+        // Einstellungen-Button
+        Button settingsButton = new Button(VaadinIcon.COG.create());
+        settingsButton.addClickListener(event -> settingsDialog.open());
+
+        headerButtons.add(notificationBellButton, settingsButton);
+
+        // Haupt-Header mit Titel und Buttons
+        HorizontalLayout header = new HorizontalLayout(title, headerButtons);
+        header.setWidthFull();
+        header.setDefaultVerticalComponentAlignment(Alignment.CENTER);
+        header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
         // Ausloggen-Button im Dialog
         Button logoutButton = new Button("Ausloggen", event -> {
@@ -39,12 +74,6 @@ public class Startseite extends VerticalLayout {
 
         settingsDialog.add(new VerticalLayout(logoutButton));
         settingsButton.addClickListener(event -> settingsDialog.open());
-
-        // Layout für Header mit Titel und Einstellungen-Button
-        HorizontalLayout header = new HorizontalLayout(title, settingsButton);
-        header.setWidthFull();
-        header.setDefaultVerticalComponentAlignment(Alignment.CENTER);
-        header.getStyle().set("position", "relative");
 
         // Plus-Button für neuen Antrag
         Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create());
@@ -106,7 +135,7 @@ public class Startseite extends VerticalLayout {
 
 
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
-        buttonLayout.setSpacing(true); //buttons nebeneiander anordnen
+        buttonLayout.setSpacing(true);
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         buttonLayout.setAlignItems(FlexComponent.Alignment.END);
 

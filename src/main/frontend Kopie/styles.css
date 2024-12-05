@@ -85,7 +85,7 @@ form-layout {
     .speichern-button:hover {
         background-color: #f9f9f9;
 
-        .absende-button {
+        .absenden-button {
             background: #dc3545;
             color: white;
         }

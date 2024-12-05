@@ -15,6 +15,17 @@ h1 {
     text-align: center;
 }
 
+.zurueck-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: none;
+    color: black;
+    cursor: pointer;
+    font-size: 20px;
+
+}
+
 /* Scrollbare Ansicht für das gesamte Formular */
 .scrollable-view {
     display: flex;
@@ -22,7 +33,7 @@ h1 {
     align-items: center; /* Zentriert den Inhalt horizontal */
     height: 100vh; /* Höhe des Viewports */
     overflow-y: auto; /* Ermöglicht Scrollen nur in eine Richtung */
-    background: linear-gradient(to right, #ff0080, #ff80bf); /* Beibehaltung des Designs */
+   /* background: linear-gradient(to right, #ff0080, #ff80bf); /* Beibehaltung des Designs */
     padding: 20px;
     box-sizing: border-box;
 }
@@ -69,7 +80,7 @@ h1 {
 
 
 /* Stil für den Absenden-Button */
-button {
+/*button {
     display: block;
     margin: 20px auto;
     background-color: #28a745;
@@ -83,4 +94,51 @@ button {
 
 button:hover {
     background-color: #218838;
+}*/
+
+
+
+/*Container für Button für Anordnung*/
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    width: auto;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+
+
+    /* Stil für Buttons */
+
+    .button {
+        padding: 15px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: auto;
+
+    }
+
+    .speichern-button {
+        background-color: #f8f9fa;
+        color: black;
+        border: #333333;
+    }
+
+    .speichern-button:hover {
+        background-color: #f9f9f9;
+
+        .absenden-button {
+            background: #dc3545;
+            color: white;
+        }
+
+        .absenden-button:hover {
+            background-color: #c82333;
+        }
+    }
 }
+
