@@ -29,12 +29,12 @@ public class RegistrationView extends VerticalLayout {
 
         // Nutzername Feld
         TextField usernameField = new TextField();
-        usernameField.setPlaceholder("Nutzername");
+        usernameField.setPlaceholder("Matrikelnummer");
         usernameField.addClassName("text-field");
 
         // Fehlernachricht für Nutzername
         Div usernameError = new Div();
-        usernameError.setText("Nutzername muss im Format s0XXXXXX sein.");
+        usernameError.setText("Bitte gib deine Matrikelnummer im Format s0XXXXXX ein.");
         usernameError.addClassName("error-message");
         usernameError.setVisible(false); // Standardmäßig unsichtbar
 
