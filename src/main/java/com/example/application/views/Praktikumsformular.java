@@ -134,17 +134,12 @@ public class Praktikumsformular extends Div {
             boolean gespeichert = true;
         });
 
-
         Button absendenButton = new Button("Absenden");
         absendenButton.addClassName("button");
         absendenButton.addClassName("absenden-button");
 
         Div buttonContainer = new Div(speichernButton, absendenButton);
         buttonContainer.addClassName("button-container"); //hinzufügen asu css
-
-
-
-
 
         absendenButton.addClickListener(e -> {
             boolean isValid = true;
@@ -182,8 +177,11 @@ public class Praktikumsformular extends Div {
 
             if (!isValid) {
                 Notification.show("Bitte alle Pflichtfelder ausfüllen!", 3000, Notification.Position.MIDDLE);
+            } else {
+                Notification.show("Antrag erfolgreich eingereicht", 3000, Notification.Position.TOP_CENTER);
             }
-        });
+
+            });
 
         add(studentendatenContainer, praktikumsdatenContainer, buttonContainer);
     }
