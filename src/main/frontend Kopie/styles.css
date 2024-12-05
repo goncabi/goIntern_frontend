@@ -40,30 +40,34 @@ form-layout {
     margin-bottom: 15px;
 }
 
-/* Stil für den Absenden-Button */
-button {
-    display: block;
-    margin: 20px auto;
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1em;
+/* Stil für Buttons */
+.button {
+    padding: 15px;
+    font-size: 16px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #218838;
+.speichern-button {
+    background-color: #f8f9fa;
+    color: royalblue;
 }
 
-/* Container-Stil für die Sektionen  */
-div[style*="padding: 20px;"] {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    margin-bottom: 20px;
+.speichern-button:hover {
+    background-color: #e2e6ea;
+
+
+    /* Container-Stil für die Sektionen  */
+
+    div[style*="padding: 20px;"] {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        margin-bottom: 20px;
+    }
+
 }

@@ -122,8 +122,15 @@ public class Praktikumsformular extends Div {
         pflichtfeldHinweis.getStyle().set("margin-top", "20px");
         praktikumsdatenContainer.add(pflichtfeldHinweis);
 
+
+
+
+        Button speichernButton = new Button("Speichern");
+        speichernButton.addClassName("button");
+        speichernButton.addClassName("speichern-button");
+
         Button absendenButton = new Button("Absenden");
-        absendenButton.getStyle().set("margin-top", "10px");
+
         absendenButton.addClickListener(e -> {
             boolean isValid = true;
             isValid &= validateField(name);
