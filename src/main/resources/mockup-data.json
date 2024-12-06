@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Max Mustermann",
+    "matrikelnummer": "123456",
+    "status": "Offen",
+    "firma": "Beispiel GmbH",
+    "email": "max.mustermann@example.com",
+    "betreuer": "Dr. Müller",
+    "praktikumVon": "2024-01-01",
+    "praktikumBis": "2024-06-30"
+  },
+  {
+    "name": "Lisa Müller",
+    "matrikelnummer": "654321",
+    "status": "Offen",
+    "firma": "Tech Solutions AG",
+    "email": "lisa.mueller@example.com",
+    "betreuer": "Prof. Schmidt",
+    "praktikumVon": "2024-03-01",
+    "praktikumBis": "2024-08-30"
+  }
+]

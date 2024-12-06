@@ -2,7 +2,6 @@ import { injectGlobalCss } from 'Frontend/generated/jar-resources/theme-util.js'
 
 import { css, unsafeCSS, registerStyles } from '@vaadin/vaadin-themable-mixin';
 import $cssFromFile_0 from 'Frontend/styles/styles.css?inline';
-import $cssFromFile_1 from 'Frontend/styles.css?inline';
 import '@vaadin/polymer-legacy-adapter/style-modules.js';
 import '@vaadin/vertical-layout/theme/lumo/vaadin-vertical-layout.js';
 import '@vaadin/app-layout/theme/lumo/vaadin-app-layout.js';
@@ -105,8 +104,6 @@ import '@vaadin/vaadin-lumo-styles/style.js';
 import '@vaadin/vaadin-lumo-styles/vaadin-iconset.js';
 
 injectGlobalCss($cssFromFile_0.toString(), 'CSSImport end', document);
-
-injectGlobalCss($cssFromFile_1.toString(), 'CSSImport end', document);
 const loadOnDemand = (key) => { return Promise.resolve(0); }
 window.Vaadin = window.Vaadin || {};
 window.Vaadin.Flow = window.Vaadin.Flow || {};
