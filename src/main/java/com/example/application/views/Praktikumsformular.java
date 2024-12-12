@@ -39,20 +39,20 @@ public class Praktikumsformular extends Div {
         // Container für Studentendaten
         Div studentendatenContainer = new Div();
         studentendatenContainer.getStyle()
-                               .set("padding",
-                                    "20px");
+                .set("padding",
+                        "20px");
         studentendatenContainer.getStyle()
-                               .set("border",
-                                    "1px solid #ccc");
+                .set("border",
+                        "1px solid #ccc");
         studentendatenContainer.getStyle()
-                               .set("border-radius",
-                                    "8px");
+                .set("border-radius",
+                        "8px");
         studentendatenContainer.getStyle()
-                               .set("margin-bottom",
-                                    "20px");
+                .set("margin-bottom",
+                        "20px");
         studentendatenContainer.getStyle()
-                               .set("background-color",
-                                    "#f9f9f9");
+                .set("background-color",
+                        "#f9f9f9");
 
         // Layout für Studentendaten
         FormLayout studentendatenLayout = new FormLayout();
@@ -80,7 +80,7 @@ public class Praktikumsformular extends Div {
         TextArea fehlendeLeistungsnachweise = new TextArea("Fehlende Leistungsnachweise");
         Checkbox ausnahmeZulassung = new Checkbox("Antrag auf Ausnahmezulassung");
         DatePicker datumAntrag = createRequiredDatePicker("Datum des Antrags *");
-       // TextArea ausnahmeBegruendung = new TextArea("Begründung für Ausnahmezulassung"); auskommentiert, wie haben die variable ausnahmeBegruendung nicht im Backend
+        // TextArea ausnahmeBegruendung = new TextArea("Begründung für Ausnahmezulassung"); auskommentiert, wie haben die variable ausnahmeBegruendung nicht im Backend
         //ausnahmeBegruendung.setVisible(false);
 
         // Event-Listener für Checkbox
@@ -88,46 +88,46 @@ public class Praktikumsformular extends Div {
 
         // Layout für Studentendaten konfigurieren
         studentendatenLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0",
-                                                                              1)
-                                                // 1 Spalte auf allen Bildschirmgrößen
+                        1)
+                // 1 Spalte auf allen Bildschirmgrößen
         );
 
         studentendatenLayout.add(matrikelnummer,
-                                 nameStudentin,
-                                 vornameStudentin,
-                                 gebDatumStudentin,
-                                 strasseStudentin,
-                                 hausnummerStudentin,
-                                 plzStudentin,
-                                 ortStudentin,
-                                 telefonnummerStudentin,
-                                 emailStudentin,
-                                 vorschlagPraktikumsbetreuerIn,
-                                 praktikumssemester,
-                                 studiensemester,
-                                 studiengang,
-                                 begleitendeLehrVeranstaltungen,
-                                 voraussetzendeLeistungsnachweise,
-                                 fehlendeLeistungsnachweise,
-                                 datumAntrag,
-                                 ausnahmeZulassung);
+                nameStudentin,
+                vornameStudentin,
+                gebDatumStudentin,
+                strasseStudentin,
+                hausnummerStudentin,
+                plzStudentin,
+                ortStudentin,
+                telefonnummerStudentin,
+                emailStudentin,
+                vorschlagPraktikumsbetreuerIn,
+                praktikumssemester,
+                studiensemester,
+                studiengang,
+                begleitendeLehrVeranstaltungen,
+                voraussetzendeLeistungsnachweise,
+                fehlendeLeistungsnachweise,
+                datumAntrag,
+                ausnahmeZulassung);
 
         studentendatenContainer.add(studentendatenLayout);
 
         // Container für Praktikumsdaten
         Div praktikumsdatenContainer = new Div();
         praktikumsdatenContainer.getStyle()
-                                .set("padding",
-                                     "20px");
+                .set("padding",
+                        "20px");
         praktikumsdatenContainer.getStyle()
-                                .set("border",
-                                     "1px solid #ccc");
+                .set("border",
+                        "1px solid #ccc");
         praktikumsdatenContainer.getStyle()
-                                .set("border-radius",
-                                     "8px");
+                .set("border-radius",
+                        "8px");
         praktikumsdatenContainer.getStyle()
-                                .set("background-color",
-                                     "#f9f9f9");
+                .set("background-color",
+                        "#f9f9f9");
 
         // Layout für Praktikumsdaten
         FormLayout praktikumsdatenLayout = new FormLayout();
@@ -151,137 +151,137 @@ public class Praktikumsformular extends Div {
 
         // Layout für Praktikumsdaten konfigurieren (ein Feld pro Zeile)
         praktikumsdatenLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0",
-                                                                               1)
-                                                 // 1 Spalte auf allen Bildschirmgrößen
+                        1)
+                // 1 Spalte auf allen Bildschirmgrößen
         );
         praktikumsdatenLayout.add(namePraktikumsstelle,
-                                  strassePraktikumsstelle,
-                                  plzPraktikumsstelle,
-                                  ortPraktikumsstelle,
-                                  landPraktikumsstelle,
-                                  ansprechpartnerPraktikumsstelle,
-                                  telefonPraktikumsstelle,
-                                  emailPraktikumsstelle,
-                                  abteilung,
-                                  taetigkeit,
-                                  startdatum,
-                                  enddatum);
+                strassePraktikumsstelle,
+                plzPraktikumsstelle,
+                ortPraktikumsstelle,
+                landPraktikumsstelle,
+                ansprechpartnerPraktikumsstelle,
+                telefonPraktikumsstelle,
+                emailPraktikumsstelle,
+                abteilung,
+                taetigkeit,
+                startdatum,
+                enddatum);
 
         praktikumsdatenContainer.add(praktikumsdatenLayout);
 
         // Pflichtfeldhinweis und Absenden-Button
         Paragraph pflichtfeldHinweis = new Paragraph("* Pflichtfeld");
         pflichtfeldHinweis.getStyle()
-                          .set("color",
-                               "red");
+                .set("color",
+                        "red");
         pflichtfeldHinweis.getStyle()
-                          .set("font-size",
-                               "0.9em");
+                .set("font-size",
+                        "0.9em");
         pflichtfeldHinweis.getStyle()
-                          .set("margin-top",
-                               "20px");
+                .set("margin-top",
+                        "20px");
         praktikumsdatenContainer.add(pflichtfeldHinweis);
         Button speichernButton = new Button("Speichern");
         speichernButton.addClassName("speichern-button");
 
         speichernButton.addClickListener(e -> {
-                // JSON mit allen notwendigen Feldern erstellen
-                String json = String.format(
-                        "{" +
-                        "\"matrikelnummer\": \"%s\"," +
-                        "\"nameStudentin\": \"%s\"," +
-                        "\"vornameStudentin\": \"%s\"," +
-                        "\"gebDatumStudentin\": \"%s\"," +
-                        "\"strasseStudentin\": \"%s\"," +
-                        "\"hausnummerStudentin\": %d," +
-                        "\"plzStudentin\": %d," +
-                        "\"ortStudentin\": \"%s\"," +
-                        "\"telefonnummerStudentin\": \"%s\"," +
-                        "\"emailStudentin\": \"%s\"," +
-                        "\"vorschlagPraktikumsbetreuerIn\": \"%s\"," +
-                        "\"praktikumssemester\": \"%s\"," +
-                        "\"studiensemester\": %d," +
-                        "\"studiengang\": \"%s\"," +
-                        "\"begleitendeLehrVeranstaltungen\": \"%s\"," +
-                        "\"voraussetzendeLeistungsnachweise\": %b," +
-                        "\"fehlendeLeistungsnachweise\": \"%s\"," +
-                        "\"ausnahmeZulassung\": %b," +
-                        "\"datumAntrag\": \"%s\"," +
-                        "\"namePraktikumsstelle\": \"%s\"," +
-                        "\"strassePraktikumsstelle\": \"%s\"," +
-                        "\"plzPraktikumsstelle\": %d," +
-                        "\"ortPraktikumsstelle\": \"%s\"," +
-                        "\"landPraktikumsstelle\": \"%s\"," +
-                        "\"ansprechpartnerPraktikumsstelle\": \"%s\"," +
-                        "\"telefonPraktikumsstelle\": \"%s\"," +
-                        "\"emailPraktikumsstelle\": \"%s\"," +
-                        "\"abteilung\": \"%s\"," +
-                        "\"taetigkeit\": \"%s\"," +
-                        "\"startdatum\": \"%s\"," +
-                        "\"enddatum\": \"%s\"," +
-                        "\"statusAntrag\": \"%s\"" +
-                        "}",
-                        matrikelnummer.getValue(),
-                        nameStudentin.getValue(),
-                        vornameStudentin.getValue(),
-                        gebDatumStudentin.getValue(),
-                        strasseStudentin.getValue(),
-                        hausnummerStudentin.getValue().intValue(),
-                        plzStudentin.getValue().intValue(),
-                        ortStudentin.getValue(),
-                        telefonnummerStudentin.getValue(),
-                        emailStudentin.getValue(),
-                        vorschlagPraktikumsbetreuerIn.getValue(),
-                        praktikumssemester.getValue(),
-                        studiensemester.getValue().intValue(),
-                        studiengang.getValue(),
-                        begleitendeLehrVeranstaltungen.getValue(),
-                        voraussetzendeLeistungsnachweise.getValue(), // Checkbox oder Boolean
-                        fehlendeLeistungsnachweise.getValue(),
-                        ausnahmeZulassung.getValue(), // Checkbox oder Boolean
-                        datumAntrag.getValue(),
-                        namePraktikumsstelle.getValue(),
-                        strassePraktikumsstelle.getValue(),
-                        plzPraktikumsstelle.getValue().intValue(),
-                        ortPraktikumsstelle.getValue(),
-                        landPraktikumsstelle.getValue(),
-                        ansprechpartnerPraktikumsstelle.getValue(),
-                        telefonPraktikumsstelle.getValue(),
-                        emailPraktikumsstelle.getValue(),
-                        abteilung.getValue(),
-                        taetigkeit.getValue(),
-                        startdatum.getValue(),
-                        enddatum.getValue(),
-                        "GESPEICHERT" // Status beim Speichern
-                );
+            // JSON mit allen notwendigen Feldern erstellen
+            String json = String.format(
+                    "{" +
+                            "\"matrikelnummer\": \"%s\"," +
+                            "\"nameStudentin\": \"%s\"," +
+                            "\"vornameStudentin\": \"%s\"," +
+                            "\"gebDatumStudentin\": \"%s\"," +
+                            "\"strasseStudentin\": \"%s\"," +
+                            "\"hausnummerStudentin\": %d," +
+                            "\"plzStudentin\": %d," +
+                            "\"ortStudentin\": \"%s\"," +
+                            "\"telefonnummerStudentin\": \"%s\"," +
+                            "\"emailStudentin\": \"%s\"," +
+                            "\"vorschlagPraktikumsbetreuerIn\": \"%s\"," +
+                            "\"praktikumssemester\": \"%s\"," +
+                            "\"studiensemester\": %d," +
+                            "\"studiengang\": \"%s\"," +
+                            "\"begleitendeLehrVeranstaltungen\": \"%s\"," +
+                            "\"voraussetzendeLeistungsnachweise\": %b," +
+                            "\"fehlendeLeistungsnachweise\": \"%s\"," +
+                            "\"ausnahmeZulassung\": %b," +
+                            "\"datumAntrag\": \"%s\"," +
+                            "\"namePraktikumsstelle\": \"%s\"," +
+                            "\"strassePraktikumsstelle\": \"%s\"," +
+                            "\"plzPraktikumsstelle\": %d," +
+                            "\"ortPraktikumsstelle\": \"%s\"," +
+                            "\"landPraktikumsstelle\": \"%s\"," +
+                            "\"ansprechpartnerPraktikumsstelle\": \"%s\"," +
+                            "\"telefonPraktikumsstelle\": \"%s\"," +
+                            "\"emailPraktikumsstelle\": \"%s\"," +
+                            "\"abteilung\": \"%s\"," +
+                            "\"taetigkeit\": \"%s\"," +
+                            "\"startdatum\": \"%s\"," +
+                            "\"enddatum\": \"%s\"," +
+                            "\"statusAntrag\": \"%s\"" +
+                            "}",
+                    matrikelnummer.getValue(),
+                    nameStudentin.getValue(),
+                    vornameStudentin.getValue(),
+                    gebDatumStudentin.getValue(),
+                    strasseStudentin.getValue(),
+                    hausnummerStudentin.getValue().intValue(),
+                    plzStudentin.getValue().intValue(),
+                    ortStudentin.getValue(),
+                    telefonnummerStudentin.getValue(),
+                    emailStudentin.getValue(),
+                    vorschlagPraktikumsbetreuerIn.getValue(),
+                    praktikumssemester.getValue(),
+                    studiensemester.getValue().intValue(),
+                    studiengang.getValue(),
+                    begleitendeLehrVeranstaltungen.getValue(),
+                    voraussetzendeLeistungsnachweise.getValue(), // Checkbox oder Boolean
+                    fehlendeLeistungsnachweise.getValue(),
+                    ausnahmeZulassung.getValue(), // Checkbox oder Boolean
+                    datumAntrag.getValue(),
+                    namePraktikumsstelle.getValue(),
+                    strassePraktikumsstelle.getValue(),
+                    plzPraktikumsstelle.getValue().intValue(),
+                    ortPraktikumsstelle.getValue(),
+                    landPraktikumsstelle.getValue(),
+                    ansprechpartnerPraktikumsstelle.getValue(),
+                    telefonPraktikumsstelle.getValue(),
+                    emailPraktikumsstelle.getValue(),
+                    abteilung.getValue(),
+                    taetigkeit.getValue(),
+                    startdatum.getValue(),
+                    enddatum.getValue(),
+                    "GESPEICHERT" // Status beim Speichern
+            );
 
-                // JSON an den Backend-Endpunkt senden
-                try {
-                    HttpClient client = HttpClient.newHttpClient();
-                    HttpRequest request = HttpRequest.newBuilder()
-                                                     .uri(URI.create("http://localhost:3000/api/antrag/speichern"))
-                                                     .header("Content-Type", "application/json")
-                                                     .POST(HttpRequest.BodyPublishers.ofString(json))
-                                                     .build();
+            // JSON an den Backend-Endpunkt senden
+            try {
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:3000/api/antrag/speichern"))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
 
-                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                    if (response.statusCode() == 201) {
-                        Notification.show("Antrag erfolgreich gespeichert!", 3000, Notification.Position.TOP_CENTER);
-                    } else {
-                        Notification.show("Fehler beim Speichern: " + response.body(), 3000, Notification.Position.TOP_CENTER);
-                    }
-                } catch (Exception ex) {
-                    Notification.show("Ein Fehler ist aufgetreten: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+                if (response.statusCode() == 201) {
+                    Notification.show("Antrag erfolgreich gespeichert!", 3000, Notification.Position.TOP_CENTER);
+                } else {
+                    Notification.show("Fehler beim Speichern: " + response.body(), 3000, Notification.Position.TOP_CENTER);
                 }
-            });
+            } catch (Exception ex) {
+                Notification.show("Ein Fehler ist aufgetreten: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            }
+        });
 
         Button absendenButton = new Button("Absenden");
         absendenButton.addClassName("button");
         absendenButton.addClassName("absenden-button");
 
         Div buttonContainer = new Div(speichernButton,
-                                      absendenButton);
+                absendenButton);
         buttonContainer.addClassName("button-container"); //hinzufügen aus css
 
         //Zurück Button
@@ -293,14 +293,14 @@ public class Praktikumsformular extends Div {
                 dialog.setHeader("Daten nicht gespeichert");
                 dialog.setText("Möchten Sie die Seite wirklich verlassen?");
                 dialog.setConfirmButton("Ja",
-                                        confirmEvent -> UI.getCurrent()
-                                                          .navigate(" ")); // Übergang Antragsübersicht (Platzhalter)
+                        confirmEvent -> UI.getCurrent()
+                                .navigate(" ")); // Übergang Antragsübersicht (Platzhalter)
                 dialog.setCancelButton("Nein",
-                                       cancelEvent -> dialog.close());
+                        cancelEvent -> dialog.close());
                 dialog.open();
             } else {
                 UI.getCurrent()
-                  .navigate(" ");
+                        .navigate(" ");
             }
         });
         zurueckButton.addClassName("zurueck-button");
@@ -348,20 +348,20 @@ public class Praktikumsformular extends Div {
             // Validierungsstatus anzeigen
             if(!isValid) {
                 Notification.show("Bitte alle Pflichtfelder ausfüllen!",
-                                  3000,
-                                  Notification.Position.MIDDLE);
+                        3000,
+                        Notification.Position.MIDDLE);
             } else {
                 Notification.show("Antrag erfolgreich eingereicht",
-                                  3000,
-                                  Notification.Position.TOP_CENTER);
+                        3000,
+                        Notification.Position.TOP_CENTER);
             }
         });
 
         // Hinzufügen aller Container und Buttons
         add(studentendatenContainer,
-            praktikumsdatenContainer,
-            buttonContainer,
-            zurueckButton);
+                praktikumsdatenContainer,
+                buttonContainer,
+                zurueckButton);
     }
 
     private TextField createRequiredTextField(String label) {
@@ -430,4 +430,5 @@ public class Praktikumsformular extends Div {
         return true;
     }
 }
+
 
