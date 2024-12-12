@@ -24,7 +24,21 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     public Praktikumsbeauftragter() {
         // Überschrift
         H1 title = new H1("Übersicht der Praktikumsanträge");
-        add(title);
+
+        // Logout-Icon hinzufügen
+        Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
+        logoutButton.getElement().getStyle().set("cursor", "pointer");
+        logoutButton.addClickListener(event -> {
+            Dialog confirmDialog = createLogoutConfirmationDialog();
+            confirmDialog.open();
+        });
+
+        // Header mit Titel und Logout-Icon
+        HorizontalLayout header = new HorizontalLayout(title, logoutButton);
+        header.setWidthFull();
+        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
+        header.setAlignItems(Alignment.CENTER);
+        add(header);
 
         // Datenmodell für Praktikumsanträge
         antraege = getPraktikumsantraege();
@@ -38,7 +52,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         grid.addComponentColumn(antrag -> {
             Button einsehenButton = new Button("Antrag einsehen", VaadinIcon.EYE.create());
             einsehenButton.addClickListener(event -> {
-                // Dialog mit dem bestehenden Praktikumsformular öffnen
                 Dialog dialog = createPraktikumsformularDialog(antrag);
                 dialog.open();
             });
@@ -62,20 +75,18 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         VerticalLayout dialogLayout = new VerticalLayout();
         dialogLayout.add(new H1("Praktikumsformular einsehen"));
 
-        // Praktikumsformular (Daten könnten hier ins Formular gesetzt werden)
+        // Praktikumsformular
         Praktikumsformular praktikumFormular = new Praktikumsformular();
 
         // Buttons unten im Dialog
         Button genehmigenButton = new Button("Genehmigen", event -> {
             antrag.setStatus("Genehmigt");
-            aktualisiereGrid(); // Grid-Daten aktualisieren
+            aktualisiereGrid();
             dialog.close();
             Notification.show("Antrag genehmigt.", 3000, Notification.Position.TOP_CENTER);
-            UI.getCurrent().navigate("praktikumsbeauftragter"); // Zurück zur Übersicht
         });
 
         Button ablehnenButton = new Button("Ablehnen", event -> {
-            // Dialog für den Kommentar anzeigen
             Dialog ablehnenDialog = createAblehnenDialog(antrag, dialog);
             ablehnenDialog.open();
         });
@@ -100,11 +111,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 Notification.show("Bitte geben Sie einen Kommentar ein.", 3000, Notification.Position.MIDDLE);
             } else {
                 antrag.setStatus("Abgelehnt");
-                aktualisiereGrid(); // Grid-Daten aktualisieren
+                aktualisiereGrid();
                 ablehnenDialog.close();
                 parentDialog.close();
                 Notification.show("Antrag abgelehnt: " + kommentarField.getValue(), 3000, Notification.Position.TOP_CENTER);
-                UI.getCurrent().navigate("praktikumsbeauftragter"); // Zurück zur Übersicht
             }
         });
 
@@ -117,8 +127,30 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return ablehnenDialog;
     }
 
+    private Dialog createLogoutConfirmationDialog() {
+        Dialog dialog = new Dialog();
+
+        // Nachricht
+        H1 message = new H1("Möchten Sie sich wirklich ausloggen?");
+
+        // Buttons
+        Button yesButton = new Button("Ja", event -> {
+            dialog.close();
+            UI.getCurrent().navigate("login");
+        });
+
+        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
+
+        // Layout für die Buttons
+        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
+        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
+
+        dialog.add(dialogLayout);
+        return dialog;
+    }
+
     private void aktualisiereGrid() {
-        grid.getDataProvider().refreshAll(); // Aktualisiert die Anzeige im Grid
+        grid.getDataProvider().refreshAll();
     }
 
     // Datenmodell für Praktikumsanträge
