@@ -8,6 +8,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.Route;
 
 import java.util.ArrayList;
@@ -16,13 +17,12 @@ import java.util.List;
 @Route("praktikumsbeauftragter")
 public class Praktikumsbeauftragter extends VerticalLayout {
 
+    private final List<Praktikumsantrag> antraege = getPraktikumsantraege(); // Datenmodell
+
     public Praktikumsbeauftragter() {
         // Überschrift
         H1 title = new H1("Übersicht der Praktikumsanträge");
         add(title);
-
-        // Datenmodell für Praktikumsanträge
-        List<Praktikumsantrag> antraege = getPraktikumsantraege();
 
         // Grid zur Anzeige der Anträge
         Grid<Praktikumsantrag> grid = new Grid<>(Praktikumsantrag.class);
@@ -34,7 +34,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             Button einsehenButton = new Button("Antrag einsehen", VaadinIcon.EYE.create());
             einsehenButton.addClickListener(event -> {
                 // Dialog mit dem bestehenden Praktikumsformular öffnen
-                Dialog dialog = createPraktikumsformularDialog(antrag);
+                Dialog dialog = createPraktikumsformularDialog(antrag, grid);
                 dialog.open();
             });
             return einsehenButton;
@@ -50,7 +50,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return antraege;
     }
 
-    private Dialog createPraktikumsformularDialog(Praktikumsantrag antrag) {
+    private Dialog createPraktikumsformularDialog(Praktikumsantrag antrag, Grid<Praktikumsantrag> grid) {
         Dialog dialog = new Dialog();
 
         // Titel des Dialogs
@@ -64,14 +64,15 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         // Buttons unten im Dialog
         Button genehmigenButton = new Button("Genehmigen", event -> {
             antrag.setStatus("Genehmigt");
+            grid.getDataProvider().refreshAll(); // Aktualisiert das Grid
             dialog.close();
             Notification.show("Antrag genehmigt.", 3000, Notification.Position.TOP_CENTER);
         });
 
         Button ablehnenButton = new Button("Ablehnen", event -> {
-            antrag.setStatus("Abgelehnt");
-            dialog.close();
-            Notification.show("Antrag abgelehnt.", 3000, Notification.Position.TOP_CENTER);
+            // Dialog für Ablehnung mit Notizfeld
+            Dialog ablehnenDialog = createAblehnenDialog(antrag, grid);
+            ablehnenDialog.open();
         });
 
         HorizontalLayout actionButtons = new HorizontalLayout(genehmigenButton, ablehnenButton);
@@ -79,6 +80,35 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         dialog.add(dialogLayout);
         return dialog;
+    }
+
+    private Dialog createAblehnenDialog(Praktikumsantrag antrag, Grid<Praktikumsantrag> grid) {
+        Dialog ablehnenDialog = new Dialog();
+
+        // Notizfeld hinzufügen
+        TextArea notizField = new TextArea("Kommentar");
+        notizField.setPlaceholder("Geben Sie den Grund für die Ablehnung ein...");
+
+        // Buttons für Ablehnung bestätigen oder Abbrechen
+        Button confirmButton = new Button("Ablehnen", event -> {
+            String notiz = notizField.getValue();
+            if (notiz.trim().isEmpty()) {
+                Notification.show("Bitte einen Kommentar eingeben.", 3000, Notification.Position.MIDDLE);
+            } else {
+                antrag.setStatus("Abgelehnt");
+                grid.getDataProvider().refreshAll(); // Aktualisiert das Grid
+                ablehnenDialog.close();
+                Notification.show("Antrag abgelehnt. Kommentar: " + notiz, 3000, Notification.Position.TOP_CENTER);
+            }
+        });
+
+        Button cancelButton = new Button("Abbrechen", event -> ablehnenDialog.close());
+
+        // Layout für den Dialog
+        VerticalLayout dialogLayout = new VerticalLayout(notizField, new HorizontalLayout(confirmButton, cancelButton));
+        ablehnenDialog.add(dialogLayout);
+
+        return ablehnenDialog;
     }
 
     // Datenmodell für Praktikumsanträge
