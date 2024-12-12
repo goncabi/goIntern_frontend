@@ -1,10 +1,14 @@
 package com.example.application.views;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -13,12 +17,40 @@ import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 @Route("praktikumsbeauftragter")
 public class Praktikumsbeauftragter extends VerticalLayout {
 
     public Praktikumsbeauftragter() {
         // Überschrift
-        add(new com.vaadin.flow.component.html.H1("Übersicht der Praktikumsanträge"));
+
+        H1 title = new H1("Übersicht der Praktikumsanträge");
+
+        //Nachrichten- Glocke
+        Button notificationBell = new Button(VaadinIcon.BELL.create());
+        notificationBell.getElement().getStyle().set("cursor", "pointer");
+
+        ContextMenu notificationMenu = new ContextMenu(notificationBell);
+        notificationMenu.setOpenOnClick(true);
+
+        List<String> nachrichten = getNachrichten();
+        if (nachrichten.isEmpty()) {
+            notificationMenu.addItem("Keine neuen Benachrichtigungen.");
+        } else {
+            for (String nachricht : nachrichten) {
+                notificationMenu.addItem(nachricht);
+            }
+        }
+
+        HorizontalLayout header = new HorizontalLayout(title, notificationBell);
+        header.setWidthFull();
+        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
+        header.setAlignItems(Alignment.CENTER);
+
+        notificationBell.getElement().getStyle().set("margin-left", "auto");
+
+        add(header);
 
         // Datenmodell für Praktikumsanträge
         List<Praktikumsantrag> antraege = getPraktikumsantraege();
@@ -51,6 +83,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }).setHeader("Aktionen");
 
         add(grid);
+    }
+
+    private List<String> getNachrichten() {
+        List<String> nachrichten = new ArrayList<>();
+        return nachrichten;
     }
 
     // Liste der Praktikumsanträge mit Beispielen
