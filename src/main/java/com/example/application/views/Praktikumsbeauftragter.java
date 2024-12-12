@@ -17,8 +17,6 @@ import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 @Route("praktikumsbeauftragter")
 public class Praktikumsbeauftragter extends VerticalLayout {
 
@@ -27,7 +25,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         H1 title = new H1("Übersicht der Praktikumsanträge");
 
-        //Nachrichten- Glocke
+        // Nachrichten-Glocke
         Button notificationBell = new Button(VaadinIcon.BELL.create());
         notificationBell.getElement().getStyle().set("cursor", "pointer");
 
@@ -43,9 +41,38 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
         }
 
-        HorizontalLayout header = new HorizontalLayout(title, notificationBell);
+        // Logout-Icon
+        Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
+        logoutButton.getElement().getStyle().set("cursor", "pointer");
+        logoutButton.addClickListener(event -> {
+            // Zeige Bestätigungsdialog an
+            Dialog confirmDialog = new Dialog();
+
+            // Nachricht
+            Span message = new Span("Möchten Sie sich wirklich ausloggen?");
+
+            // Buttons
+            Button yesButton = new Button("Ja", e -> {
+                confirmDialog.close();
+                getUI().ifPresent(ui -> ui.navigate("login"));
+            });
+
+            Button cancelButton = new Button("Abbrechen", e -> confirmDialog.close());
+
+            // Layout für die Buttons
+            HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
+
+            // Dialog hinzufügen
+            VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
+            confirmDialog.add(dialogLayout);
+
+            confirmDialog.open();
+        });
+
+        // Header mit Logout-Icon
+        HorizontalLayout header = new HorizontalLayout(title, notificationBell, logoutButton);
         header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
+        header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         header.setAlignItems(Alignment.CENTER);
 
         notificationBell.getElement().getStyle().set("margin-left", "auto");
