@@ -2,6 +2,7 @@ package com.example.application.views;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
@@ -25,6 +26,23 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         // Überschrift
         H1 title = new H1("Übersicht der Praktikumsanträge");
 
+        // Nachrichtenglocke
+
+        Button notificationBell = new Button(VaadinIcon.BELL.create());
+        notificationBell.getElement().getStyle().set("cursor", "pointer");
+
+        ContextMenu notificationMenu = new ContextMenu(notificationBell);
+        notificationMenu.setOpenOnClick(true);
+
+        List<String> nachrichten = getNachrichten();
+        if (nachrichten.isEmpty()) {
+            notificationMenu.addItem("Keine neuen Benachrichtigungen.");
+        } else {
+            for (String nachricht : nachrichten) {
+                notificationMenu.addItem(nachricht);
+            }
+        }
+
         // Logout-Icon hinzufügen
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("cursor", "pointer");
@@ -34,10 +52,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         });
 
         // Header mit Titel und Logout-Icon
-        HorizontalLayout header = new HorizontalLayout(title, logoutButton);
+        HorizontalLayout header = new HorizontalLayout(title, notificationBell, logoutButton);
         header.setWidthFull();
         header.setJustifyContentMode(JustifyContentMode.BETWEEN);
         header.setAlignItems(Alignment.CENTER);
+
+        notificationBell.getElement().getStyle().set("margin-left", "auto");
         add(header);
 
         // Datenmodell für Praktikumsanträge
@@ -59,6 +79,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }).setHeader("Aktionen");
 
         add(grid);
+    }
+
+    private List<String> getNachrichten() {
+        List<String> nachrichten = new ArrayList<>();
+        return nachrichten;
     }
 
     private List<Praktikumsantrag> getPraktikumsantraege() {
