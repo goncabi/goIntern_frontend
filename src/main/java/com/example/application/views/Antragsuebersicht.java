@@ -1,9 +1,11 @@
 package com.example.application.views;
 
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -17,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
 import java.awt.*;
 
 @Route("antragsuebersicht")
@@ -66,6 +69,8 @@ public class Antragsuebersicht extends VerticalLayout {
                 .set("max-width", "600px");
 
         H2 heading = new H2("Mein Antrag");
+        String status = getAntragStatus("123476"); // hier noch hardgecodet..hier ist die 999 noch als Platzhalter für die Variable
+        H3 statuslabel = new H3(status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
 
         Button bearbeitenButton = new Button("Bearbeiten", event -> {
             getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
@@ -76,7 +81,7 @@ public class Antragsuebersicht extends VerticalLayout {
             confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
 
             Button jaButton = new Button("Ja", e -> {
-                loeschenAntrag("s3223");
+                loeschenAntrag("123476"); // hier noch hargecoded. Da muss eine Variable hin und das geht erst wenn sich eingeloggt und die Backend-Frontend-Anbindung fuer Login implementiert wurde.
                 confirmDialog.close();
                 Notification.show("Antrag gelöscht.");
             });
@@ -87,7 +92,7 @@ public class Antragsuebersicht extends VerticalLayout {
         });
 
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
-        container.add(heading, buttonLayout);
+        container.add(heading, statuslabel, buttonLayout);
 
         return container;
     }
@@ -104,6 +109,22 @@ public class Antragsuebersicht extends VerticalLayout {
         } catch (Exception e) {
             Notification.show("Fehler: " + e.getMessage());
         }
+    }
+
+    // Anbindung zum Backend
+    private String getAntragStatus(String matrikelnummer) {
+        String url = backendUrl + "/getantrag/" + matrikelnummer;
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String jsonstring = response.getBody();
+                JSONObject jsonobjekt = new JSONObject(jsonstring); // hier haben wir den jasonstring in das jsonobjekt reingetan
+                return jsonobjekt.getString("statusAntrag"); // holt das Feld aus den ganzen Daten (siehe Terminal) raus
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler: " + e.getMessage());
+        }
+        return "nicht gefunden";
     }
 }
 
