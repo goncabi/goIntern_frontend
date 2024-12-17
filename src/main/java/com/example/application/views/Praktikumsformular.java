@@ -280,31 +280,31 @@ public class Praktikumsformular extends Div {
         absendenButton.addClassName("button");
         absendenButton.addClassName("absenden-button");
 
-        Div buttonContainer = new Div(speichernButton,
-                absendenButton);
-        buttonContainer.addClassName("button-container"); //hinzufügen aus css
 
-        //Zurück Button
-        Button zurueckButton = new Button(new Icon(VaadinIcon.ARROW_LEFT));
-        zurueckButton.addClickListener(e -> {
+        // Abbrechen Button
+        Button abbrechenButton = new Button("Abbrechen");
+        abbrechenButton.addClassName("button");
+        abbrechenButton.addClassName("abbrechen-button");
+        abbrechenButton.addClickListener(e -> {
 
             if(!gespeichert) {
                 ConfirmDialog dialog = new ConfirmDialog();
                 dialog.setHeader("Daten nicht gespeichert");
-                dialog.setText("Möchten Sie die Seite wirklich verlassen?");
+                dialog.setText("Möchten Sie die Eingabe wirklich verwerfen?");
                 dialog.setConfirmButton("Ja",
                         confirmEvent -> UI.getCurrent()
-                                .navigate(" ")); // Übergang Antragsübersicht (Platzhalter)
+                                .navigate("antragsuebersicht")); // Übergang Antragsübersicht (Platzhalter)
                 dialog.setCancelButton("Nein",
                         cancelEvent -> dialog.close());
                 dialog.open();
             } else {
                 UI.getCurrent()
-                        .navigate(" ");
+                        .navigate("antragsuebersicht");
             }
         });
-        zurueckButton.addClassName("zurueck-button");
 
+        Div buttonContainer = new Div(speichernButton, abbrechenButton, absendenButton);
+        buttonContainer.addClassName("button-container"); //hinzufügen aus css
 
         absendenButton.addClickListener(e -> {
             boolean isValid = true;
@@ -360,8 +360,7 @@ public class Praktikumsformular extends Div {
         // Hinzufügen aller Container und Buttons
         add(studentendatenContainer,
                 praktikumsdatenContainer,
-                buttonContainer,
-                zurueckButton);
+                buttonContainer);
     }
 
     private TextField createRequiredTextField(String label) {
