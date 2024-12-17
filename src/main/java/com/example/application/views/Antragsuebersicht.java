@@ -1,10 +1,12 @@
 package com.example.application.views;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 import com.vaadin.flow.component.button.Button;
@@ -72,6 +74,11 @@ public class Antragsuebersicht extends VerticalLayout {
         String status = getAntragStatus("123476"); // hier noch hardgecodet..hier ist die 999 noch als Platzhalter für die Variable
         H3 statuslabel = new H3(status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
 
+        Button anzeigenButton = new Button("Antrag anzeigen", event -> {
+            // Navigieren zur Seite d. Praktikumsantrags mit der spezifischen Antrag-ID
+            getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+        });
+
         Button bearbeitenButton = new Button("Bearbeiten", event -> {
             getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
         });
@@ -91,7 +98,7 @@ public class Antragsuebersicht extends VerticalLayout {
             confirmDialog.open();
         });
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
+        HorizontalLayout buttonLayout = new HorizontalLayout(anzeigenButton, bearbeitenButton, loeschenButton);
         container.add(heading, statuslabel, buttonLayout);
 
         return container;
@@ -126,6 +133,23 @@ public class Antragsuebersicht extends VerticalLayout {
         }
         return "nicht gefunden";
     }
+
+    //Anbindung zum Backend AntragAnzeigen
+    private JSONObject getPraktikumsAntrag(String matrikelnummer) {
+        String url = backendUrl + "/getantrag/{matrikelnummer}" + matrikelnummer; // URL des Backend-Endpunkts
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String jsonstring = response.getBody();
+                return new JSONObject(jsonstring); // JSON-String in ein JSON-Objekt umwandeln
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler beim Aufruf des Praktikumsantrags " + e.getMessage());
+        }
+        return null;
+    }
+
+
 }
 
 
