@@ -1,6 +1,8 @@
 package com.example.application.views;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -78,8 +80,7 @@ public class Antragsuebersicht extends VerticalLayout {
 
         Button bearbeitenButton = new Button("Bearbeiten", event -> {
             getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-        }); // navigiert zum Formular
-
+        }); // navigiert zum Formular/
         Button loeschenButton = new Button("Löschen", event -> {
             Dialog confirmDialog = new Dialog();
             confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
@@ -99,21 +100,21 @@ public class Antragsuebersicht extends VerticalLayout {
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
-        container.add(heading, statuslabel, buttonLayout);
-/*
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.setWidthFull();
-        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+        H4 kommentarLabel = new H4("Kommentare:");
+        Span kommentarContent = new Span();
+        kommentarContent.getStyle()
+                .set("border", "1px solid #ddd")
+                .set("border-radius", "8px")
+                .set("padding", "8px")
+                .set("background-color", "#f2f2f2")
+                .set("width", "50%")
+                .set("min-height", "50px")
+                .set("display", "block");
 
-        HorizontalLayout leftButtons = new HorizontalLayout(anzeigenButton);
+        String kommentar = getAntragKommentar("123476");
+        kommentarContent.setText(kommentar);
 
-        HorizontalLayout rightButtons = new HorizontalLayout(bearbeitenButton, loeschenButton);
-        rightButtons.setSpacing(true);
-
-        buttonLayout.add(leftButtons, rightButtons);
-
-        container.add(heading, statuslabel, buttonLayout);*/
-
+        container.add(heading, statuslabel, buttonLayout, kommentarLabel, kommentarContent);
         return container;
     }
 
@@ -131,7 +132,7 @@ public class Antragsuebersicht extends VerticalLayout {
         }
     }
 
-    // Anbindung zum Backend
+     // Anbindung zum Backend
     //Erklärung: Die Methode getAntragStatus returnt einen String.
     //Im Backend haben die Controller den Endpunkt getAntrag() und da wird ein Praktikumsantrag zurückgegeben und dann ein JSONString gemacht.
     // In der Methode getAntragStatus möchte ich ja nur den Status sehen
@@ -151,6 +152,21 @@ public class Antragsuebersicht extends VerticalLayout {
         return "nicht gefunden";
     }
 
+    private String getAntragKommentar(String matrikelnummer) {
+        String url = backendUrl + "/getantrag/" + matrikelnummer + "/kommentar";
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String jsonstring = response.getBody();
+                JSONObject jsonObject = new JSONObject(jsonstring);
+                return jsonObject.optString("kommentar", "Keine Kommentare vorhanden");
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler beim Abrufen des Kommentars: " + e.getMessage());
+        }
+        return "Es gibt keine Notiz.";
+    }
+
     //Anbindung zum Backend AntragAnzeigen
     private JSONObject getPraktikumsAntrag(String matrikelnummer) {
         String url = backendUrl + "/getantrag/{matrikelnummer}" + matrikelnummer; // URL des Backend-Endpunkts
@@ -165,7 +181,6 @@ public class Antragsuebersicht extends VerticalLayout {
         }
         return null;
     }
-
 
 }
 
