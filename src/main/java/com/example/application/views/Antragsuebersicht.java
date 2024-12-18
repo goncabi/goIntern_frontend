@@ -37,17 +37,8 @@ public class Antragsuebersicht extends VerticalLayout {
 
         H1 title = new H1("Antragsübersicht");
 
-        Dialog settingsDialog = new Dialog();
-        Button settingsButton = new Button(VaadinIcon.COG.create());
-        Button logoutButton = new Button("Ausloggen", event -> {
-            settingsDialog.close();
-            getUI().ifPresent(ui -> ui.navigate("login"));
-        });
 
-        settingsDialog.add(new VerticalLayout(logoutButton));
-        settingsButton.addClickListener(event -> settingsDialog.open());
-
-        HorizontalLayout header = new HorizontalLayout(title, settingsButton);
+        HorizontalLayout header = new HorizontalLayout(title);
         header.setWidthFull();
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
