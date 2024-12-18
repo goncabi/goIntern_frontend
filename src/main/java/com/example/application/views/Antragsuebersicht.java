@@ -164,7 +164,7 @@ public class Antragsuebersicht extends VerticalLayout {
         } catch (Exception e) {
             Notification.show("Fehler beim Abrufen des Kommentars: " + e.getMessage());
         }
-        return "Es gibt keine Notiz.";
+        return "Keine Kommentare vorhanden.";
     }
 
     //Anbindung zum Backend AntragAnzeigen
