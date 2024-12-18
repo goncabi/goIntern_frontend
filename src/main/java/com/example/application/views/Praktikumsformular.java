@@ -17,8 +17,7 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.icon.Icon;
+
 
 import java.io.IOException;
 import java.net.URI;
@@ -36,41 +35,41 @@ import com.vaadin.flow.router.Route;
 public class Praktikumsformular extends Div {
 
     // Studentendaten
-    private TextField matrikelnummer;
-    private TextField nameStudentin;
-    private TextField vornameStudentin;
-    private DatePicker gebDatumStudentin;
-    private TextField strasseStudentin;
-    private NumberField hausnummerStudentin;
-    private NumberField plzStudentin;
-    private TextField ortStudentin;
-    private TextField telefonnummerStudentin;
-    private EmailField emailStudentin;
-    private TextField vorschlagPraktikumsbetreuerIn;
-    private TextField praktikumssemester;
-    private NumberField studiensemester;
-    private TextField studiengang;
-    private TextArea begleitendeLehrVeranstaltungen;
+    private final TextField matrikelnummer;
+    private final TextField nameStudentin;
+    private final TextField vornameStudentin;
+    private final DatePicker gebDatumStudentin;
+    private final TextField strasseStudentin;
+    private final NumberField hausnummerStudentin;
+    private final NumberField plzStudentin;
+    private final TextField ortStudentin;
+    private final TextField telefonnummerStudentin;
+    private final EmailField emailStudentin;
+    private final TextField vorschlagPraktikumsbetreuerIn;
+    private final TextField praktikumssemester;
+    private final NumberField studiensemester;
+    private final TextField studiengang;
+    private final TextArea begleitendeLehrVeranstaltungen;
 
     // Zusatzinformationen
-    private Checkbox voraussetzendeLeistungsnachweise;
-    private TextArea fehlendeLeistungsnachweise;
-    private Checkbox ausnahmeZulassung;
-    private DatePicker datumAntrag;
+    private final Checkbox voraussetzendeLeistungsnachweise;
+    private final TextArea fehlendeLeistungsnachweise;
+    private final Checkbox ausnahmeZulassung;
+    private final DatePicker datumAntrag;
 
     // Praktikumsdaten
-    private TextField namePraktikumsstelle;
-    private TextField strassePraktikumsstelle;
-    private NumberField plzPraktikumsstelle;
-    private TextField ortPraktikumsstelle;
-    private TextField landPraktikumsstelle;
-    private TextField ansprechpartnerPraktikumsstelle;
-    private TextField telefonPraktikumsstelle;
-    private EmailField emailPraktikumsstelle;
-    private TextField abteilung;
-    private TextArea taetigkeit;
-    private DatePicker startdatum;
-    private DatePicker enddatum;
+    private final TextField namePraktikumsstelle;
+    private final TextField strassePraktikumsstelle;
+    private final NumberField plzPraktikumsstelle;
+    private final TextField ortPraktikumsstelle;
+    private final TextField landPraktikumsstelle;
+    private final TextField ansprechpartnerPraktikumsstelle;
+    private final TextField telefonPraktikumsstelle;
+    private final EmailField emailPraktikumsstelle;
+    private final TextField abteilung;
+    private final TextArea taetigkeit;
+    private final DatePicker startdatum;
+    private final DatePicker enddatum;
 
     private boolean gespeichert = false; // Standardwert: nicht gespeichert
 
@@ -79,58 +78,59 @@ public class Praktikumsformular extends Div {
         // Hauptüberschrift
         add(new H1("Praktikumsformular"));
 
-            // Felder initialisieren
-            matrikelnummer = createRequiredTextField("Matrikelnummer *");
-            nameStudentin = createRequiredTextField("Name der Studentin *");
-            vornameStudentin = createRequiredTextField("Vorname der Studentin *");
-            gebDatumStudentin = createRequiredDatePicker("Geburtsdatum *");
-            strasseStudentin = createRequiredTextField("Straße der Studentin *");
-            hausnummerStudentin = createRequiredNumberField("Hausnummer der Studentin *");
-            plzStudentin = createRequiredNumberField("Postleitzahl der Studentin *");
-            ortStudentin = createRequiredTextField("Ort der Studentin *");
-            telefonnummerStudentin = createRequiredTextField("Telefonnummer der Studentin *");
-            emailStudentin = createRequiredEmailField("E-Mail-Adresse der Studentin *");
-            vorschlagPraktikumsbetreuerIn = createRequiredTextField("Vorgeschlagener Praktikumsbetreuer (an der HTW) *");
-            praktikumssemester = createRequiredTextField("Praktikumssemester (SoSe / WS) *");
-            studiensemester = createRequiredNumberField("Studiensemester *");
-            studiengang = createRequiredTextField("Studiengang *");
-            begleitendeLehrVeranstaltungen = createRequiredTextArea("Begleitende Lehrveranstaltungen");
+        // Felder initialisieren
+        matrikelnummer = createTextField("Matrikelnummer *");
+        nameStudentin = createTextField("Name der Studentin *");
+        vornameStudentin = createTextField("Vorname der Studentin *");
+        gebDatumStudentin = createDatePicker("Geburtsdatum *");
+        strasseStudentin = createTextField("Straße der Studentin *");
+        hausnummerStudentin = createNumberField("Hausnummer der Studentin *");
+        plzStudentin = createNumberField("Postleitzahl der Studentin *");
+        ortStudentin = createTextField("Ort der Studentin *");
+        telefonnummerStudentin = createTextField("Telefonnummer der Studentin *");
+        emailStudentin = createEmailField("E-Mail-Adresse der Studentin *");
+        vorschlagPraktikumsbetreuerIn = createTextField("Vorgeschlagener Praktikumsbetreuer (an der HTW) *");
+        praktikumssemester = createTextField("Praktikumssemester (SoSe / WS) *");
+        studiensemester = createNumberField("Studiensemester *");
+        studiengang = createTextField("Studiengang *");
+        begleitendeLehrVeranstaltungen = createTextArea("Begleitende Lehrveranstaltungen *");
 
-            voraussetzendeLeistungsnachweise = new Checkbox("Voraussetzende Leistungsnachweise");
-            fehlendeLeistungsnachweise = createRequiredTextArea("Fehlende Leistungsnachweise");
-            ausnahmeZulassung = new Checkbox("Antrag auf Ausnahmezulassung");
-            datumAntrag = createRequiredDatePicker("Datum des Antrags *");
+        voraussetzendeLeistungsnachweise = new Checkbox("Voraussetzende Leistungsnachweise *");
+        fehlendeLeistungsnachweise = createTextArea("Fehlende Leistungsnachweise *");
+        ausnahmeZulassung = new Checkbox("Antrag auf Ausnahmezulassung *");
+        datumAntrag = createDatePicker("Datum des Antrags *");
 
-            namePraktikumsstelle = createRequiredTextField("Name der Praktikumsstelle *");
-            strassePraktikumsstelle = createRequiredTextField("Straße der Praktikumsstelle *");
-            plzPraktikumsstelle = createRequiredNumberField("Postleitzahl der Praktikumsstelle *");
-            ortPraktikumsstelle = createRequiredTextField("Ort der Praktikumsstelle *");
-            landPraktikumsstelle = createRequiredTextField("Land der Praktikumsstelle *");
-            ansprechpartnerPraktikumsstelle = createRequiredTextField("Ansprechpartner der Praktikumsstelle *");
-            telefonPraktikumsstelle = createRequiredTextField("Telefon der Praktikumsstelle *");
-            emailPraktikumsstelle = createRequiredEmailField("E-Mail-Adresse der Praktikumsstelle *");
-            abteilung = createRequiredTextField("Abteilung *");
-            taetigkeit = createRequiredTextArea("Tätigkeit der Praktikantin / des Praktikanten *");
-            startdatum = createRequiredDatePicker("Startdatum des Praktikums *");
-            enddatum = createRequiredDatePicker("Enddatum des Praktikums *");
+        namePraktikumsstelle = createTextField("Name der Praktikumsstelle *");
+        strassePraktikumsstelle = createTextField("Straße der Praktikumsstelle *");
+        plzPraktikumsstelle = createNumberField("Postleitzahl der Praktikumsstelle *");
+        ortPraktikumsstelle = createTextField("Ort der Praktikumsstelle *");
+        landPraktikumsstelle = createTextField("Land der Praktikumsstelle *");
+        ansprechpartnerPraktikumsstelle = createTextField("Ansprechpartner der Praktikumsstelle *");
+        telefonPraktikumsstelle = createTextField("Telefon der Praktikumsstelle *");
+        emailPraktikumsstelle = createEmailField("E-Mail-Adresse der Praktikumsstelle *");
+        abteilung = createTextField("Abteilung *");
+        taetigkeit = createTextArea("Tätigkeit der Praktikantin / des Praktikanten *");
+        startdatum = createDatePicker("Startdatum des Praktikums *");
+        enddatum = createDatePicker("Enddatum des Praktikums *");
+
 
         // Container für Studentendaten
         Div studentendatenContainer = new Div();
         studentendatenContainer.getStyle()
-                .set("padding",
-                        "20px");
+                               .set("padding",
+                                    "20px");
         studentendatenContainer.getStyle()
-                .set("border",
-                        "1px solid #ccc");
+                               .set("border",
+                                    "1px solid #ccc");
         studentendatenContainer.getStyle()
-                .set("border-radius",
-                        "8px");
+                               .set("border-radius",
+                                    "8px");
         studentendatenContainer.getStyle()
-                .set("margin-bottom",
-                        "20px");
+                               .set("margin-bottom",
+                                    "20px");
         studentendatenContainer.getStyle()
-                .set("background-color",
-                        "#f9f9f9");
+                               .set("background-color",
+                                    "#f9f9f9");
 
 
         // Layout für Studentendaten
@@ -140,46 +140,46 @@ public class Praktikumsformular extends Div {
 
         // Layout für Studentendaten konfigurieren
         studentendatenLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0",
-                        1)
-                // 1 Spalte auf allen Bildschirmgrößen
+                                                                              1)
+                                                // 1 Spalte auf allen Bildschirmgrößen
         );
 
         studentendatenLayout.add(matrikelnummer,
-                nameStudentin,
-                vornameStudentin,
-                gebDatumStudentin,
-                strasseStudentin,
-                hausnummerStudentin,
-                plzStudentin,
-                ortStudentin,
-                telefonnummerStudentin,
-                emailStudentin,
-                vorschlagPraktikumsbetreuerIn,
-                praktikumssemester,
-                studiensemester,
-                studiengang,
-                begleitendeLehrVeranstaltungen,
-                voraussetzendeLeistungsnachweise,
-                fehlendeLeistungsnachweise,
-                datumAntrag,
-                ausnahmeZulassung);
+                                 nameStudentin,
+                                 vornameStudentin,
+                                 gebDatumStudentin,
+                                 strasseStudentin,
+                                 hausnummerStudentin,
+                                 plzStudentin,
+                                 ortStudentin,
+                                 telefonnummerStudentin,
+                                 emailStudentin,
+                                 vorschlagPraktikumsbetreuerIn,
+                                 praktikumssemester,
+                                 studiensemester,
+                                 studiengang,
+                                 begleitendeLehrVeranstaltungen,
+                                 voraussetzendeLeistungsnachweise,
+                                 fehlendeLeistungsnachweise,
+                                 datumAntrag,
+                                 ausnahmeZulassung);
 
         studentendatenContainer.add(studentendatenLayout);
 
         // Container für Praktikumsdaten
         Div praktikumsdatenContainer = new Div();
         praktikumsdatenContainer.getStyle()
-                .set("padding",
-                        "20px");
+                                .set("padding",
+                                     "20px");
         praktikumsdatenContainer.getStyle()
-                .set("border",
-                        "1px solid #ccc");
+                                .set("border",
+                                     "1px solid #ccc");
         praktikumsdatenContainer.getStyle()
-                .set("border-radius",
-                        "8px");
+                                .set("border-radius",
+                                     "8px");
         praktikumsdatenContainer.getStyle()
-                .set("background-color",
-                        "#f9f9f9");
+                                .set("background-color",
+                                     "#f9f9f9");
 
         // Layout für Praktikumsdaten
         FormLayout praktikumsdatenLayout = new FormLayout();
@@ -188,35 +188,35 @@ public class Praktikumsformular extends Div {
 
         // Layout für Praktikumsdaten konfigurieren (ein Feld pro Zeile)
         praktikumsdatenLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0",
-                        1)
-                // 1 Spalte auf allen Bildschirmgrößen
+                                                                               1)
+                                                 // 1 Spalte auf allen Bildschirmgrößen
         );
         praktikumsdatenLayout.add(namePraktikumsstelle,
-                strassePraktikumsstelle,
-                plzPraktikumsstelle,
-                ortPraktikumsstelle,
-                landPraktikumsstelle,
-                ansprechpartnerPraktikumsstelle,
-                telefonPraktikumsstelle,
-                emailPraktikumsstelle,
-                abteilung,
-                taetigkeit,
-                startdatum,
-                enddatum);
+                                  strassePraktikumsstelle,
+                                  plzPraktikumsstelle,
+                                  ortPraktikumsstelle,
+                                  landPraktikumsstelle,
+                                  ansprechpartnerPraktikumsstelle,
+                                  telefonPraktikumsstelle,
+                                  emailPraktikumsstelle,
+                                  abteilung,
+                                  taetigkeit,
+                                  startdatum,
+                                  enddatum);
 
         praktikumsdatenContainer.add(praktikumsdatenLayout);
 
         // Pflichtfeldhinweis und Absenden-Button
         Paragraph pflichtfeldHinweis = new Paragraph("* Pflichtfeld");
         pflichtfeldHinweis.getStyle()
-                .set("color",
-                        "red");
+                          .set("color",
+                               "red");
         pflichtfeldHinweis.getStyle()
-                .set("font-size",
-                        "0.9em");
+                          .set("font-size",
+                               "0.9em");
         pflichtfeldHinweis.getStyle()
-                .set("margin-top",
-                        "20px");
+                          .set("margin-top",
+                               "20px");
         // Anfangs unsichtbar
         pflichtfeldHinweis.setVisible(false);
 
@@ -251,14 +251,14 @@ public class Praktikumsformular extends Div {
                 dialog.setHeader("Daten nicht gespeichert");
                 dialog.setText("Möchten Sie die Eingabe wirklich verwerfen?");
                 dialog.setConfirmButton("Ja",
-                        confirmEvent -> UI.getCurrent()
-                                .navigate("antragsuebersicht")); // Übergang Antragsübersicht (Platzhalter)
+                                        confirmEvent -> UI.getCurrent()
+                                                          .navigate("antragsuebersicht")); // Übergang Antragsübersicht (Platzhalter)
                 dialog.setCancelButton("Nein",
-                        cancelEvent -> dialog.close());
+                                       cancelEvent -> dialog.close());
                 dialog.open();
             } else {
                 UI.getCurrent()
-                        .navigate("antragsuebersicht");
+                  .navigate("antragsuebersicht");
             }
         });
 
@@ -280,11 +280,19 @@ public class Praktikumsformular extends Div {
             }
         });
 
+        Paragraph sternchenHinweis = new Paragraph(
+                "Hinweis: Felder mit * sind Pflichtfelder, die vor dem Absenden ausgefüllt werden müssen. Sie können den Antrag jedoch auch speichern, ohne alle Pflichtfelder auszufüllen."
+        );
+
+        sternchenHinweis.getStyle()
+                          .set("color", "gray")
+                          .set("font-size", "0.9em")
+                          .set("margin-bottom", "20px");
 
         // Hinzufügen aller Container und Buttons
         add(studentendatenContainer,
-                praktikumsdatenContainer,
-                buttonContainer);
+            praktikumsdatenContainer, sternchenHinweis,
+            buttonContainer);
     }
     private boolean validateAllFields() {
         boolean isValid = true;
@@ -322,35 +330,26 @@ public class Praktikumsformular extends Div {
 
         return isValid;
     }
-    private TextField createRequiredTextField(String label) {
-        TextField field = new TextField(label);
-        field.setRequiredIndicatorVisible(true);
-        return field;
+    private TextField createTextField(String label) {
+        return new TextField(label);
     }
 
-    private NumberField createRequiredNumberField(String label) {
-        NumberField field = new NumberField(label);
-        field.setRequiredIndicatorVisible(true);
-        return field;
+    private NumberField createNumberField(String label) {
+        return new NumberField(label);
     }
 
-    private EmailField createRequiredEmailField(String label) {
-        EmailField field = new EmailField(label);
-        field.setRequiredIndicatorVisible(true);
-        return field;
+    private EmailField createEmailField(String label) {
+        return new EmailField(label);
     }
 
-    private DatePicker createRequiredDatePicker(String label) {
-        DatePicker field = new DatePicker(label);
-        field.setRequiredIndicatorVisible(true);
-        return field;
+    private DatePicker createDatePicker(String label) {
+        return new DatePicker(label);
     }
 
-    private TextArea createRequiredTextArea(String label) {
-        TextArea field = new TextArea(label);
-        field.setRequiredIndicatorVisible(true);
-        return field;
+    private TextArea createTextArea(String label) {
+        return new TextArea(label);
     }
+
 
     // Validierungsmethoden für Pflichtfelder
     private boolean validateField(TextField field) {
@@ -478,6 +477,8 @@ public class Praktikumsformular extends Div {
     }
     private void sendJsonToBackend(String json, String url, String successMessage) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
+            // Verwende den HttpClient
+
         HttpRequest request = HttpRequest.newBuilder()
                                          .uri(URI.create(url))
                                          .header("Content-Type", "application/json")
@@ -486,7 +487,7 @@ public class Praktikumsformular extends Div {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() == 201) {
+        if (response.statusCode() == 200 || response.statusCode() == 201) {
             Notification.show(successMessage, 3000, Notification.Position.TOP_CENTER);
         } else {
             Notification.show("Fehler: " + response.body(), 3000, Notification.Position.TOP_CENTER);
