@@ -1,8 +1,7 @@
 package com.example.application.views;
 
 import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -11,8 +10,6 @@ import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -81,7 +78,7 @@ public class Antragsuebersicht extends VerticalLayout {
 
         Button bearbeitenButton = new Button("Bearbeiten", event -> {
             getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-        });
+        }); // navigiert zum Formular
 
         Button loeschenButton = new Button("Löschen", event -> {
             Dialog confirmDialog = new Dialog();
@@ -99,7 +96,23 @@ public class Antragsuebersicht extends VerticalLayout {
         });
 
         HorizontalLayout buttonLayout = new HorizontalLayout(anzeigenButton, bearbeitenButton, loeschenButton);
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
         container.add(heading, statuslabel, buttonLayout);
+/*
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+
+        HorizontalLayout leftButtons = new HorizontalLayout(anzeigenButton);
+
+        HorizontalLayout rightButtons = new HorizontalLayout(bearbeitenButton, loeschenButton);
+        rightButtons.setSpacing(true);
+
+        buttonLayout.add(leftButtons, rightButtons);
+
+        container.add(heading, statuslabel, buttonLayout);*/
 
         return container;
     }
