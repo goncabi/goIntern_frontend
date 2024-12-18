@@ -119,6 +119,10 @@ public class Antragsuebersicht extends VerticalLayout {
     }
 
     // Anbindung zum Backend
+    //Erklärung: Die Methode getAntragStatus returnt einen String.
+    //Im Backend haben die Controller den Endpunkt getAntrag() und da wird ein Praktikumsantrag zurückgegeben und dann ein JSONString gemacht.
+    // In der Methode getAntragStatus möchte ich ja nur den Status sehen
+    // deswegen wird von dem JSON String nur das entsprechende Feld zum key statusAntrag dann ausgegeben.
     private String getAntragStatus(String matrikelnummer) {
         String url = backendUrl + "/getantrag/" + matrikelnummer;
         try {
@@ -126,7 +130,7 @@ public class Antragsuebersicht extends VerticalLayout {
             if (response.getStatusCode().is2xxSuccessful()) {
                 String jsonstring = response.getBody();
                 JSONObject jsonobjekt = new JSONObject(jsonstring); // hier haben wir den jasonstring in das jsonobjekt reingetan
-                return jsonobjekt.getString("statusAntrag"); // holt das Feld aus den ganzen Daten (siehe Terminal) raus
+                return jsonobjekt.getString("statusAntrag"); // an dem jsonObjekt wird die getString Methode mit dem key statusAntrag aufgerufen.
             }
         } catch (Exception e) {
             Notification.show("Fehler: " + e.getMessage());
