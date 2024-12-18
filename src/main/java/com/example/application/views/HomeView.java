@@ -10,7 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.Lumo;
 
-@Route("home")
+@Route("")
 @CssImport("./styles/styles.css")
 public class HomeView extends VerticalLayout {
 

@@ -16,7 +16,7 @@ import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.List;
 
-@Route("praktikumsbeauftragter")
+@Route("admin/startseite")
 public class Praktikumsbeauftragter extends VerticalLayout {
 
     private Grid<Praktikumsantrag> grid;
