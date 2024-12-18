@@ -18,6 +18,10 @@ public class LoginView extends VerticalLayout {
 
     public LoginView() {
         addClassName("view-container");
+        setSizeFull(); // Nutzt die gesamte Seitenhöhe
+        setJustifyContentMode(JustifyContentMode.CENTER); // Zentriert vertikal
+        setAlignItems(Alignment.CENTER); // Zentriert horizontal
+
 
         // Container für das Formular
         Div formContainer = new Div();
@@ -26,6 +30,12 @@ public class LoginView extends VerticalLayout {
         // Titel
         H1 title = new H1("Login");
         title.addClassName("form-title");
+
+        // Rolle auswählen (ComboBox)
+        ComboBox<String> roleSelection = new ComboBox<>("Rolle auswählen");
+        roleSelection.setItems("Admin", "Student");
+        roleSelection.setPlaceholder("Wähle eine Rolle");
+        roleSelection.addClassName("role-selection");
 
         // Nutzername-Feld
         TextField usernameField = new TextField();
@@ -37,21 +47,15 @@ public class LoginView extends VerticalLayout {
         passwordField.setPlaceholder("Passwort");
         passwordField.addClassName("text-field");
 
-        // Rolle auswählen
-        ComboBox<String> roleSelection = new ComboBox<>("Rolle auswählen");
-        roleSelection.setItems("Admin", "Student");
-        roleSelection.setPlaceholder("Wähle eine Rolle");
-        roleSelection.addClassName("role-selection");
-
-
+        // Login-Button
         Button loginButton = getButton(usernameField, passwordField, roleSelection);
 
         // Link "Passwort vergessen?"
         Anchor forgotPasswordLink = new Anchor("passwort-vergessen", "Passwort vergessen?");
         forgotPasswordLink.addClassName("link");
 
-        // Elemente hinzufügen
-        formContainer.add(title, usernameField, passwordField, roleSelection, loginButton, forgotPasswordLink);
+        // Elemente hinzufügen in richtiger Reihenfolge
+        formContainer.add(title, roleSelection, usernameField, passwordField, loginButton, forgotPasswordLink);
         add(formContainer);
     }
 
