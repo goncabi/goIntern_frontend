@@ -37,14 +37,46 @@ public class Antragsuebersicht extends VerticalLayout {
 
         H1 title = new H1("Antragsübersicht");
 
+        Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
+        logoutButton.getElement().getStyle().set("position", "absolute")
+                .set("top", "10px")
+                .set("right", "10px");
+        logoutButton.addClickListener(event -> {
+            // Zeige Bestätigungsdialog
+            Dialog confirmDialog = createLogoutConfirmationDialog();
+            confirmDialog.open();
+        });
 
-        HorizontalLayout header = new HorizontalLayout(title);
+        HorizontalLayout header = new HorizontalLayout(title, logoutButton);
         header.setWidthFull();
+        header.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+        header.getStyle().set("position", "relative");
 
         VerticalLayout meinAntragContainer = createMeinAntragContainer();
         add(header, meinAntragContainer);
     }
+
+    private Dialog createLogoutConfirmationDialog() {
+        Dialog dialog = new Dialog();
+        Span message = new Span("Möchten Sie sich wirklich ausloggen?");
+        Button yesButton = new Button("Ja", event -> {
+            dialog.close();
+            // navigiert zur Login-Seite
+            getUI().ifPresent(ui -> ui.navigate("login"));
+        });
+
+        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
+
+        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
+        buttons.setSpacing(true);
+        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
+        dialogLayout.setSpacing(true);
+        dialog.add(dialogLayout);
+
+        return dialog;
+    }
+
 
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
         private VerticalLayout createMeinAntragContainer() {
