@@ -15,17 +15,6 @@ h1 {
     text-align: center;
 }
 
-.zurueck-button {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: none;
-    color: black;
-    cursor: pointer;
-    font-size: 20px;
-
-}
-
 /* Scrollbare Ansicht für das gesamte Formular */
 .scrollable-view {
     display: flex;
@@ -78,7 +67,6 @@ h1 {
     margin-top: 20px;
 }
 
-
 /*Container für Button für Anordnung*/
 .button-container {
     display: flex;
@@ -91,8 +79,7 @@ h1 {
     margin-right: auto;
 
 
-    /* Stil für Buttons */
-
+    /* Stil für Buttons*/
     .button {
         padding: 15px;
         font-size: 16px;
@@ -112,6 +99,17 @@ h1 {
     .speichern-button:hover {
         background-color: #f9f9f9;
 
+
+        .abbrechen-button {
+            background-color: #f8f9fa;
+            color: black;
+            border: 1px solid #333333;
+        }
+
+        .abbrechen-button:hover {
+            background-color: #e9ecef;
+        }
+
         .absenden-button {
             background: #dc3545;
             color: white;
@@ -120,6 +118,8 @@ h1 {
         .absenden-button:hover {
             background-color: #c82333;
         }
+
     }
 }
+
 
