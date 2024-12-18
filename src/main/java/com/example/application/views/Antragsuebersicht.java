@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -36,7 +37,6 @@ public class Antragsuebersicht extends VerticalLayout {
 
         H1 title = new H1("Antragsübersicht");
 
-
         Dialog settingsDialog = new Dialog();
         Button settingsButton = new Button(VaadinIcon.COG.create());
         Button logoutButton = new Button("Ausloggen", event -> {
@@ -51,14 +51,12 @@ public class Antragsuebersicht extends VerticalLayout {
         header.setWidthFull();
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
-        // "Mein Antrag"-Container
         VerticalLayout meinAntragContainer = createMeinAntragContainer();
-
         add(header, meinAntragContainer);
     }
 
-    // Container mit Buttons
-    private VerticalLayout createMeinAntragContainer() {
+    // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
+        private VerticalLayout createMeinAntragContainer() {
         VerticalLayout container = new VerticalLayout();
         container.getStyle()
                 .set("border", "1px solid #ccc")
@@ -80,7 +78,7 @@ public class Antragsuebersicht extends VerticalLayout {
 
         Button bearbeitenButton = new Button("Bearbeiten", event -> {
             getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-        }); // navigiert zum Formular/
+        }); // navigiert zum eigenen Praktikumsformular zum Bearbeiten
         Button loeschenButton = new Button("Löschen", event -> {
             Dialog confirmDialog = new Dialog();
             confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
@@ -98,25 +96,40 @@ public class Antragsuebersicht extends VerticalLayout {
 
         HorizontalLayout buttonLayout = new HorizontalLayout(anzeigenButton, bearbeitenButton, loeschenButton);
         buttonLayout.setWidthFull();
-        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);// Buttons rechts anordnen
 
-        H4 kommentarLabel = new H4("Kommentare:");
-        Span kommentarContent = new Span();
+        //Kommentar- /Notizfeld für die Kommentare die PB beim Ablehnen für Studentinnen hinterlässt
+        Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
+        kommentarToggle.getStyle()
+                .set("color", "#007bff")
+                .set("font-size", "14px")
+                .set("cursor", "pointer")
+                .set("margin-top", "10px");
+
+
+        VerticalLayout kommentarContent = new VerticalLayout();
+        kommentarContent.setVisible(false);
         kommentarContent.getStyle()
                 .set("border", "1px solid #ddd")
-                .set("border-radius", "8px")
+                .set("border-radius", "4px")
                 .set("padding", "8px")
-                .set("background-color", "#f2f2f2")
-                .set("width", "50%")
-                .set("min-height", "50px")
-                .set("display", "block");
+                .set("background-color", "#f5f5f5")
+                .set("width", "100%");
 
-        String kommentar = getAntragKommentar("123476");
-        kommentarContent.setText(kommentar);
+        String notiz = getAntragNotiz("123476"); // Hardgecodet vorerst
+        Span kommentarText = new Span(notiz);
+        kommentarContent.add(kommentarText);
 
-        container.add(heading, statuslabel, buttonLayout, kommentarLabel, kommentarContent);
+        kommentarToggle.addClickListener(event -> {
+            boolean isVisible = kommentarContent.isVisible();
+            kommentarContent.setVisible(!isVisible);
+            kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
+        });
+
+        container.add(heading, statuslabel, buttonLayout, kommentarToggle, kommentarContent);
         return container;
     }
+
 
     private void loeschenAntrag(String matrikelnummer) {
         String url = backendUrl + "/" + matrikelnummer;
@@ -152,7 +165,7 @@ public class Antragsuebersicht extends VerticalLayout {
         return "nicht gefunden";
     }
 
-    private String getAntragKommentar(String matrikelnummer) {
+    private String getAntragNotiz(String matrikelnummer) {
         String url = backendUrl + "/getantrag/" + matrikelnummer + "/kommentar";
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
