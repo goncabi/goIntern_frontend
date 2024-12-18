@@ -88,6 +88,16 @@
             <artifactId>vaadin-testbench-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.example.application</groupId>
+            <artifactId>my-app</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin.servletdetector</groupId>
+            <artifactId>servlet-detector-parent</artifactId>
+            <version>1.0.2</version>
+        </dependency>
     </dependencies>
 
     <build>

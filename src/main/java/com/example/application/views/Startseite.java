@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 
-@Route("")
+@Route("student/startseite")
 public class Startseite extends VerticalLayout {
 
     private boolean antragVorhanden = false;
