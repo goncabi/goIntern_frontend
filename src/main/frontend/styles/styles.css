@@ -1,21 +1,34 @@
 /* Hintergrund und Container */
 .view-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: linear-gradient(135deg, #ff0080, #ff80bf);
+    display: flex !important; /* Flexbox aktivieren */
+    justify-content: center !important; /* Horizontal zentriert */
+    align-items: center !important; /* Vertikal zentriert */
+    height: 100vh !important; /* Volle Höhe des Viewports */
+    margin: 0 !important;
+    padding: 0 !important;
+    background: linear-gradient(135deg, #ff0080, #ff80bf) !important;
+    overflow: hidden !important;
+}
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    /* Hintergrund für die gesamte Seite */
+    background: linear-gradient(135deg, #ff0080, #ff80bf) no-repeat;
+    background-size: cover;
 }
 
 /* Formular-Container */
 .form-container {
-    width: 400px;
-    padding: 30px;
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    background: #fff !important;
+    padding: 30px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+    width: 400px !important;
+    text-align: center !important;
+    margin: 0 auto !important;
 }
 
 /* Titel im Formular */
@@ -27,7 +40,7 @@
 }
 
 /* Eingabefelder */
-.text-field {
+.text-field, .role-selection {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
@@ -131,6 +144,7 @@
     background-position: right 10px center;
     background-size: 20px 20px;
 }
+
 
 
 
