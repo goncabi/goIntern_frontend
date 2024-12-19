@@ -12,6 +12,12 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 @Route("login")
 @CssImport("./styles/styles.css")
 public class LoginView extends VerticalLayout {
@@ -32,8 +38,8 @@ public class LoginView extends VerticalLayout {
         title.addClassName("form-title");
 
         // Rolle auswählen (ComboBox)
-        ComboBox<String> roleSelection = new ComboBox<>("Rolle auswählen");
-        roleSelection.setItems("Admin", "Student");
+        ComboBox<String> roleSelection = new ComboBox<>();
+        roleSelection.setItems("Praktikumsbeauftragte/r", "Student/in");
         roleSelection.setPlaceholder("Wähle eine Rolle");
         roleSelection.addClassName("role-selection");
 
@@ -65,35 +71,58 @@ public class LoginView extends VerticalLayout {
 
         // Login-Logik
         loginButton.addClickListener(event -> {
-            boolean isValid = true;
-
-            // Validierung des Nutzernamens
-            if (!usernameField.getValue().matches("s0\\d{6}")) {
-                Notification.show("Ungültiger Nutzername. Format: s0XXXXXX.", 3000, Notification.Position.MIDDLE);
-                isValid = false;
-            }
-
-            // Validierung des Passworts
-            if (!passwordField.getValue().equals("richtigePasswort123")) { // Beispielpasswort
-                Notification.show("Falsches Passwort. Bitte erneut versuchen.", 3000, Notification.Position.MIDDLE);
-                isValid = false;
-            }
-
-            // Validierung der Rolle
+            boolean isValid;
             if (roleSelection.isEmpty()) {
                 Notification.show("Bitte Rolle auswählen!", 3000, Notification.Position.MIDDLE);
                 isValid = false;
             }
+            else{
+                try{
+                    String json = createLoginJson(roleSelection.getValue(), usernameField.getValue(), passwordField.getValue());
+                    HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/login");
+                    if (response.statusCode() == 200 || response.statusCode() == 201) {
+                        Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
+                        isValid = true;
+                    } else if (response.statusCode() == 400 || response.statusCode() == 401) {
+                        Notification.show("Nutzername oder Passwort falsch.", 3000, Notification.Position.TOP_CENTER);
+                        isValid = false;
+                    }
+                    else{
+                        Notification.show("Fehler: " + response.body(), 3000, Notification.Position.TOP_CENTER);
+                        isValid = false;
+                    }
+                }
+                catch(Exception e){
+                    Notification.show("Ein Fehler ist aufgetreten: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+                    isValid = false;
+                }
+            }
 
             // Weiterleitung nach erfolgreicher Validierung
             if (isValid) {
-                if ("Admin".equals(roleSelection.getValue())) {
+                if ("Praktikumsbeauftragte/r".equals(roleSelection.getValue())) {
                     getUI().ifPresent(ui -> ui.navigate("admin/startseite"));
-                } else if ("Student".equals(roleSelection.getValue())) {
+                } else if ("Student/in".equals(roleSelection.getValue())) {
                     getUI().ifPresent(ui -> ui.navigate("student/startseite"));
                 }
             }
         });
         return loginButton;
+    }
+
+    private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private String createLoginJson(String role, String username, String password) {
+        return String.format("{\"role\": \"%s\", \"username\": \"%s\", \"password\": \"%s\"}", role, username, password);
     }
 }
