@@ -15,8 +15,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    /* Hintergrund für die gesamte Seite */
-    background: linear-gradient(135deg, #ff0080, #ff80bf) no-repeat;
+
     background-size: cover;
 }
 
