@@ -11,6 +11,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -81,7 +83,17 @@ public class LoginView extends VerticalLayout {
                     String json = createLoginJson(roleSelection.getValue(), usernameField.getValue(), passwordField.getValue());
                     HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/login");
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
-                        Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
+                        String responseBody = response.body();
+                        JSONObject jsonResponse = new JSONObject(responseBody);
+
+                        String matrikelnummer = jsonResponse.optString("matrikelnummer", null);
+                        if (matrikelnummer != null) {
+                            VaadinSession.getCurrent().setAttribute("matrikelnummer", matrikelnummer);
+                            Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
+                        } else {
+                            Notification.show("Matrikelnummer konnte nicht abgerufen werden.", 3000, Notification.Position.TOP_CENTER);
+                        }
+
                         isValid = true;
                     } else if (response.statusCode() == 400 || response.statusCode() == 401) {
                         Notification.show("Nutzername oder Passwort falsch.", 3000, Notification.Position.TOP_CENTER);
@@ -103,7 +115,7 @@ public class LoginView extends VerticalLayout {
                 if ("Praktikumsbeauftragte/r".equals(roleSelection.getValue())) {
                     getUI().ifPresent(ui -> ui.navigate("admin/startseite"));
                 } else if ("Student/in".equals(roleSelection.getValue())) {
-                    getUI().ifPresent(ui -> ui.navigate("student/startseite"));
+                    getUI().ifPresent(ui -> ui.navigate("/studentin/startseite"));
                 }
             }
         });
