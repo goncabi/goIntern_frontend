@@ -1,32 +1,41 @@
 package com.example.application.views;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
+import org.json.JSONObject;
+import org.springframework.web.client.RestTemplate;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.Route;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 
-@Route("student/startseite")
+@Route("studentin/startseite")
+@PageTitle("Startseite")
+
 public class Startseite extends VerticalLayout {
 
-    private boolean antragVorhanden = false;
-
-    private RestTemplate restTemplate = new RestTemplate(); // Das RestTemplate sendet die Anfrage an das Backend
-    private final String backendUrl = "http://localhost:3000/api/antrag"; // URL, an die die Anfrage gesendet wird
+    private RestTemplate restTemplate = new RestTemplate();
+    private final String backendUrl = "http://localhost:3000/api/antrag";
 
     public Startseite() {
-        // Überschrift hinzufügen
-        H1 title = new H1("Willkommen auf der Startseite!");
+        String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
 
-        // Ausloggen-Button
+        if (matrikelnummer == null) {
+            Notification.show("Keine Matrikelnummer in der Sitzung gefunden. Bitte loggen Sie sich erneut ein.", 5000, Notification.Position.MIDDLE);
+            getUI().ifPresent(ui -> ui.navigate("login"));
+            return;
+        }
+        //header
+        H1 title = new H1("Antragsübersicht");
+
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("position", "absolute")
                 .set("top", "10px")
@@ -37,52 +46,207 @@ public class Startseite extends VerticalLayout {
             confirmDialog.open();
         });
 
-        // Layout für Header mit Titel und Ausloggen-Button
         HorizontalLayout header = new HorizontalLayout(title, logoutButton);
         header.setWidthFull();
         header.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         header.getStyle().set("position", "relative");
+        // Antrag anzeigen oder "Neuen Antrag erstellen"
+        Component content = hasAntrag(matrikelnummer) ? createMeinAntragContainer(matrikelnummer) : createStartseite();
 
-        // Plus-Button für neuen Antrag
-        Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create());
-        newRequestButton.addClickListener(event -> {
-            // Navigation zur Praktikumsformular-Seite
-            getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-        });
+        // Elemente hinzufügen
+        add(header, content);
 
-        // Hinweis unter dem Plus-Button
-        Span hintLabel = new Span("Hinweis: Ein Antrag kann nur einmal erstellt werden.");
-
-        // Komponenten zur Seite hinzufügen
-        add(header, newRequestButton, hintLabel);
+        //VerticalLayout meinAntragContainer = createMeinAntragContainer();
+        //add(header, meinAntragContainer);
     }
 
-    // Erstellung des Bestätigungsdialogs für das Ausloggen
     private Dialog createLogoutConfirmationDialog() {
         Dialog dialog = new Dialog();
-
-        // Nachricht
         Span message = new Span("Möchten Sie sich wirklich ausloggen?");
-
-        // Buttons
         Button yesButton = new Button("Ja", event -> {
             dialog.close();
-            // Weiterleitung zur Login-Seite
+            // navigiert zur Login-Seite
             getUI().ifPresent(ui -> ui.navigate("login"));
         });
 
         Button cancelButton = new Button("Abbrechen", event -> dialog.close());
 
-        // Layout für die Buttons
         HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
         buttons.setSpacing(true);
-
-        // Dialog hinzufügen
         VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
         dialogLayout.setSpacing(true);
         dialog.add(dialogLayout);
 
         return dialog;
     }
+    private boolean hasAntrag(String matrikelnummer) {
+        String url = backendUrl + "/getantrag/" + matrikelnummer;
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+            return response.getStatusCode().is2xxSuccessful() && response.getBody() != null;
+        } catch (Exception e) {
+            if (e.getMessage().contains("404")) {
+                // Kein Antrag gefunden, aber kein Fehler
+                return false;
+            }
+            Notification.show("Fehler beim Abrufen des Antrags: " + e.getMessage(), 3000, Notification.Position.MIDDLE);
+        }
+        return false;
+    }
+
+    // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
+       private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
+        VerticalLayout container = new VerticalLayout();
+        container.getStyle()
+                .set("border", "1px solid #ccc")
+                .set("border-radius", "8px")
+                .set("padding", "16px")
+                .set("background-color", "#f9f9f9")
+                .set("box-shadow", "0px 4px 6px rgba(0, 0, 0, 0.1)")
+                .set("width", "80%")
+                .set("max-width", "600px");
+
+        H2 heading = new H2("Mein Antrag");
+        String status = getAntragStatus(matrikelnummer);// hier noch hardgecodet..hier ist die 999 noch als Platzhalter für die Variable
+        H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
+
+           Button bearbeitenButton = new Button("Bearbeiten", event -> {
+               VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
+               getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+           });
+
+            Button loeschenButton = new Button("Löschen", event -> {
+            Dialog confirmDialog = new Dialog();
+            confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
+
+            Button jaButton = new Button("Ja", e -> {
+                loeschenAntrag(matrikelnummer); // hier noch hargecoded. Da muss eine Variable hin und das geht erst wenn sich eingeloggt und die Backend-Frontend-Anbindung fuer Login implementiert wurde.
+                confirmDialog.close();
+                Notification.show("Antrag gelöscht.");
+            });
+
+            Button neinButton = new Button("Nein", e -> confirmDialog.close());
+            confirmDialog.add(new HorizontalLayout(jaButton, neinButton));
+            confirmDialog.open();
+        });
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);// Buttons rechts anordnen
+
+        //Kommentar- /Notizfeld für die Kommentare die PB beim Ablehnen für Studentinnen hinterlässt
+        Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
+        kommentarToggle.getStyle()
+                .set("color", "#007bff")
+                .set("font-size", "14px")
+                .set("cursor", "pointer")
+                .set("margin-top", "10px");
+
+
+        VerticalLayout kommentarContent = new VerticalLayout();
+        kommentarContent.setVisible(false);
+        kommentarContent.getStyle()
+                .set("border", "1px solid #ddd")
+                .set("border-radius", "4px")
+                .set("padding", "8px")
+                .set("background-color", "#f5f5f5")
+                .set("width", "100%");
+
+        String notiz = getAntragNotiz(matrikelnummer); // Hardgecodet vorerst
+        Span kommentarText = new Span(notiz);
+        kommentarContent.add(kommentarText);
+
+        kommentarToggle.addClickListener(event -> {
+            boolean isVisible = kommentarContent.isVisible();
+            kommentarContent.setVisible(!isVisible);
+            kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
+        });
+
+        container.add(heading, statuslabel, buttonLayout, kommentarToggle, kommentarContent);
+        return container;
+    }
+
+
+    private void loeschenAntrag(String matrikelnummer) {
+        String url = backendUrl + "/" + matrikelnummer;
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                Notification.show("Antrag erfolgreich gelöscht.");
+            } else {
+                Notification.show("Antrag nicht gefunden oder Fehler beim Löschen.");
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler: " + e.getMessage());
+        }
+    }
+    private Component createStartseite() {
+        VerticalLayout layout = new VerticalLayout();
+
+        H2 title = new H2("Willkommen auf der Startseite!");
+        Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
+            VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
+            getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+        });
+        Span hintLabel = new Span("Hinweis: Ein Antrag kann nur einmal erstellt werden.");
+
+        layout.add(title, newRequestButton, hintLabel);
+        return layout;
+    }
+
+     // Anbindung zum Backend
+    //Erklärung: Die Methode getAntragStatus returnt einen String.
+    //Im Backend haben die Controller den Endpunkt getAntrag() und da wird ein Praktikumsantrag zurückgegeben und dann ein JSONString gemacht.
+    // In der Methode getAntragStatus möchte ich ja nur den Status sehen
+    // deswegen wird von dem JSON String nur das entsprechende Feld zum key statusAntrag dann ausgegeben.
+    private String getAntragStatus(String matrikelnummer) {
+        String url = backendUrl + "/getantrag/" + matrikelnummer;
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String jsonstring = response.getBody();
+                JSONObject jsonobjekt = new JSONObject(jsonstring); // hier haben wir den jasonstring in das jsonobjekt reingetan
+                return jsonobjekt.getString("statusAntrag"); // an dem jsonObjekt wird die getString Methode mit dem key statusAntrag aufgerufen.
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler: " + e.getMessage());
+        }
+        return "nicht gefunden";
+    }
+
+    private String getAntragNotiz(String matrikelnummer) {
+        String url = backendUrl + "/getantrag/" + matrikelnummer + "/kommentar";
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String jsonstring = response.getBody();
+                JSONObject jsonObject = new JSONObject(jsonstring);
+                return jsonObject.optString("kommentar", "Keine Kommentare vorhanden");
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler beim Abrufen des Kommentars: " + e.getMessage());
+        }
+        return "Keine Kommentare vorhanden.";
+    }
+
+    //Anbindung zum Backend AntragAnzeigen
+    private JSONObject getPraktikumsAntrag(String matrikelnummer) {
+        String url = backendUrl + "/getantrag/{matrikelnummer}" + matrikelnummer; // URL des Backend-Endpunkts
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String jsonstring = response.getBody();
+                return new JSONObject(jsonstring); // JSON-String in ein JSON-Objekt umwandeln
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler beim Aufruf des Praktikumsantrags " + e.getMessage());
+        }
+        return null;
+    }
+
 }
+
+
+
+
