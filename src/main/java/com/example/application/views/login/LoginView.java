@@ -87,13 +87,17 @@ public class LoginView extends VerticalLayout {
                         JSONObject jsonResponse = new JSONObject(responseBody);
 
                         String matrikelnummer = jsonResponse.optString("matrikelnummer", null);
-                        if (matrikelnummer != null) {
-                            VaadinSession.getCurrent().setAttribute("matrikelnummer", matrikelnummer);
-                            Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
-                        } else {
-                            Notification.show("Matrikelnummer konnte nicht abgerufen werden.", 3000, Notification.Position.TOP_CENTER);
+                        // Rolle prüfen
+                        if ("Praktikumsbeauftragte/r".equals(roleSelection.getValue())) {
+                            Notification.show("Login erfolgreich! (Praktikumsbeauftragter)", 3000, Notification.Position.TOP_CENTER);
+                        } else if ("Student/in".equals(roleSelection.getValue())) {
+                            if (matrikelnummer != null) {
+                                VaadinSession.getCurrent().setAttribute("matrikelnummer", matrikelnummer);
+                                Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
+                            } else {
+                                Notification.show("Matrikelnummer konnte nicht abgerufen werden.", 3000, Notification.Position.TOP_CENTER);
+                            }
                         }
-
                         isValid = true;
                     } else if (response.statusCode() == 400 || response.statusCode() == 401) {
                         Notification.show("Nutzername oder Passwort falsch.", 3000, Notification.Position.TOP_CENTER);
