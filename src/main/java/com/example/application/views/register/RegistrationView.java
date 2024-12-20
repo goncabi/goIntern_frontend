@@ -1,6 +1,7 @@
 package com.example.application.views.register;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
@@ -10,6 +11,12 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.dependency.CssImport;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 @Route("register")
 @CssImport("./styles/styles.css")
@@ -57,16 +64,18 @@ public class RegistrationView extends VerticalLayout {
         H3 securityQuestionsTitle = new H3("Sicherheitsfragen:");
         securityQuestionsTitle.addClassName("form-title");
 
+        // Sicherheitsfrage auswählen (ComboBox)
+        ComboBox<String> questionSelection = new ComboBox<>();
+        String question1 = "1. Wie lautet dein Geburtsort?";
+        String question2 = "2. Was war dein erstes Haustier?";
+        String question3 = "3. Wie lautet der Name deiner Grundschule?";
+        questionSelection.setItems(question1, question2, question3);
+        questionSelection.setPlaceholder("Wähle eine Sicherheitsfrage");
+        questionSelection.addClassName("question-selection");
 
-        // Sicherheitsfragen Felder
-        TextField question1Field = new TextField("1. Wie lautet dein Geburtsort?");
-        question1Field.addClassName("text-field");
-
-        TextField question2Field = new TextField("2. Was war dein erstes Haustier?");
-        question2Field.addClassName("text-field");
-
-        TextField question3Field = new TextField("3. Wie lautet der Name deiner Grundschule?");
-        question3Field.addClassName("text-field");
+        // Sicherheitsfragen
+        TextField answerField = new TextField();
+        answerField.addClassName("text-field");
 
         // Registrieren-Button
         Button registerButton = new Button("Registrieren");
@@ -86,7 +95,6 @@ public class RegistrationView extends VerticalLayout {
                 usernameField.removeClassName("invalid-field");
             }
 
-            // Passwort Validierung
             // Passwort Validierung
             passwordErrors.removeAll(); // Alle vorherigen Fehler entfernen
             if (!passwordField.getValue().matches("(?=.*[A-Z])(?=.*\\d)(?=.*[!?§/'@#$%^&*()]).{8,}")) {
@@ -116,16 +124,55 @@ public class RegistrationView extends VerticalLayout {
             }
 
 
-            // Registrierungserfolg
+            // Registrierung
             if (isValid) {
-                Notification.show("Registrierung erfolgreich!", 3000, Notification.Position.MIDDLE);
+                String frageId = String.valueOf(questionSelection.getValue().charAt(0));
+                try{
+                    String json = createRegisterJson(usernameField.getValue(), passwordField.getValue(),
+                            confirmPasswordField.getValue(), frageId, answerField.getValue());
+                    HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/registrieren");
+                    if (response.statusCode() == 200 || response.statusCode() == 201) {
+                        Notification.show("Registrierung erfolgreich!", 3000, Notification.Position.TOP_CENTER);
+                    }
+                    else if (response.statusCode() == 400 || response.statusCode() == 401) {
+                        Notification.show("Passwörter stimmen nicht miteinander überein oder Matrikelnummer existiert bereits.", 3000, Notification.Position.TOP_CENTER);
+                        isValid = false;
+                    }
+                    else{
+                        Notification.show("Fehler: " + response.body(), 3000, Notification.Position.TOP_CENTER);
+                        isValid = false;
+                    }
+                }
+                catch (Exception e) {
+                    Notification.show("Ein Fehler ist aufgetreten: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+                    isValid = false;
+                }
+            }
+            if(isValid){
+                getUI().ifPresent(ui -> ui.navigate("studentin/startseite"));
             }
         });
 
         // Formular-Layout
         formContainer.add(title, usernameField, usernameError, passwordField, passwordErrors,
-                confirmPasswordField, securityQuestionsTitle, question1Field, question2Field, question3Field, registerButton);
+                confirmPasswordField, securityQuestionsTitle, questionSelection, answerField, registerButton);
 
         add(formContainer);
+    }
+
+    private String createRegisterJson(String username, String password, String passwordConfirm, String frageId, String answer) {
+        return String.format("{\"username\": \"%s\", \"password\": \"%s\", \"passwordConfirm\": \"%s\", \"frageId\": \"%s\", \"answer\": \"%s\"}",username, password, passwordConfirm, frageId,  answer);
+    }
+
+    private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }
