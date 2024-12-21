@@ -43,7 +43,7 @@ public class LoginView extends VerticalLayout {
         ComboBox<String> roleSelection = new ComboBox<>();
         roleSelection.setItems("Praktikumsbeauftragte/r", "Student/in");
         roleSelection.setPlaceholder("Wähle eine Rolle");
-        roleSelection.addClassName("role-selection");
+        roleSelection.addClassName("dropdown");
 
         // Nutzername-Feld
         TextField usernameField = new TextField();

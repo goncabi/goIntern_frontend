@@ -72,7 +72,7 @@ public class RegistrationView extends VerticalLayout {
         String question3 = "3. Wie lautet der Name deiner Grundschule?";
         questionSelection.setItems(question1, question2, question3);
         questionSelection.setPlaceholder("Wähle eine Sicherheitsfrage");
-        questionSelection.addClassName("question-selection");
+        questionSelection.addClassName("dropdown");
 
         // Sicherheitsfragen
         TextField answerField = new TextField();
