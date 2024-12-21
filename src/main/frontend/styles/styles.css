@@ -144,6 +144,26 @@ html, body {
     background-size: 20px 20px;
 }
 
+/* Gemeinsame Dropdown-Klasse */
+.dropdown {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover und Fokus für Dropdown */
+.dropdown:hover, .dropdown:focus {
+    border-color: #ff4081;
+    box-shadow: 0 0 5px rgba(255, 64, 129, 0.5);
+}
+
+
 
 
 
