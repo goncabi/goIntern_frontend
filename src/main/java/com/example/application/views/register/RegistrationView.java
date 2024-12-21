@@ -67,9 +67,9 @@ public class RegistrationView extends VerticalLayout {
 
         // Sicherheitsfrage auswählen (ComboBox)
         ComboBox<String> questionSelection = new ComboBox<>();
-        String question1 = "1. Wie lautet dein Geburtsort?";
-        String question2 = "2. Was war dein erstes Haustier?";
-        String question3 = "3. Wie lautet der Name deiner Grundschule?";
+        String question1 = "Wie lautet dein Geburtsort?";
+        String question2 = "Was war dein erstes Haustier?";
+        String question3 = "Wie lautet der Name deiner Grundschule?";
         questionSelection.setItems(question1, question2, question3);
         questionSelection.setPlaceholder("Wähle eine Sicherheitsfrage");
         questionSelection.addClassName("dropdown");
@@ -100,11 +100,11 @@ public class RegistrationView extends VerticalLayout {
             passwordErrors.removeAll(); // Alle vorherigen Fehler entfernen
             if (!passwordField.getValue().matches("(?=.*[A-Z])(?=.*\\d)(?=.*[!?§/'@#$%^&*()]).{8,}")) {
                 Div error1 = new Div();
-                error1.setText("Mindestens ein Großbuchstabe erforderlich. (A-Z)");
+                error1.setText("Mindestens ein Großbuchstabe erforderlich.");
                 error1.addClassName("error-message"); // Gleicher Stil wie beim Nutzernamen
 
                 Div error2 = new Div();
-                error2.setText("Mindestens eine Zahl erforderlich. (0-9)");
+                error2.setText("Mindestens eine Zahl erforderlich.");
                 error2.addClassName("error-message");
 
                 Div error3 = new Div();
