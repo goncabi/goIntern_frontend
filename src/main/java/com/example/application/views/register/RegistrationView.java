@@ -11,6 +11,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.server.VaadinSession;
 
 import java.io.IOException;
 import java.net.URI;
@@ -126,7 +127,9 @@ public class RegistrationView extends VerticalLayout {
 
             // Registrierung
             if (isValid) {
+                VaadinSession.getCurrent().setAttribute("matrikelnummer", usernameField.getValue());
                 String frageId = String.valueOf(questionSelection.getValue().charAt(0));
+
                 try{
                     String json = createRegisterJson(usernameField.getValue(), passwordField.getValue(),
                             confirmPasswordField.getValue(), frageId, answerField.getValue());
