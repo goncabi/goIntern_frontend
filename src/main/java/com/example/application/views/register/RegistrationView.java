@@ -62,7 +62,7 @@ public class RegistrationView extends VerticalLayout {
         confirmPasswordField.addClassName("text-field");
 
         // Sicherheitsfragen Titel
-        H3 securityQuestionsTitle = new H3("Sicherheitsfragen:");
+        H3 securityQuestionsTitle = new H3("Sicherheitsfragen");
         securityQuestionsTitle.addClassName("form-title");
 
         // Sicherheitsfrage auswählen (ComboBox)
@@ -74,9 +74,16 @@ public class RegistrationView extends VerticalLayout {
         questionSelection.setPlaceholder("Wähle eine Sicherheitsfrage");
         questionSelection.addClassName("dropdown");
 
-        // Sicherheitsfragen
+        // Sicherheitsfrage-Feld
         TextField answerField = new TextField();
+        answerField.setPlaceholder("Deine Antwort");
         answerField.addClassName("text-field");
+
+        // Fehlernachricht für die Sicherheitsfrage
+        Div questionError = new Div();
+        questionError.setText("Bitte fülle das Feld aus!");
+        questionError.addClassName("error-message");
+        questionError.setVisible(false); // Standardmäßig unsichtbar
 
         // Registrieren-Button
         Button registerButton = new Button("Registrieren");
@@ -123,6 +130,15 @@ public class RegistrationView extends VerticalLayout {
                 passwordErrors.setVisible(false);
                 passwordField.removeClassName("invalid-field");
             }
+            // Sicherheitsfrage Antwort Validierung
+            if (answerField.getValue().trim().isEmpty()) {
+                answerField.addClassName("invalid-field");
+                questionError.setVisible(true);
+                isValid = false;
+            } else {
+                answerField.removeClassName("invalid-field");
+                questionError.setVisible(false);
+            }
 
 
             // Registrierung
@@ -158,7 +174,7 @@ public class RegistrationView extends VerticalLayout {
 
         // Formular-Layout
         formContainer.add(title, usernameField, usernameError, passwordField, passwordErrors,
-                confirmPasswordField, securityQuestionsTitle, questionSelection, answerField, registerButton);
+                confirmPasswordField, securityQuestionsTitle, questionSelection, answerField, questionError,registerButton);
 
         add(formContainer);
     }
