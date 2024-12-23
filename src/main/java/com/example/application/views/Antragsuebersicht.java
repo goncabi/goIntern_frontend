@@ -8,6 +8,8 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
@@ -91,7 +93,12 @@ public class Antragsuebersicht extends VerticalLayout {
                 .set("max-width", "600px");
 
         H2 heading = new H2("Mein Antrag");
-        String status = getAntragStatus("123476"); // hier noch hardgecodet..hier ist die 999 noch als Platzhalter für die Variable
+
+        //aus der VaadinSession bekommen wir die Matrikelnummer die im Login gespeichert wurde.
+       String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
+       String status = getAntragStatus(matrikelnummer); //hier wird der Status vom Antrag aus dem Backend geholt.
+
+
         H3 statuslabel = new H3(status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
 
         Button anzeigenButton = new Button("Antrag anzeigen", event -> {
