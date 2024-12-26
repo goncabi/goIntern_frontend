@@ -7,6 +7,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.web.client.RestTemplate;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -23,7 +24,7 @@ import org.springframework.http.ResponseEntity;
 public class Startseite extends VerticalLayout {
 
     private RestTemplate restTemplate = new RestTemplate();
-    private final String backendUrl = "http://localhost:3000/api/antrag";
+    private final String backendUrl = "http://localhost:3000/api/";
 
     public Startseite() {
         String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
@@ -81,7 +82,7 @@ public class Startseite extends VerticalLayout {
         return dialog;
     }
     private boolean hasAntrag(String matrikelnummer) {
-        String url = backendUrl + "/getantrag/" + matrikelnummer;
+        String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             return response.getStatusCode().is2xxSuccessful() && response.getBody() != null;
@@ -108,7 +109,7 @@ public class Startseite extends VerticalLayout {
                 .set("max-width", "600px");
 
         H2 heading = new H2("Mein Antrag");
-        String status = getAntragStatus(matrikelnummer);// hier noch hardgecodet..hier ist die 999 noch als Platzhalter für die Variable
+        String status = getAntragStatus(matrikelnummer);
         H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
 
            Button bearbeitenButton = new Button("Bearbeiten", event -> {
@@ -153,7 +154,7 @@ public class Startseite extends VerticalLayout {
                 .set("background-color", "#f5f5f5")
                 .set("width", "100%");
 
-        String notiz = getAntragNotiz(matrikelnummer); // Hardgecodet vorerst
+        String notiz = getAntragNotiz(matrikelnummer);
         Span kommentarText = new Span(notiz);
         kommentarContent.add(kommentarText);
 
@@ -167,9 +168,8 @@ public class Startseite extends VerticalLayout {
         return container;
     }
 
-
     private void loeschenAntrag(String matrikelnummer) {
-        String url = backendUrl + "/" + matrikelnummer;
+        String url = backendUrl + "antrag/" + matrikelnummer;
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -201,7 +201,7 @@ public class Startseite extends VerticalLayout {
     // In der Methode getAntragStatus möchte ich ja nur den Status sehen
     // deswegen wird von dem JSON String nur das entsprechende Feld zum key statusAntrag dann ausgegeben.
     private String getAntragStatus(String matrikelnummer) {
-        String url = backendUrl + "/getantrag/" + matrikelnummer;
+        String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -216,13 +216,14 @@ public class Startseite extends VerticalLayout {
     }
 
     private String getAntragNotiz(String matrikelnummer) {
-        String url = backendUrl + "/getantrag/" + matrikelnummer + "/kommentar";
+
+        String url = backendUrl + matrikelnummer + "/nachrichten";
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 String jsonstring = response.getBody();
-                JSONObject jsonObject = new JSONObject(jsonstring);
-                return jsonObject.optString("kommentar", "Keine Kommentare vorhanden");
+                JSONArray jsonarray = new JSONArray(jsonstring);
+                return jsonarray.optString(0, "Keine Kommentare vorhanden");
             }
         } catch (Exception e) {
             Notification.show("Fehler beim Abrufen des Kommentars: " + e.getMessage());
@@ -232,7 +233,7 @@ public class Startseite extends VerticalLayout {
 
     //Anbindung zum Backend AntragAnzeigen
     private JSONObject getPraktikumsAntrag(String matrikelnummer) {
-        String url = backendUrl + "/getantrag/{matrikelnummer}" + matrikelnummer; // URL des Backend-Endpunkts
+        String url = backendUrl + "antrag/getantrag/{matrikelnummer}" + matrikelnummer; // URL des Backend-Endpunkts
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
