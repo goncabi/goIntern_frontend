@@ -218,10 +218,17 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         Button cancelButton = new Button("Abbrechen", event -> dialog.close());
 
         // Layout für die Buttons
-        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
-        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
+        HorizontalLayout buttons = new HorizontalLayout();
+        buttons.setWidthFull(); // Volle Breite für die Ausrichtung
+        buttons.add(yesButton, cancelButton);
 
+        // Ausrichtung der Buttons
+        buttons.setJustifyContentMode(JustifyContentMode.BETWEEN);
+
+
+        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
         dialog.add(dialogLayout);
+
         return dialog;
     }
 
