@@ -143,7 +143,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 dialog.setWidth("600px");
                 dialog.setHeight("80%");
 
-                String matrikelnummerUeberschrift = json.getString("matrikelnummer"); // Ersetzen mit der tatsächlichen Quelle
+                String matrikelnummerUeberschrift = json.getString("matrikelnummer");
 
                 // Titel
                 H1 dialogTitle = new H1("Praktikumsantrag " + matrikelnummerUeberschrift);
