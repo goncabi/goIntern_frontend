@@ -61,7 +61,11 @@ public class Antragsuebersicht extends VerticalLayout {
 
     private Dialog createLogoutConfirmationDialog() {
         Dialog dialog = new Dialog();
+
+        // Nachricht
         Span message = new Span("Möchten Sie sich wirklich ausloggen?");
+
+        // Buttons
         Button yesButton = new Button("Ja", event -> {
             dialog.close();
             // navigiert zur Login-Seite
@@ -70,14 +74,22 @@ public class Antragsuebersicht extends VerticalLayout {
 
         Button cancelButton = new Button("Abbrechen", event -> dialog.close());
 
-        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
-        buttons.setSpacing(true);
+        // Layout für die Buttons
+        HorizontalLayout buttons = new HorizontalLayout();
+        buttons.setWidthFull(); // Volle Breite für die Ausrichtung
+        buttons.add(yesButton, cancelButton);
+
+        // Ausrichtung der Buttons: Ja nach links, Abbrechen nach rechts
+        buttons.setJustifyContentMode(JustifyContentMode.BETWEEN);
+
+        // Gesamtes Layout des Dialogs
         VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
         dialogLayout.setSpacing(true);
         dialog.add(dialogLayout);
 
         return dialog;
     }
+
 
 
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
