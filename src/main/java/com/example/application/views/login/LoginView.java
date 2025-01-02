@@ -92,6 +92,7 @@ public class LoginView extends VerticalLayout {
                             Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
                         } else if ("Student/in".equals(roleSelection.getValue())) {
                             if (matrikelnummer != null) {
+
                                 VaadinSession.getCurrent().setAttribute("matrikelnummer", matrikelnummer);
                                 Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
                             } else {
