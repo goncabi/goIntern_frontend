@@ -14,7 +14,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -80,7 +79,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 fetchAntragDetailsFromBackend(antrag.getMatrikelnummer());
             });
             return anzeigenButton;
-        }).setHeader("Aktionen");
+        }).setHeader("");
 
         add(grid);
     }
@@ -96,18 +95,24 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         List<Praktikumsantrag> antraege = new ArrayList<>();
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:3000/api/antrag/uebermitteln";
+            String url = "http://localhost:3000/api/antrag/alle";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 JSONArray jsonArray = new JSONArray(response.getBody());
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject json = jsonArray.getJSONObject(i);
-                    antraege.add(new Praktikumsantrag(
-                            json.getString("name"),
-                            json.getString("matrikelnummer"),
-                            json.getString("status")
-                    ));
+                    String status = json.getString("statusAntrag");
+
+                    // hier nur anträge anzeigen, deren Status nicht "gespeichert" ist
+                    // weil: gespeicherte anträge sind noh nicht abgesendet
+                    if (!"GESPEICHERT".equalsIgnoreCase(status)) {
+                        antraege.add(new Praktikumsantrag(
+                                json.getString("nameStudentin"),
+                                json.getString("matrikelnummer"),
+                                status
+                        ));
+                    }
                 }
             }
         } catch (Exception e) {
@@ -116,30 +121,39 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return antraege;
     }
 
+
+
     private void fetchAntragDetailsFromBackend(String matrikelnummer) {
         try {
+            System.out.println("Abrufen von Antrag mit Matrikelnummer: " + matrikelnummer);
             RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:3000/api/antrag/uebermitteln" + matrikelnummer;
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            String url = String.format("http://localhost:3000/api/antrag/getantrag/%s", //richtige url
+                    matrikelnummer);
+            System.out.println("URL: " + url);
 
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            ResponseEntity<String> response = restTemplate.getForEntity(url,
+                    String.class);
+            System.out.println("Response: " + response.getBody());
+
+            if (response.getStatusCode()
+                    .is2xxSuccessful() && response.getBody() != null) {
                 JSONObject json = new JSONObject(response.getBody());
-                Praktikumsantrag antrag = new Praktikumsantrag(
-                        json.getString("name"),
-                        json.getString("matrikelnummer"),
-                        json.getString("status")
-                );
+                System.out.println("JSON erhalten: " + json);
 
                 Dialog dialog = new Dialog();
                 dialog.add(new H1("Antragdetails"));
-                dialog.add(new TextArea("Name", antrag.getName()));
-                dialog.add(new TextArea("Matrikelnummer", antrag.getMatrikelnummer()));
-                dialog.add(new TextArea("Status", antrag.getStatus()));
+                dialog.add(new TextArea("Name",
+                        json.getString("nameStudentin")));
+                dialog.add(new TextArea("Matrikelnummer",
+                        json.getString("matrikelnummer")));
+                dialog.add(new TextArea("Status",
+                        json.getString("statusAntrag")));
                 dialog.open();
             } else {
                 Notification.show("Kein Antrag mit Matrikelnummer " + matrikelnummer + " gefunden.");
             }
         } catch (Exception e) {
+            System.err.println("Fehler: " + e.getMessage());
             Notification.show("Fehler beim Abrufen der Antragsdetails: " + e.getMessage());
         }
     }
@@ -266,5 +280,4 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
-    //backend-anbindung, sodass antrag unter bestimmter id ausgegeben wird
 }
