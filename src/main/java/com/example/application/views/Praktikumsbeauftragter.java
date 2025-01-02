@@ -152,8 +152,14 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 FormLayout formLayout = new FormLayout();
                 formLayout.setWidthFull();
 
+                // Styles für Key und Value
+                String keyStyle = "color: gray; font-size: 14px; font-weight: bold;";
+                String valueStyle = "color: black; font-size: 14px;";
+
                 // Key-Value-Paare hinzufügen
-                formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:");
+                formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:")
+                        .getStyle().set("color", "gray").set("font-size", "14px").set("margin-right", "50px");
+
                 formLayout.addFormItem(new Span(json.getString("nameStudentin")), "Name:");
                 formLayout.addFormItem(new Span(json.getString("vornameStudentin")), "Vorname:");
                 formLayout.addFormItem(new Span(json.getString("gebDatumStudentin")), "Geburtsdatum:");
