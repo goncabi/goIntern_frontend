@@ -4,8 +4,11 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -14,10 +17,8 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +81,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 fetchAntragDetailsFromBackend(antrag.getMatrikelnummer());
             });
             return anzeigenButton;
-        }).setHeader("Aktionen");
+        }).setHeader("");
 
         add(grid);
     }
@@ -96,18 +97,24 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         List<Praktikumsantrag> antraege = new ArrayList<>();
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:3000/api/antrag/uebermitteln";
+            String url = "http://localhost:3000/api/antrag/alle";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 JSONArray jsonArray = new JSONArray(response.getBody());
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject json = jsonArray.getJSONObject(i);
-                    antraege.add(new Praktikumsantrag(
-                            json.getString("name"),
-                            json.getString("matrikelnummer"),
-                            json.getString("status")
-                    ));
+                    String status = json.getString("statusAntrag");
+
+                    // hier nur anträge anzeigen, deren Status nicht "gespeichert" ist
+                    // weil: gespeicherte anträge sind noh nicht abgesendet
+                    if (!"GESPEICHERT".equalsIgnoreCase(status)) {
+                        antraege.add(new Praktikumsantrag(
+                                json.getString("nameStudentin"),
+                                json.getString("matrikelnummer"),
+                                status
+                        ));
+                    }
                 }
             }
         } catch (Exception e) {
@@ -116,33 +123,106 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return antraege;
     }
 
+
     private void fetchAntragDetailsFromBackend(String matrikelnummer) {
         try {
+            System.out.println("Abrufen von Antrag mit Matrikelnummer: " + matrikelnummer);
             RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:3000/api/antrag/uebermitteln" + matrikelnummer;
+            String url = String.format("http://localhost:3000/api/antrag/getantrag/%s", matrikelnummer);
+            System.out.println("URL: " + url);
+
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            System.out.println("Response: " + response.getBody());
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 JSONObject json = new JSONObject(response.getBody());
-                Praktikumsantrag antrag = new Praktikumsantrag(
-                        json.getString("name"),
-                        json.getString("matrikelnummer"),
-                        json.getString("status")
-                );
+                System.out.println("JSON erhalten: " + json);
 
+                // Pop-up Dialog erstellen
                 Dialog dialog = new Dialog();
-                dialog.add(new H1("Antragdetails"));
-                dialog.add(new TextArea("Name", antrag.getName()));
-                dialog.add(new TextArea("Matrikelnummer", antrag.getMatrikelnummer()));
-                dialog.add(new TextArea("Status", antrag.getStatus()));
+                dialog.setWidth("600px");
+                dialog.setHeight("80%");
+
+                String matrikelnummerUeberschrift = json.getString("matrikelnummer");
+
+                // Titel
+                H1 dialogTitle = new H1("Praktikumsantrag " + matrikelnummerUeberschrift);
+
+                // FormLayout für Key-Value-Darstellung
+                FormLayout formLayout = new FormLayout();
+                formLayout.setWidthFull();
+
+                // Styles für Key und Value
+                String keyStyle = "color: gray; font-size: 14px; font-weight: bold;";
+                String valueStyle = "color: black; font-size: 14px;";
+
+                // Key-Value-Paare hinzufügen
+                formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:")
+                        .getStyle().set("color", "gray").set("font-size", "14px").set("margin-right", "50px");
+
+                formLayout.addFormItem(new Span(json.getString("nameStudentin")), "Name:");
+                formLayout.addFormItem(new Span(json.getString("vornameStudentin")), "Vorname:");
+                formLayout.addFormItem(new Span(json.getString("gebDatumStudentin")), "Geburtsdatum:");
+                formLayout.addFormItem(new Span(json.getString("strasseStudentin")), "Straße:");
+                formLayout.addFormItem(new Span(json.getString("hausnummerStudentin")), "Hausnummer:");
+                formLayout.addFormItem(new Span(json.getString("plzStudentin")), "Postleitzahl:");
+                formLayout.addFormItem(new Span(json.getString("ortStudentin")), "Ort:");
+                formLayout.addFormItem(new Span(json.getString("telefonnummerStudentin")), "Telefonnummer:");
+                formLayout.addFormItem(new Span(json.getString("emailStudentin")), "E-Mail-Adresse:");
+                formLayout.addFormItem(new Span(json.getString("vorschlagPraktikumsbetreuerIn")), "Vorgeschlagener Praktikumsbetreuer (an der HTW):");
+                formLayout.addFormItem(new Span(json.getString("praktikumssemester")), "Praktikumssemester (SoSe / WiSe):");
+                formLayout.addFormItem(new Span(json.getString("studiensemester")), "Studiensemester:");
+                formLayout.addFormItem(new Span(json.getString("studiengang")), "Studiengang:");
+                formLayout.addFormItem(new Span(json.getString("begleitendeLehrVeranstaltungen")), "Begleitende Lehrveranstaltungen:");
+
+                formLayout.addFormItem(new Span(json.getString("voraussetzendeLeistungsnachweise")), "Vorraussetzende Leistungsnachweise:");
+                formLayout.addFormItem(new Span(json.getString("fehlendeLeistungsnachweise")), "Fehlende Leistungsnachweise:");
+                formLayout.addFormItem(new Span(json.getString("ausnahmeZulassung")), "Antrag auf Ausnahmezulassung:");
+                formLayout.addFormItem(new Span(json.getString("datumAntrag")), "Datum des Antrags:");
+
+                formLayout.addFormItem(new Span(json.getString("namePraktikumsstelle")), "Name der Praktikumsstelle:");
+                formLayout.addFormItem(new Span(json.getString("strassePraktikumsstelle")), "Straße der Praktikumsstelle:");
+                formLayout.addFormItem(new Span(json.getString("plzPraktikumsstelle")), "Postleitzahl der Praktikumsstelle:");
+                formLayout.addFormItem(new Span(json.getString("ortPraktikumsstelle")), "Ort der Praktikumsstelle:");
+                formLayout.addFormItem(new Span(json.getString("landPraktikumsstelle")), "Land der Praktikumsstelle:");
+                formLayout.addFormItem(new Span(json.getString("ansprechpartnerPraktikumsstelle")), "Ansprechpartner*in der Praktikumsstelle:");
+                formLayout.addFormItem(new Span(json.getString("telefonPraktikumsstelle")), "Telefon der Praktikumsstelle:");
+                formLayout.addFormItem(new Span(json.getString("emailPraktikumsstelle")), "E-Mail-Adresse der Praktikumsstelle:");
+                formLayout.addFormItem(new Span(json.getString("abteilung")), "Abteilung:");
+                formLayout.addFormItem(new Span(json.getString("taetigkeit")), "Tätigkeit der Praktikantin / des Praktikanten:");
+                formLayout.addFormItem(new Span(json.getString("startdatum")), "Startdatum des Praktikums:");
+                formLayout.addFormItem(new Span(json.getString("enddatum")), "Startdatum des Praktikums:");
+
+                // Button-Leiste mit linksbündigem "Abbrechen"-Button und rechtsbündigen anderen Buttons
+                Button abbrechen = new Button("Abbrechen", event -> dialog.close());
+                Button genehmigen = new Button("Genehmigen", event -> Notification.show("Antrag wurde genehmigt."));
+                Button ablehnen = new Button("Ablehnen", event -> Notification.show("Antrag wurde abgelehnt."));
+
+                // Leeres flexibles Element, sorgt dafür, dass zwischen den buttons abstände sind
+                Div spacer = new Div();
+                spacer.getStyle().set("flex-grow", "1");
+
+                // Button-Leiste erstellen
+                HorizontalLayout buttonLayout = new HorizontalLayout(abbrechen, spacer, genehmigen, ablehnen);
+                buttonLayout.setWidthFull();
+
+                // Alles in das Dialog-Layout einfügen
+                VerticalLayout dialogLayout = new VerticalLayout(dialogTitle, formLayout, buttonLayout);
+                dialogLayout.setPadding(true);
+                dialogLayout.setSpacing(true);
+
+                dialog.add(dialogLayout);
                 dialog.open();
+
             } else {
                 Notification.show("Kein Antrag mit Matrikelnummer " + matrikelnummer + " gefunden.");
             }
         } catch (Exception e) {
+            System.err.println("Fehler: " + e.getMessage());
             Notification.show("Fehler beim Abrufen der Antragsdetails: " + e.getMessage());
         }
     }
+
 
 
     private Dialog createPraktikumsformularDialog(Praktikumsantrag antrag) {
@@ -273,5 +353,4 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
-    //backend-anbindung, sodass antrag unter bestimmter id ausgegeben wird
 }
