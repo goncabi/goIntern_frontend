@@ -108,7 +108,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                     // hier nur anträge anzeigen, deren Status nicht "gespeichert" ist
                     // weil: gespeicherte anträge sind noh nicht abgesendet
-                    if (!"GESPEICHERT".equalsIgnoreCase(status)) {
+                    if (!"gespeichert".equalsIgnoreCase(status)) {
                         antraege.add(new Praktikumsantrag(
                                 json.getString("nameStudentin"),
                                 json.getString("matrikelnummer"),
