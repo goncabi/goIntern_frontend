@@ -67,9 +67,9 @@ public class RegistrationView extends VerticalLayout {
 
         // Sicherheitsfrage auswählen (ComboBox)
         ComboBox<String> questionSelection = new ComboBox<>();
-        String question1 = "Wie lautet dein Geburtsort?";
-        String question2 = "Was war dein erstes Haustier?";
-        String question3 = "Wie lautet der Name deiner Grundschule?";
+        String question1 = "1. Wie lautet dein Geburtsort?";
+        String question2 = "2. Was war dein erstes Haustier?";
+        String question3 = "3. Wie lautet der Name deiner Grundschule?";
         questionSelection.setItems(question1, question2, question3);
         questionSelection.setPlaceholder("Wähle eine Sicherheitsfrage");
         questionSelection.addClassName("dropdown");
