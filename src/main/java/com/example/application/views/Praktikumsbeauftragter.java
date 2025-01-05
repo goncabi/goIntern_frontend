@@ -12,13 +12,18 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.Route;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +32,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
     private Grid<Praktikumsantrag> grid;
     private List<Praktikumsantrag> antraege;
+    private boolean bereitsGenehmigtOderAbgelehnt = false; //für Button Logik
+
 
     public Praktikumsbeauftragter() {
         // Überschrift
@@ -67,7 +74,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         add(header);
 
         // Datenmodell für Praktikumsanträge
-        antraege = fetchAntraegeFromBackend();
+        antraege = eingegangeneAntraegePreviewListe();
 
         // Grid zur Anzeige der Anträge
         grid = new Grid<>(Praktikumsantrag.class);
@@ -78,7 +85,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         grid.addComponentColumn(antrag -> {
             Button anzeigenButton = new Button("Antrag anzeigen", VaadinIcon.EYE.create());
             anzeigenButton.addClickListener(event -> {
-                fetchAntragDetailsFromBackend(antrag.getMatrikelnummer());
+                vollstaendigenAntragAnzeigenImPopUp(antrag.getMatrikelnummer());
             });
             return anzeigenButton;
         }).setHeader("");
@@ -93,7 +100,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
     //Methode zum Anzeigen der eingegangenen Antraege und zum Preview der Antragsinformationen
     // infomation needed:name, matrnummer, status
-    private List<Praktikumsantrag> fetchAntraegeFromBackend() {
+    private List<Praktikumsantrag> eingegangeneAntraegePreviewListe() {
         List<Praktikumsantrag> antraege = new ArrayList<>();
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -124,19 +131,18 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     }
 
 
-    private void fetchAntragDetailsFromBackend(String matrikelnummer) {
+    //methode zum ausgeben des vollständigen antrags im pop-up-fesnter und
+    // buttons zum genehmigen/ablehnen oder abbrechen
+    private void vollstaendigenAntragAnzeigenImPopUp(String matrikelnummer) {
         try {
-            System.out.println("Abrufen von Antrag mit Matrikelnummer: " + matrikelnummer);
             RestTemplate restTemplate = new RestTemplate();
             String url = String.format("http://localhost:3000/api/antrag/getantrag/%s", matrikelnummer);
-            System.out.println("URL: " + url);
 
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            System.out.println("Response: " + response.getBody());
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 JSONObject json = new JSONObject(response.getBody());
-                System.out.println("JSON erhalten: " + json);
+
 
                 // Pop-up Dialog erstellen
                 Dialog dialog = new Dialog();
@@ -195,15 +201,65 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                 // Button-Leiste mit linksbündigem "Abbrechen"-Button und rechtsbündigen anderen Buttons
                 Button abbrechen = new Button("Abbrechen", event -> dialog.close());
-                Button genehmigen = new Button("Genehmigen", event -> Notification.show("Antrag wurde genehmigt."));
-                Button ablehnen = new Button("Ablehnen", event -> Notification.show("Antrag wurde abgelehnt."));
+
+                Button genehmigen = new Button("Genehmigen", event -> {
+
+                    if(bereitsGenehmigtOderAbgelehnt) {
+
+                        Notification.show("Der Antrag wurde bereits abgelehnt oder genehmigt", 3000, Notification.Position.TOP_CENTER);
+                        return;
+                    }
+
+                    bereitsGenehmigtOderAbgelehnt = true; //verhindert wiederholtes Klicken von Genehmigen und Ablehnen
+                    try {
+
+                         genehmigenAntrag(matrikelnummer);
+
+                        //pop-up schließen
+                        dialog.close();
+
+                        //liste der antraege aktualisieren
+                        aktualisiereListeUndGrid();
+
+                    } catch (Exception e) {
+                        Notification.show("Fehler beim Genehmigen des Antrags: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+                    }
+
+                });
+
+                Button ablehnen = new Button("Ablehnen", event -> {
+
+                    if (bereitsGenehmigtOderAbgelehnt) {
+
+                        Notification.show("Der Antrag wurde bereits abgelehnt oder genehmigt", 3000, Notification.Position.TOP_CENTER);
+                        return; // Abbrechen, wenn schon eine Verarbeitung läuft
+                    }
+
+                    bereitsGenehmigtOderAbgelehnt = true; // Verhindert wiederholtes Klicken
+                    try {
+                        ablehnenAntrag(matrikelnummer);
+                        Notification.show("Antrag wurde abgelehnt.", 3000, Notification.Position.TOP_CENTER);
+
+                        // Pop-up schließen
+                        dialog.close();
+
+                        // Liste der Anträge aktualisieren
+                        aktualisiereListeUndGrid();
+
+                    } catch (Exception e) {
+                        Notification.show("Fehler beim Ablehnen des Antrags: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+                    }
+                });
+
+
+
 
                 // Leeres flexibles Element, sorgt dafür, dass zwischen den buttons abstände sind
                 Div spacer = new Div();
                 spacer.getStyle().set("flex-grow", "1");
 
                 // Button-Leiste erstellen
-                HorizontalLayout buttonLayout = new HorizontalLayout(abbrechen, spacer, genehmigen, ablehnen);
+                HorizontalLayout buttonLayout = new HorizontalLayout(abbrechen, spacer, ablehnen, genehmigen);
                 buttonLayout.setWidthFull();
 
                 // Alles in das Dialog-Layout einfügen
@@ -223,65 +279,105 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
+    //separation of concerns, ablehnen methode
+    private void ablehnenAntrag(String matrikelnummer) {
+        try {
+            // neues antrags-objekt erstellen und status auf zugelassen setzen
+            Praktikumsantrag antrag = new Praktikumsantrag("", matrikelnummer, "ABGELEHNT");
+
+            // JSON-Objekt für den Antrag
+            JSONObject jsonAntrag = new JSONObject();
+            jsonAntrag.put("matrikelnummer", antrag.getMatrikelnummer());
+            jsonAntrag.put("statusAntrag", antrag.getStatus());
+
+            // JSON an Backend senden
+            String backendUrl = "http://localhost:3000/pb/antrag/ablehnen";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> request = new HttpEntity<>(jsonAntrag.toString(), headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(backendUrl, HttpMethod.POST, request, String.class);
 
 
-    private Dialog createPraktikumsformularDialog(Praktikumsantrag antrag) {
-        Dialog dialog = new Dialog();
+            if (response.getStatusCode() == HttpStatus.OK) {
+                Notification.show("Antrag wurde abgelehnt.", 3000, Notification.Position.TOP_CENTER);
 
-        // Titel des Dialogs
-        VerticalLayout dialogLayout = new VerticalLayout();
-        dialogLayout.add(new H1("Praktikumsformular anzeigen"));
 
-        // Praktikumsformular hier mit json daten füllen
+                // Nach erfolgreicher ablehnung: liste neu laden
+                List<Praktikumsantrag> aktualisierteListe = eingegangeneAntraegePreviewListe();
+                aktualisiereAntraegeListeImFrontend(aktualisierteListe);
+                grid.getDataProvider().refreshAll();
 
-        // Buttons unten im Dialog
-        Button genehmigenButton = new Button("Genehmigen", event -> {
-            antrag.setStatus("Genehmigt");
-            aktualisiereGrid();
-            dialog.close();
-            Notification.show("Antrag genehmigt.", 3000, Notification.Position.TOP_CENTER);
-        });
-
-        Button ablehnenButton = new Button("Ablehnen", event -> {
-            Dialog ablehnenDialog = createAblehnenDialog(antrag, dialog);
-            ablehnenDialog.open();
-        });
-
-        HorizontalLayout actionButtons = new HorizontalLayout(genehmigenButton, ablehnenButton);
-        dialogLayout.add(actionButtons);
-
-        dialog.add(dialogLayout);
-        return dialog;
-    }
-
-    private Dialog createAblehnenDialog(Praktikumsantrag antrag, Dialog parentDialog) {
-        Dialog ablehnenDialog = new Dialog();
-
-        // Kommentarbereich
-        TextArea kommentarField = new TextArea("Kommentar");
-        kommentarField.setPlaceholder("Bitte geben Sie einen Grund für die Ablehnung ein...");
-
-        // Buttons
-        Button ablehnenConfirmButton = new Button("Ablehnen", event -> {
-            if (kommentarField.getValue().trim().isEmpty()) {
-                Notification.show("Bitte geben Sie einen Kommentar ein.", 3000, Notification.Position.MIDDLE);
             } else {
-                antrag.setStatus("Abgelehnt");
-                aktualisiereGrid();
-                ablehnenDialog.close();
-                parentDialog.close();
-                Notification.show("Antrag abgelehnt: " + kommentarField.getValue(), 3000, Notification.Position.TOP_CENTER);
+                Notification.show("Fehler beim Ablehnen des Antrags.", 3000, Notification.Position.TOP_CENTER);
             }
-        });
 
-        Button cancelButton = new Button("Abbrechen", event -> ablehnenDialog.close());
-
-        HorizontalLayout actionButtons = new HorizontalLayout(ablehnenConfirmButton, cancelButton);
-        VerticalLayout layout = new VerticalLayout(kommentarField, actionButtons);
-
-        ablehnenDialog.add(layout);
-        return ablehnenDialog;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Notification.show("Fehler beim Ablehnen des Antrags: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+        }
     }
+
+
+    //separation of concerns: auslagerung der genehmigen methode, weil sonst block zu groß und unübersichtlich
+    private void genehmigenAntrag(String matrikelnummer) {
+        try {
+            // neues antrags-objekt erstellen und status auf zugelassen setzen
+            Praktikumsantrag antrag = new Praktikumsantrag("", matrikelnummer, "ZUGELASSEN");
+
+            // JSON-Objekt für den Antrag
+            JSONObject jsonAntrag = new JSONObject();
+            jsonAntrag.put("matrikelnummer", antrag.getMatrikelnummer());
+            jsonAntrag.put("statusAntrag", antrag.getStatus());
+
+            // JSON an Backend senden
+            String backendUrl = "http://localhost:3000/pb/antrag/genehmigen";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> request = new HttpEntity<>(jsonAntrag.toString(), headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(backendUrl, HttpMethod.POST, request, String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                Notification.show("Antrag wurde genehmigt.", 3000, Notification.Position.TOP_CENTER);
+
+                // Nach erfolgreicher Genehmigung: liste neu laden
+                List<Praktikumsantrag> aktualisierteListe = eingegangeneAntraegePreviewListe();
+                aktualisiereAntraegeListeImFrontend(aktualisierteListe);
+                grid.getDataProvider().refreshAll();
+
+            } else {
+                Notification.show("Fehler beim Genehmigen des Antrags.", 3000, Notification.Position.TOP_CENTER);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Notification.show("Fehler beim Genehmigen des Antrags: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+        }
+    }
+
+    private void aktualisiereListeUndGrid() {
+        try {
+            // Abrufen der neuen Liste der Anträge
+            List<Praktikumsantrag> neueListe = eingegangeneAntraegePreviewListe();
+
+            // Aktualisieren des Grids
+            aktualisiereAntraegeListeImFrontend(neueListe);
+
+        } catch (Exception e) {
+            Notification.show("Fehler beim Aktualisieren der Liste: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+        }
+    }
+
+    private void aktualisiereAntraegeListeImFrontend(List<Praktikumsantrag> neueListe) {
+        grid.setItems(neueListe);
+
+    }
+
+    //separation of concerns: auslagerung der ablehnen methode, weil sonst block zu groß und unübersichtlich
+
 
     private Dialog createLogoutConfirmationDialog() {
         Dialog dialog = new Dialog();
@@ -338,10 +434,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         public String getMatrikelnummer() {
             return matrikelnummer;
-        }
-
-        public void setMatrikelnummer(String matrikelnummer) {
-            this.matrikelnummer = matrikelnummer;
         }
 
         public String getStatus() {
