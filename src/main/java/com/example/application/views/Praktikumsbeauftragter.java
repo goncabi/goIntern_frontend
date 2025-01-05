@@ -169,6 +169,16 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 FormLayout formLayout = new FormLayout();
                 formLayout.setWidthFull();
 
+                // Styles für Key und Value
+                String keyStyle = "color: gray; font-size: 14px; font-weight: bold;";
+                String valueStyle = "color: black; font-size: 14px;";
+
+                // Key-Value-Paare hinzufügen
+                formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:")
+                        .getStyle().set("color", "gray").set("font-size", "14px").set("margin-right", "50px");
+
+
+
                 formLayout.addFormItem(new Span(json.getString("nameStudentin")), "Name:");
                 formLayout.addFormItem(new Span(json.getString("vornameStudentin")), "Vorname:");
                 formLayout.addFormItem(new Span(json.getString("gebDatumStudentin")), "Geburtsdatum:");
@@ -281,6 +291,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 Notification.show("Antrag wurde abgelehnt.", 3000, Notification.Position.TOP_CENTER);
+                // Nach erfolgreicher ablehnung: liste neu laden
+                List<Praktikumsantrag> aktualisierteListe = eingegangeneAntraegePreviewListe();
+                aktualisiereAntraegeListeImFrontend(aktualisierteListe);
+                grid.getDataProvider().refreshAll();
+
+
             } else {
                 Notification.show("Fehler beim Ablehnen des Antrags.", 3000, Notification.Position.TOP_CENTER);
             }
@@ -305,6 +321,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 Notification.show("Antrag wurde genehmigt.", 3000, Notification.Position.TOP_CENTER);
+                // Nach erfolgreicher Genehmigung: liste neu laden
+                List<Praktikumsantrag> aktualisierteListe = eingegangeneAntraegePreviewListe();
+                aktualisiereAntraegeListeImFrontend(aktualisierteListe);
+                grid.getDataProvider().refreshAll();
+
+
             } else {
                 Notification.show("Fehler beim Genehmigen des Antrags.", 3000, Notification.Position.TOP_CENTER);
             }
@@ -312,6 +334,32 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             Notification.show("Fehler beim Genehmigen des Antrags: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
         }
     }
+    private void aktualisiereListeUndGrid() {
+        try {
+            // Abrufen der neuen Liste der Anträge
+            List<Praktikumsantrag> neueListe = eingegangeneAntraegePreviewListe();
+
+            // Aktualisieren des Grids
+            aktualisiereAntraegeListeImFrontend(neueListe);
+
+        } catch (Exception e) {
+            Notification.show("Fehler beim Aktualisieren der Liste: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+        }
+    }
+
+    private void aktualisiereAntraegeListeImFrontend(List<Praktikumsantrag> neueListe) {
+        grid.setItems(neueListe);
+
+    }
+
+    //separation of concerns: auslagerung der ablehnen methode, weil sonst block zu groß und unübersichtlich
+
+
+
+    private void aktualisiereGrid() {
+        grid.getDataProvider().refreshAll();
+    }
+
 
     public static class Praktikumsantrag {
         private String name;
