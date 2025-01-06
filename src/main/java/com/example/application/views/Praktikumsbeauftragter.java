@@ -2,6 +2,8 @@ package com.example.application.views;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -33,6 +35,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     private Grid<Praktikumsantrag> grid;
     private List<Praktikumsantrag> antraege;
     private boolean bereitsGenehmigtOderAbgelehnt = false;
+    private HorizontalLayout badges;
+
 
     public Praktikumsbeauftragter() {
         // Überschrift
@@ -72,13 +76,35 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         notificationBell.getElement().getStyle().set("margin-left", "auto");
         add(header);
 
+
+
+        // ComboBox für Statusfilter
+        ComboBox<String> comboBox = new ComboBox<>("Status filtern");
+        comboBox.setItems("Gespeichert", "Antrag eingereicht", "In Bearbeitung", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
+        comboBox.addValueChangeListener(e -> {
+            if (e.getValue() != null) {
+                Span filterBadge = createFilterBadge(e.getValue());
+                badges.add(filterBadge);
+                filterGridByStatus(e.getValue());
+            }
+        });
+
+        badges = new HorizontalLayout();
+        badges.getStyle().set("flex-wrap", "wrap");
+
         // Datenmodell für Praktikumsanträge
         antraege = eingegangeneAntraegePreviewListe();
+        if (antraege.isEmpty()) {
+            Notification.show("Keine Anträge verfügbar.", 3000, Notification.Position.MIDDLE);
+        }
+
 
         // Grid zur Anzeige der Anträge
         grid = new Grid<>(Praktikumsantrag.class);
-        grid.setItems(antraege);
-        grid.setColumns("name", "matrikelnummer", "status");
+        grid.setColumns("name", "matrikelnummer");
+
+        grid.addComponentColumn(antrag -> createStatusBadge(antrag.getStatus()))
+            .setHeader("Status");
 
         // Spalte für "Antrag anzeigen"
         grid.addComponentColumn(antrag -> {
@@ -89,7 +115,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             return anzeigenButton;
         }).setHeader("");
 
-        add(grid);
+        grid.setItems(antraege);
+
+
+        add(title, comboBox, badges, grid);
+        
     }
 
     private Dialog createLogoutConfirmationDialog() {
@@ -144,6 +174,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     }
                 }
             }
+
         } catch (Exception e) {
             Notification.show("Fehler beim Abrufen der Anträge: " + e.getMessage());
         }
@@ -175,7 +206,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                 // Key-Value-Paare hinzufügen
                 formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:")
-                        .getStyle().set("color", "gray").set("font-size", "14px").set("margin-right", "50px");
+                          .getStyle().set("color", "gray").set("font-size", "14px").set("margin-right", "50px");
 
 
 
@@ -360,6 +391,67 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
     private void aktualisiereGrid() {
         grid.getDataProvider().refreshAll();
+    }
+
+    private void filterGridByStatus(String status) {
+        List<Praktikumsantrag> filteredItems = antraege.stream()
+                                                       .filter(antrag -> antrag.getStatus().equalsIgnoreCase(status))
+                                                       .toList();
+
+        grid.setItems(filteredItems);
+
+        if (filteredItems.isEmpty()) {
+            Notification.show("Keine Ergebnisse für: " + status, 3000, Notification.Position.MIDDLE);
+        }
+    }
+
+    private Span createStatusBadge(String status) {
+        String theme;
+
+        switch (status) {
+            case "Gespeichert":
+                theme = "badge contrast pill";
+                break;
+            case "Antrag eingereicht":
+                theme = "badge primary pill";
+                break;
+            case "In Bearbeitung":
+                theme = "badge contrast pill";
+                break;
+            case "Abgelehnt":
+                theme = "badge error pill";
+                break;
+            case "Zugelassen":
+            case "Absolviert":
+                theme = "badge success pill";
+                break;
+            case "Derzeit im Praktikum":
+                theme = "badge pill";
+                break;
+            default:
+                theme = "badge";
+                break;
+        }
+
+        Span badge = new Span(status);
+        badge.getElement().getThemeList().add(theme);
+        return badge;
+    }
+
+    private Span createFilterBadge(String status) {
+        Button clearButton = new Button(VaadinIcon.CLOSE_SMALL.create());
+        clearButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST, ButtonVariant.LUMO_TERTIARY_INLINE);
+        clearButton.getStyle().set("margin-inline-start", "var(--lumo-space-xs)");
+
+        Span badge = new Span(new Span(status), clearButton);
+        badge.getElement().getThemeList().add("badge contrast pill");
+
+        clearButton.addClickListener(event -> {
+            badge.getElement().removeFromParent();
+            grid.setItems(antraege); // Originaldaten zurücksetzen
+        });
+
+        return badge;
     }
 
 
