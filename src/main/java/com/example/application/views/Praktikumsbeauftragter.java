@@ -233,10 +233,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                     H1 ablehnungsTitle = new H1("Antrag ablehnen");
                     TextArea kommentarField = new TextArea("Begründung");
-                    kommentarField.setPlaceholder("Geben Sie hier Ihre Begründung ein...");
+                    kommentarField.setPlaceholder("Geben Sie hier Ihre Begründung ein:");
                     kommentarField.setWidthFull();
 
-                    Button jaButton = new Button("Ja", e -> {
+                    Button ablehnungAbsendenButton = new Button("Ablehnung absenden", e -> {
                         String kommentar = kommentarField.getValue();
                         if (kommentar == null || kommentar.trim().isEmpty()) {
                             Notification.show("Bitte geben Sie eine Begründung ein.", 3000, Notification.Position.TOP_CENTER);
@@ -249,7 +249,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                     Button abbrechenButton = new Button("Abbrechen", e -> ablehnungsDialog.close());
 
-                    HorizontalLayout buttonLayout = new HorizontalLayout(jaButton, abbrechenButton);
+                    HorizontalLayout buttonLayout = new HorizontalLayout(abbrechenButton, ablehnungAbsendenButton);
                     buttonLayout.setWidthFull();
                     buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 
@@ -258,7 +258,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     ablehnungsDialog.open();
                 });
 
-                HorizontalLayout buttonLayout = new HorizontalLayout(abbrechen, genehmigen, ablehnen);
+                // Leeres flexibles Element, sorgt dafür, dass zwischen den buttons abstände sind
+                Div spacer = new Div();
+                spacer.getStyle().set("flex-grow", "1");
+
+
+                HorizontalLayout buttonLayout = new HorizontalLayout(abbrechen, spacer, ablehnen,  genehmigen);
                 buttonLayout.setWidthFull();
                 buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 
@@ -277,11 +282,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     private void ablehnenAntragMitKommentar(String matrikelnummer, String kommentar) {
         try {
             JSONObject jsonAntrag = new JSONObject();
-            jsonAntrag.put("matrikelnummer", matrikelnummer);
             jsonAntrag.put("statusAntrag", "ABGELEHNT");
             jsonAntrag.put("kommentar", kommentar);
 
-            String backendUrl = "http://localhost:3000/pb/antrag/ablehnen";
+            String backendUrl = String.format("http://localhost:3000/pb/antrag/ablehnen/%s", matrikelnummer);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> request = new HttpEntity<>(jsonAntrag.toString(), headers);
@@ -352,8 +356,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
     }
 
-    //separation of concerns: auslagerung der ablehnen methode, weil sonst block zu groß und unübersichtlich
-
 
 
     private void aktualisiereGrid() {
@@ -383,5 +385,24 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         public String getStatus() {
             return status;
         }
+    }
+
+    public class AblehnungsRequest {
+        private String matrikelnummer;
+        private String kommentar;
+
+        public String getKommentar() {
+            return kommentar;
+        }
+
+        public String getMatrikelnummer() {
+            return matrikelnummer;
+        }
+
+        public void setKommentar(String kommentar) {
+            this.kommentar = kommentar;
+        }
+
+        public void setMatrikelnummer(String matrikelnummer) {}
     }
 }
