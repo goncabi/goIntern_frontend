@@ -223,7 +223,16 @@ public class Startseite extends VerticalLayout {
             if (response.getStatusCode().is2xxSuccessful()) {
                 String jsonstring = response.getBody();
                 JSONArray jsonarray = new JSONArray(jsonstring);
-                return jsonarray.optString(0, "Keine Kommentare vorhanden");
+
+                //Wollen hier checken ob das Array ein Eintrag hat:
+                if(jsonarray.length() > 0){ //wenn das Array mindestens ein element hat. Also die länge größer 0 ist, dann hat es eine Nachricht vom PB bekommen.
+
+                    //das was an der 0ten Stelle ist, wollen wir bekommen
+                    JSONObject jsonObject = jsonarray.getJSONObject(0);
+                    String nachricht = jsonObject.getString("nachricht");
+                    return nachricht;
+
+                }
             }
         } catch (Exception e) {
             Notification.show("Fehler beim Abrufen des Kommentars: " + e.getMessage());

@@ -314,8 +314,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         try {
             JSONObject jsonAntrag = new JSONObject();
             jsonAntrag.put("statusAntrag", "ABGELEHNT");
-            jsonAntrag.put("kommentar", kommentar);
+            jsonAntrag.put("kommentar", kommentar); //Hier kommt der Kommentar rein, zb. "Kaffe kochen ist kein Informatik"
 
+            //hier wird es ans Backend gesendet
             String backendUrl = String.format("http://localhost:3000/pb/antrag/ablehnen/%s", matrikelnummer);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
