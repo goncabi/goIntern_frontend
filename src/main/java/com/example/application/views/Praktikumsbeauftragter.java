@@ -10,6 +10,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -79,14 +80,18 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
         // ComboBox für Statusfilter
-        ComboBox<String> comboBox = new ComboBox<>("Status filtern");
+        ComboBox<String> comboBox = new ComboBox<>("Nach Status filtern");
         comboBox.setItems("Gespeichert", "Antrag eingereicht", "In Bearbeitung", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
+        comboBox.getStyle().set("width", "250px");
         comboBox.addValueChangeListener(e -> {
             if (e.getValue() != null) {
-                Span filterBadge = createFilterBadge(e.getValue());
+                //hier verhindern, dass zwei status gleichzeitig gesucht werden können
+                badges.removeAll(); // Alle existierenden Badges entfernen
+                Span filterBadge = createFilterBadge(e.getValue()); // Neuen Badge erstellen
                 badges.add(filterBadge);
                 filterGridByStatus(e.getValue());
             }
+
         });
 
         badges = new HorizontalLayout();
@@ -181,6 +186,16 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return antraege;
     }
 
+    //für das antrag pop-up
+    private Span createStyledSpan(String text) {
+        Span span = new Span(text);
+        span.getStyle()
+                .set("color", "black")
+                .set("font-size", "16px");
+        return span;
+    }
+
+
     private void vollstaendigenAntragAnzeigenImPopUp(String matrikelnummer) {
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -192,24 +207,24 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 JSONObject json = new JSONObject(response.getBody());
 
                 Dialog dialog = new Dialog();
-                dialog.setWidth("600px");
-                dialog.setHeight("80%");
+                dialog.setWidth("800px");
+                dialog.setHeight("90%");
 
-                H1 dialogTitle = new H1("Praktikumsantrag " + json.getString("matrikelnummer"));
+                H3 dialogTitle = new H3("Praktikumsantrag " + json.getString("matrikelnummer"));
 
                 FormLayout formLayout = new FormLayout();
                 formLayout.setWidthFull();
 
-                // Styles für Key und Value
-                String keyStyle = "color: gray; font-size: 14px; font-weight: bold;";
-                String valueStyle = "color: black; font-size: 14px;";
-
-                // Key-Value-Paare hinzufügen
-                formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:")
-                          .getStyle().set("color", "gray").set("font-size", "14px").set("margin-right", "50px");
+                // Styles für die Labels und die Werte
+                formLayout.setResponsiveSteps(
+                        new FormLayout.ResponsiveStep("0", 1)
+                );
 
 
+                formLayout.getElement().getStyle().set("--vaadin-form-item-label-width", "300px");
 
+
+                formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:");
                 formLayout.addFormItem(new Span(json.getString("nameStudentin")), "Name:");
                 formLayout.addFormItem(new Span(json.getString("vornameStudentin")), "Vorname:");
                 formLayout.addFormItem(new Span(json.getString("gebDatumStudentin")), "Geburtsdatum:");
@@ -219,7 +234,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("ortStudentin")), "Ort:");
                 formLayout.addFormItem(new Span(json.getString("telefonnummerStudentin")), "Telefonnummer:");
                 formLayout.addFormItem(new Span(json.getString("emailStudentin")), "E-Mail-Adresse:");
-                formLayout.addFormItem(new Span(json.getString("vorschlagPraktikumsbetreuerIn")), "Vorgeschlagener Praktikumsbetreuer (an der HTW):");
+                formLayout.addFormItem(new Span(json.getString("vorschlagPraktikumsbetreuerIn")), "Vorschlag für Praktikumsbetreuer*in:");
                 formLayout.addFormItem(new Span(json.getString("praktikumssemester")), "Praktikumssemester (SoSe / WiSe):");
                 formLayout.addFormItem(new Span(json.getString("studiensemester")), "Studiensemester:");
                 formLayout.addFormItem(new Span(json.getString("studiengang")), "Studiengang:");
@@ -237,7 +252,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("telefonPraktikumsstelle")), "Telefon der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("emailPraktikumsstelle")), "E-Mail-Adresse der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("abteilung")), "Abteilung:");
-                formLayout.addFormItem(new Span(json.getString("taetigkeit")), "Tätigkeit der Praktikantin / des Praktikanten:");
+                formLayout.addFormItem(new Span(json.getString("taetigkeit")), "Tätigkeit als Praktikant*in:");
                 formLayout.addFormItem(new Span(json.getString("startdatum")), "Startdatum des Praktikums:");
                 formLayout.addFormItem(new Span(json.getString("enddatum")), "Startdatum des Praktikums:");
 
@@ -260,7 +275,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     }
 
                     Dialog ablehnungsDialog = new Dialog();
-                    ablehnungsDialog.setWidth("400px");
+                    ablehnungsDialog.setWidth("600px");
+                    ablehnungsDialog.setHeight("600px");
 
                     H1 ablehnungsTitle = new H1("Antrag ablehnen");
                     TextArea kommentarField = new TextArea("Begründung");
