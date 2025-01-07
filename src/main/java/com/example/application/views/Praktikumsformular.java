@@ -207,8 +207,8 @@ public class Praktikumsformular extends Div {
                                  begleitendeLehrVeranstaltungen,
                                  voraussetzendeLeistungsnachweise,
                                  fehlendeLeistungsnachweise,
-                                 datumAntrag,
-                                 ausnahmeZulassung);
+                                 ausnahmeZulassung,
+                                 datumAntrag);
 
         studentendatenContainer.add(studentendatenLayout);
 
