@@ -90,6 +90,13 @@ public class LoginView extends VerticalLayout {
                         // Rolle prüfen
                         if ("Praktikumsbeauftragte/r".equals(roleSelection.getValue())) {
                             Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
+                            if (usernameField.getValue() != null) {
+
+                                VaadinSession.getCurrent().setAttribute("username", usernameField.getValue());
+                                Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
+                            } else {
+                                Notification.show("Username konnte nicht abgerufen werden.", 3000, Notification.Position.TOP_CENTER);
+                            }
                         } else if ("Student/in".equals(roleSelection.getValue())) {
                             if (matrikelnummer != null) {
 
