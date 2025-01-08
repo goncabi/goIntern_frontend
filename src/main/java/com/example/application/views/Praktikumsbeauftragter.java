@@ -18,6 +18,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
@@ -40,22 +41,32 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
     public Praktikumsbeauftragter() {
+        String username = (String) VaadinSession.getCurrent().getAttribute("username");
+        if (username == null) {
+            Notification.show("Kein Username in der Sitzung gefunden. Bitte loggen Sie sich erneut ein.", 5000, Notification.Position.MIDDLE);
+            getUI().ifPresent(ui -> ui.navigate("login"));
+            return;
+        }
+
         // Überschrift
         H1 title = new H1("Übersicht der Praktikumsanträge");
 
         // Nachrichtenglocke
         Button notificationBell = new Button(VaadinIcon.BELL.create());
         notificationBell.getElement().getStyle().set("cursor", "pointer");
-
         ContextMenu notificationMenu = new ContextMenu(notificationBell);
         notificationMenu.setOpenOnClick(true);
 
-        List<String> nachrichten = getNachrichten();
+        if(hasUnreadNotifications(username)){
+            notificationBell.getElement().getStyle().set("color", "red");
+        }
+
+        List<NotificationMessage> nachrichten = getNachrichten(username);
         if (nachrichten.isEmpty()) {
             notificationMenu.addItem("Keine neuen Benachrichtigungen.");
         } else {
-            for (String nachricht : nachrichten) {
-                notificationMenu.addItem(nachricht);
+            for (NotificationMessage nachricht : nachrichten) {
+                notificationMenu.addItem(nachricht.date() + " : " + nachricht.message());
             }
         }
 
@@ -120,7 +131,83 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             return anzeigenButton;
         }).setHeader("");
 
-        grid.setItems(antraege);
+        add(grid);
+    }
+
+    //Methode, um Nachrichten aus Backend zu holen
+    private List<NotificationMessage> getNachrichten(String username) {
+        List<NotificationMessage> nachrichten = new ArrayList<>();
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "http://localhost:3000/api/nachrichten/" + username;
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                JSONArray jsonArray = new JSONArray(response.getBody());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject json = jsonArray.getJSONObject(i);
+                    String nachricht = json.getString("nachricht");
+                    String datum = json.getString("datum");
+                    nachrichten.add(new NotificationMessage(nachricht, datum));
+                }
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler beim Abrufen der Nachrichten: " + e.getMessage());
+        }
+        return nachrichten;
+    }
+    //Methode, um zu überprüfen, ob es ungelesene Nachrichten im Backend gibt
+    private boolean hasUnreadNotifications(String username){
+        boolean hasUnreadNotifications = false;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "http://localhost:3000/api/glocke/" + username;
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                if(response.getBody().equals("Ungelesene vorhanden")){
+                    hasUnreadNotifications = true;
+                }
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler beim Abrufen der Nachrichten: " + e.getMessage());
+        }
+        return hasUnreadNotifications;
+    }
+    //innere Klasse für die Nachrichten
+        public record NotificationMessage(String message, String date) {
+    }
+
+    //Methode zum Anzeigen der eingegangenen Antraege und zum Preview der Antragsinformationen
+    // infomation needed:name, matrnummer, status
+    private List<Praktikumsantrag> fetchAntraegeFromBackend() {
+        List<Praktikumsantrag> antraege = new ArrayList<>();
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "http://localhost:3000/api/antrag/alle";
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                JSONArray jsonArray = new JSONArray(response.getBody());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject json = jsonArray.getJSONObject(i);
+                    String status = json.getString("statusAntrag");
+
+                    // hier nur anträge anzeigen, deren Status nicht "gespeichert" ist
+                    // weil: gespeicherte anträge sind noh nicht abgesendet
+                    if (!"gespeichert".equalsIgnoreCase(status)) {
+                        antraege.add(new Praktikumsantrag(
+                                json.getString("nameStudentin"),
+                                json.getString("matrikelnummer"),
+                                status
+                        ));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler beim Abrufen der Anträge: " + e.getMessage());
+        }
+        return antraege;
+    }
 
 
         add(title, comboBox, badges, grid);
