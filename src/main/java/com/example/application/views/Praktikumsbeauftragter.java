@@ -131,7 +131,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             return anzeigenButton;
         }).setHeader("");
 
-        add(grid);
+        grid.setItems(antraege);
+
+        add(title, comboBox, badges, grid);
     }
 
     //Methode, um Nachrichten aus Backend zu holen
@@ -177,43 +179,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         public record NotificationMessage(String message, String date) {
     }
 
-    //Methode zum Anzeigen der eingegangenen Antraege und zum Preview der Antragsinformationen
-    // infomation needed:name, matrnummer, status
-    private List<Praktikumsantrag> fetchAntraegeFromBackend() {
-        List<Praktikumsantrag> antraege = new ArrayList<>();
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:3000/api/antrag/alle";
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                JSONArray jsonArray = new JSONArray(response.getBody());
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject json = jsonArray.getJSONObject(i);
-                    String status = json.getString("statusAntrag");
-
-                    // hier nur anträge anzeigen, deren Status nicht "gespeichert" ist
-                    // weil: gespeicherte anträge sind noh nicht abgesendet
-                    if (!"gespeichert".equalsIgnoreCase(status)) {
-                        antraege.add(new Praktikumsantrag(
-                                json.getString("nameStudentin"),
-                                json.getString("matrikelnummer"),
-                                status
-                        ));
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Notification.show("Fehler beim Abrufen der Anträge: " + e.getMessage());
-        }
-        return antraege;
-    }
-
-
-        add(title, comboBox, badges, grid);
-        
-    }
-
     private Dialog createLogoutConfirmationDialog() {
         Dialog dialog = new Dialog();
 
@@ -237,12 +202,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         dialog.add(dialogLayout);
 
         return dialog;
-    }
-
-
-
-    private List<String> getNachrichten() {
-        return new ArrayList<>();
     }
 
     private List<Praktikumsantrag> eingegangeneAntraegePreviewListe() {
