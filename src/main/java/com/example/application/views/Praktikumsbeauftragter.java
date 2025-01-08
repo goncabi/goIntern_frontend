@@ -57,14 +57,14 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         ContextMenu notificationMenu = new ContextMenu(notificationBell);
         notificationMenu.setOpenOnClick(true);
 
-        if(hasUnreadNotifications(username)){
-            notificationBell.getElement().getStyle().set("color", "red");
-        }
-
         List<NotificationMessage> nachrichten = getNachrichten(username);
         if (nachrichten.isEmpty()) {
             notificationMenu.addItem("Keine neuen Benachrichtigungen.");
         } else {
+            notificationBell.getElement().getStyle().set("color", "red");
+            notificationMenu.addItem("Alle Nachrichten gelesen?").addClickListener(event -> {
+                nachrichtenLoeschen(username);
+            });
             for (NotificationMessage nachricht : nachrichten) {
                 notificationMenu.addItem(nachricht.date() + " : " + nachricht.message());
             }
@@ -158,25 +158,24 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
         return nachrichten;
     }
-    //Methode, um zu überprüfen, ob es ungelesene Nachrichten im Backend gibt
-    private boolean hasUnreadNotifications(String username){
-        boolean hasUnreadNotifications = false;
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:3000/api/glocke/" + username;
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                if(response.getBody().equals("Ungelesene vorhanden")){
-                    hasUnreadNotifications = true;
-                }
-            }
-        } catch (Exception e) {
-            Notification.show("Fehler beim Abrufen der Nachrichten: " + e.getMessage());
-        }
-        return hasUnreadNotifications;
-    }
     //innere Klasse für die Nachrichten
         public record NotificationMessage(String message, String date) {
+    }
+    //Methode, um Nachrichten zu löschen
+    private void nachrichtenLoeschen(String username) {
+        String url = "http://localhost:3000/api//nachrichtenLoeschen/" + username;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                Notification.show("Nachrichten erfolgreich gelöscht.");
+                UI.getCurrent().getPage().reload();
+            } else {
+                Notification.show("Nachrichten nicht gefunden oder Fehler beim Löschen.");
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler: " + e.getMessage());
+        }
     }
 
     private Dialog createLogoutConfirmationDialog() {
