@@ -323,7 +323,7 @@ public class Praktikumsformular extends Div {
             if(validateAllFields()) {
                 pflichtfeldHinweis.setVisible(false);
                 try {
-                    String json = createJson("EINGEREICHT");
+                    String json = createJson("Antrag eingereicht");
                     sendJsonToBackend(json,
                                       "http://localhost:3000/api/antrag/uebermitteln",
                                       "Antrag erfolgreich eingereicht!");
