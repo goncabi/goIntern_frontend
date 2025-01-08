@@ -84,10 +84,7 @@ public class Praktikumsformular extends Div {
         // Hauptüberschrift
         add(new H1("Praktikumsformular"));
 
-
-
         // Felder initialisieren
-        //matrikelnummer = createTextField("Matrikelnummer *");
         nameStudentin = createTextField("Name der Studentin *");
         vornameStudentin = createTextField("Vorname der Studentin *");
         gebDatumStudentin = createDatePicker("Geburtsdatum *");
@@ -303,14 +300,12 @@ public class Praktikumsformular extends Div {
                 dialog.setHeader("Daten nicht gespeichert");
                 dialog.setText("Möchten Sie die Eingabe wirklich verwerfen?");
                 dialog.setConfirmButton("Ja",
-                                        confirmEvent -> UI.getCurrent()
-                                                          .navigate("antragsuebersicht")); // Übergang Antragsübersicht (Platzhalter)
+                                        confirmEvent -> UI.getCurrent().getPage().setLocation("studentin/startseite"));// Navigiere nach "Startseite"
                 dialog.setCancelButton("Nein",
                                        cancelEvent -> dialog.close());
                 dialog.open();
             } else {
-                UI.getCurrent()
-                  .navigate("antragsuebersicht");
+                UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Startseite"
             }
         });
 
@@ -353,9 +348,8 @@ public class Praktikumsformular extends Div {
                              "20px");
 
         // Hinzufügen aller Container und Buttons
-        add(studentendatenContainer,
+        add(sternchenHinweis, studentendatenContainer,
             praktikumsdatenContainer,
-            sternchenHinweis,
             buttonContainer);
     }
 
