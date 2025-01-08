@@ -232,7 +232,7 @@ public class Startseite extends VerticalLayout {
 
     private String getAntragNotiz(String matrikelnummer) {
 
-        String url = backendUrl + matrikelnummer + "/nachrichten";
+        String url = backendUrl + "nachrichten/" + matrikelnummer;
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
