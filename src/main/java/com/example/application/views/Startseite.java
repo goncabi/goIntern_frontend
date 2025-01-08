@@ -112,12 +112,23 @@ public class Startseite extends VerticalLayout {
         String status = getAntragStatus(matrikelnummer);
         H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
 
-           Button bearbeitenButton = new Button("Bearbeiten", event -> {
-               VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
-               getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-           });
+           Button bearbeitenButton = new Button("Bearbeiten");
+           String statusBearbeiten = getAntragStatus(matrikelnummer); // Obtener el estado directamente
 
-            Button loeschenButton = new Button("Löschen", event -> {
+           // Status "Gespeichert" überprüfen
+           if (!"Gespeichert".equalsIgnoreCase(statusBearbeiten)) {
+               bearbeitenButton.setEnabled(false); // Button abschalten
+               bearbeitenButton.getStyle()
+                               .set("background-color", "#d3d3d3") // Grau
+                               .set("color", "#808080")
+                               .set("cursor", "not-allowed");
+               bearbeitenButton.addClickListener(event -> {
+                   VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikador für Bearbeiten
+                   getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+               });
+           }
+
+           Button loeschenButton = new Button("Löschen", event -> {
             Dialog confirmDialog = new Dialog();
             confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
 
@@ -223,7 +234,16 @@ public class Startseite extends VerticalLayout {
             if (response.getStatusCode().is2xxSuccessful()) {
                 String jsonstring = response.getBody();
                 JSONArray jsonarray = new JSONArray(jsonstring);
-                return jsonarray.optString(0, "Keine Kommentare vorhanden");
+
+                //Wollen hier checken ob das Array ein Eintrag hat:
+                if(jsonarray.length() > 0){ //wenn das Array mindestens ein element hat. Also die länge größer 0 ist, dann hat es eine Nachricht vom PB bekommen.
+
+                    //das was an der 0ten Stelle ist, wollen wir bekommen
+                    JSONObject jsonObject = jsonarray.getJSONObject(0);
+                    String nachricht = jsonObject.getString("nachricht");
+                    return nachricht;
+
+                }
             }
         } catch (Exception e) {
             Notification.show("Fehler beim Abrufen des Kommentars: " + e.getMessage());

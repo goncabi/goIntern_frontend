@@ -207,8 +207,8 @@ public class Praktikumsformular extends Div {
                                  begleitendeLehrVeranstaltungen,
                                  voraussetzendeLeistungsnachweise,
                                  fehlendeLeistungsnachweise,
-                                 datumAntrag,
-                                 ausnahmeZulassung);
+                                 ausnahmeZulassung,
+                                 datumAntrag);
 
         studentendatenContainer.add(studentendatenLayout);
 
@@ -276,6 +276,8 @@ public class Praktikumsformular extends Div {
                                   "http://localhost:3000/api/antrag/speichern",
                                   "Antrag erfolgreich gespeichert!");
                 gespeichert = true; // Daten wurden gespeichert
+                UI.getCurrent().navigate("studentin/startseite"); // Navigiere nach "Startseite"
+
             }
             catch(Exception ex) {
                 Notification.show("Ein Fehler ist aufgetreten: " + ex.getMessage(),
@@ -321,10 +323,11 @@ public class Praktikumsformular extends Div {
             if(validateAllFields()) {
                 pflichtfeldHinweis.setVisible(false);
                 try {
-                    String json = createJson("EINGEREICHT");
+                    String json = createJson("Antrag eingereicht");
                     sendJsonToBackend(json,
                                       "http://localhost:3000/api/antrag/uebermitteln",
                                       "Antrag erfolgreich eingereicht!");
+                    UI.getCurrent().navigate("studentin/startseite"); // Navigiere nach "Startseite"
                 }
                 catch(Exception ex) {
                     Notification.show("Ein Fehler ist aufgetreten: " + ex.getMessage(),
