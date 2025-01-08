@@ -117,14 +117,16 @@ public class Startseite extends VerticalLayout {
            String statusBearbeiten = getAntragStatus(matrikelnummer);
 
            // Status "Gespeichert" überprüfen
-           if (!"Gespeichert".equalsIgnoreCase(statusBearbeiten)) {
-               bearbeitenButton.setEnabled(false); // Button abschalten
+           bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(statusBearbeiten));
+
+           if (!bearbeitenButton.isEnabled()) {
                bearbeitenButton.getStyle()
                                .set("background-color", "#d3d3d3") // Grau
                                .set("color", "#808080")
                                .set("cursor", "not-allowed");
+           } else {
                bearbeitenButton.addClickListener(event -> {
-                   VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikador für Bearbeiten
+                   VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
                    getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
                });
            }
