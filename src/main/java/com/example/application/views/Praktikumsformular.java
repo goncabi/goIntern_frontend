@@ -327,7 +327,7 @@ public class Praktikumsformular extends Div {
                     sendJsonToBackend(json,
                                       "http://localhost:3000/api/antrag/uebermitteln",
                                       "Antrag erfolgreich eingereicht!");
-                    UI.getCurrent().navigate("studentin/startseite"); // Navigiere nach "Startseite"
+                    UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Startseite"
                 }
                 catch(Exception ex) {
                     Notification.show("Ein Fehler ist aufgetreten: " + ex.getMessage(),

@@ -1,6 +1,7 @@
 package com.example.application.views;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -113,7 +114,7 @@ public class Startseite extends VerticalLayout {
         H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
 
            Button bearbeitenButton = new Button("Bearbeiten");
-           String statusBearbeiten = getAntragStatus(matrikelnummer); // Obtener el estado directamente
+           String statusBearbeiten = getAntragStatus(matrikelnummer);
 
            // Status "Gespeichert" überprüfen
            if (!"Gespeichert".equalsIgnoreCase(statusBearbeiten)) {
@@ -136,6 +137,7 @@ public class Startseite extends VerticalLayout {
                 loeschenAntrag(matrikelnummer); // hier noch hargecoded. Da muss eine Variable hin und das geht erst wenn sich eingeloggt und die Backend-Frontend-Anbindung fuer Login implementiert wurde.
                 confirmDialog.close();
                 Notification.show("Antrag gelöscht.");
+                UI.getCurrent().getPage().reload(); //Seite neu laden nach löschen
             });
 
             Button neinButton = new Button("Nein", e -> confirmDialog.close());
