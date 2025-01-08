@@ -3,6 +3,7 @@ package com.example.application.views;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -264,7 +265,7 @@ public class Praktikumsformular extends Div {
         pflichtfeldHinweis.setVisible(false);
 
         Button speichernButton = new Button("Speichern");
-        speichernButton.addClassName("speichern-button");
+        speichernButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
 
         speichernButton.addClickListener(e -> {
             try {
@@ -285,14 +286,14 @@ public class Praktikumsformular extends Div {
 
 
         Button absendenButton = new Button("Absenden");
-        absendenButton.addClassName("button");
-        absendenButton.addClassName("absenden-button");
+        absendenButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
+                                        ButtonVariant.LUMO_SUCCESS);
+
 
 
         // Abbrechen Button
         Button abbrechenButton = new Button("Abbrechen");
-        abbrechenButton.addClassName("button");
-        abbrechenButton.addClassName("abbrechen-button");
+        abbrechenButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         abbrechenButton.addClickListener(e -> {
 
             if(!gespeichert) {
