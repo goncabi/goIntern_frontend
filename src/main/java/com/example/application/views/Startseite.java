@@ -114,10 +114,9 @@ public class Startseite extends VerticalLayout {
         H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
 
            Button bearbeitenButton = new Button("Bearbeiten");
-           String statusBearbeiten = getAntragStatus(matrikelnummer);
 
-           // Status "Gespeichert" überprüfen
-           bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(statusBearbeiten));
+           // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
+           bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
 
            if (!bearbeitenButton.isEnabled()) {
                bearbeitenButton.getStyle()
@@ -131,7 +130,7 @@ public class Startseite extends VerticalLayout {
                });
            }
 
-           Button loeschenButton = new Button("Löschen", event -> {
+            Button loeschenButton = new Button("Löschen", event -> {
             Dialog confirmDialog = new Dialog();
             confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
 
@@ -143,7 +142,7 @@ public class Startseite extends VerticalLayout {
             });
 
             Button neinButton = new Button("Nein", e -> confirmDialog.close());
-            confirmDialog.add(new HorizontalLayout(jaButton, neinButton));
+            confirmDialog.add(new HorizontalLayout(neinButton, jaButton));
             confirmDialog.open();
         });
 
