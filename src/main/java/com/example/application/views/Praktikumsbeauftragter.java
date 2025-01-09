@@ -202,6 +202,13 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         // Nachricht
         H1 message = new H1("Möchten Sie sich wirklich ausloggen?");
 
+        // Hinweisnotiz
+        Span hinweis = new Span("Sicherheitshinweis: Bitte denken Sie daran, den Tab zu schließen, nachdem Sie sich ausgeloggt haben.");
+        hinweis.getStyle()
+                .set("color", "gray") // Graue Schriftfarbe
+                .set("font-size", "medium") // Kleinere Schriftgröße
+                .set("margin-top", "20px"); // Etwas Abstand nach oben
+
         // Buttons
         Button yesButton = new Button("Ja", event -> {
             dialog.close();
@@ -211,11 +218,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         Button cancelButton = new Button("Abbrechen", event -> dialog.close());
 
         // Layout für die Buttons
-        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
+        HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
         buttons.setWidthFull();
         buttons.setJustifyContentMode(JustifyContentMode.BETWEEN);
 
-        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
+        VerticalLayout dialogLayout = new VerticalLayout(message, hinweis, buttons);
         dialog.add(dialogLayout);
 
         return dialog;

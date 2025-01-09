@@ -65,7 +65,15 @@ public class Startseite extends VerticalLayout {
 
     private Dialog createLogoutConfirmationDialog() {
         Dialog dialog = new Dialog();
-        Span message = new Span("Möchten Sie sich wirklich ausloggen?");
+        H1 message= new H1("Möchten Sie sich wirklich ausloggen?");
+
+        // Hinweisnotiz
+        Span hinweis = new Span("Sicherheitshinweis: Bitte denk daran, den Tab zu schließen, nachdem du dich ausgeloggt hast.");
+        hinweis.getStyle()
+                .set("color", "gray") // Graue Schriftfarbe
+                .set("font-size", "medium") // Kleinere Schriftgröße
+                .set("margin-top", "20px"); // Etwas Abstand nach oben
+
         Button yesButton = new Button("Ja", event -> {
             dialog.close();
             // navigiert zur Login-Seite
@@ -74,9 +82,9 @@ public class Startseite extends VerticalLayout {
 
         Button cancelButton = new Button("Abbrechen", event -> dialog.close());
 
-        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
+        HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
         buttons.setSpacing(true);
-        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
+        VerticalLayout dialogLayout = new VerticalLayout(message, hinweis, buttons);
         dialogLayout.setSpacing(true);
         dialog.add(dialogLayout);
 
