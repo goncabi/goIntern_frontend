@@ -4,16 +4,13 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -44,25 +41,19 @@ public class Praktikumsformular extends Div {
     private  TextField nameStudentin;
     private  TextField vornameStudentin;
     private  DatePicker gebDatumStudentin;
-    private  TextField strasseStudentin;
-    private  NumberField hausnummerStudentin;
+    private  TextField adresseStudentin;
     private  NumberField plzStudentin;
     private  TextField ortStudentin;
+    private  TextField bundesland;
     private  TextField telefonnummerStudentin;
     private  EmailField emailStudentin;
     private  TextField vorschlagPraktikumsbetreuerIn;
     private  TextField praktikumssemester;
     private  NumberField studiensemester;
     private  TextField studiengang;
-    private  TextArea begleitendeLehrVeranstaltungen;
-
-    // Zusatzinformationen
-    private  Checkbox voraussetzendeLeistungsnachweise;
-    private  TextArea fehlendeLeistungsnachweise;
-    private  Checkbox ausnahmeZulassung;
     private  DatePicker datumAntrag;
-
-    // Praktikumsdaten
+    //praktikumsdaten
+    private  RadioButtonGroup<String> auslandspraktikumsOptionen;
     private  TextField namePraktikumsstelle;
     private  TextField strassePraktikumsstelle;
     private  NumberField plzPraktikumsstelle;
@@ -89,8 +80,7 @@ public class Praktikumsformular extends Div {
         nameStudentin = createTextField("Name der Studentin *");
         vornameStudentin = createTextField("Vorname der Studentin *");
         gebDatumStudentin = createDatePicker("Geburtsdatum *");
-        strasseStudentin = createTextField("Straße der Studentin *");
-        hausnummerStudentin = createNumberField("Hausnummer der Studentin *");
+        adresseStudentin = createTextField("Straße und Hausnummer der Studentin *");
         plzStudentin = createNumberField("Postleitzahl der Studentin *");
         ortStudentin = createTextField("Ort der Studentin *");
         telefonnummerStudentin = createTextField("Telefonnummer der Studentin *");
@@ -99,17 +89,21 @@ public class Praktikumsformular extends Div {
         praktikumssemester = createTextField("Praktikumssemester (SoSe / WS) *");
         studiensemester = createNumberField("Studiensemester *");
         studiengang = createTextField("Studiengang *");
-        begleitendeLehrVeranstaltungen = createTextArea("Begleitende Lehrveranstaltungen *");
 
-        voraussetzendeLeistungsnachweise = new Checkbox("Voraussetzende Leistungsnachweise *");
-        fehlendeLeistungsnachweise = createTextArea("Fehlende Leistungsnachweise *");
-        ausnahmeZulassung = new Checkbox("Antrag auf Ausnahmezulassung *");
+
         datumAntrag = createDatePicker("Datum des Antrags *");
+        // Checkbox-Feld für Auslandspraktikum
+        auslandspraktikumsOptionen = new RadioButtonGroup<>();
+        auslandspraktikumsOptionen.setLabel("Ich mache mein Praktikum im Ausland");
+        auslandspraktikumsOptionen.setItems("Ja", "Nein");
+        auslandspraktikumsOptionen.setValue("Nein"); // default
+        add(auslandspraktikumsOptionen);
 
         namePraktikumsstelle = createTextField("Name der Praktikumsstelle *");
         strassePraktikumsstelle = createTextField("Straße der Praktikumsstelle *");
         plzPraktikumsstelle = createNumberField("Postleitzahl der Praktikumsstelle *");
         ortPraktikumsstelle = createTextField("Ort der Praktikumsstelle *");
+        bundesland = createTextField("Bundesland der Praktikumstelle*");
         landPraktikumsstelle = createTextField("Land der Praktikumsstelle *");
         ansprechpartnerPraktikumsstelle = createTextField("Ansprechpartner der Praktikumsstelle *");
         telefonPraktikumsstelle = createTextField("Telefon der Praktikumsstelle *");
@@ -156,31 +150,12 @@ public class Praktikumsformular extends Div {
             }
         }
 
-
-
-        // Container für Studentendaten
-        Div studentendatenContainer = new Div();
-        studentendatenContainer.getStyle()
-                               .set("padding",
-                                    "20px");
-        studentendatenContainer.getStyle()
-                               .set("border",
-                                    "1px solid #ccc");
-        studentendatenContainer.getStyle()
-                               .set("border-radius",
-                                    "8px");
-        studentendatenContainer.getStyle()
-                               .set("margin-bottom",
-                                    "20px");
-        studentendatenContainer.getStyle()
-                               .set("background-color",
-                                    "#f9f9f9");
-
-
-        // Layout für Studentendaten
         FormLayout studentendatenLayout = new FormLayout();
         H2 studentendatenHeader = new H2("Studentendaten");
         studentendatenLayout.add(studentendatenHeader);
+
+
+
 
         // Layout für Studentendaten konfigurieren
         studentendatenLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0",
@@ -192,8 +167,7 @@ public class Praktikumsformular extends Div {
                                  nameStudentin,
                                  vornameStudentin,
                                  gebDatumStudentin,
-                                 strasseStudentin,
-                                 hausnummerStudentin,
+                                 adresseStudentin,
                                  plzStudentin,
                                  ortStudentin,
                                  telefonnummerStudentin,
@@ -202,13 +176,34 @@ public class Praktikumsformular extends Div {
                                  praktikumssemester,
                                  studiensemester,
                                  studiengang,
-                                 begleitendeLehrVeranstaltungen,
-                                 voraussetzendeLeistungsnachweise,
-                                 fehlendeLeistungsnachweise,
-                                 ausnahmeZulassung,
                                  datumAntrag);
+        Div studentendatenContainer = new Div(studentendatenLayout);
+        // Container für Studentendaten
+
+        studentendatenContainer.getStyle()
+                .set("padding",
+                        "20px");
+        studentendatenContainer.getStyle()
+                .set("border",
+                        "1px solid #ccc");
+        studentendatenContainer.getStyle()
+                .set("border-radius",
+                        "8px");
+        studentendatenContainer.getStyle()
+                .set("margin-bottom",
+                        "20px");
+        studentendatenContainer.getStyle()
+                .set("background-color",
+                        "#f9f9f9");
+
+
+        // Layout für Studentendaten
 
         studentendatenContainer.add(studentendatenLayout);
+        // Hinzufügen zum Formular
+        add(studentendatenContainer);
+
+
 
         // Container für Praktikumsdaten
         Div praktikumsdatenContainer = new Div();
@@ -235,10 +230,12 @@ public class Praktikumsformular extends Div {
                                                                                1)
                                                  // 1 Spalte auf allen Bildschirmgrößen
         );
-        praktikumsdatenLayout.add(namePraktikumsstelle,
+        praktikumsdatenLayout.add(auslandspraktikumsOptionen,
+                                  namePraktikumsstelle,
                                   strassePraktikumsstelle,
                                   plzPraktikumsstelle,
                                   ortPraktikumsstelle,
+                                  bundesland,
                                   landPraktikumsstelle,
                                   ansprechpartnerPraktikumsstelle,
                                   telefonPraktikumsstelle,
@@ -269,7 +266,7 @@ public class Praktikumsformular extends Div {
 
         speichernButton.addClickListener(e -> {
             try {
-                String json = createJson("GESPEICHERT");
+                String json = createJson("Gespeichert");
                 sendJsonToBackend(json,
                                   "http://localhost:3000/api/antrag/speichern",
                                   "Antrag erfolgreich gespeichert!");
@@ -353,6 +350,17 @@ public class Praktikumsformular extends Div {
             praktikumsdatenContainer,
             buttonContainer);
     }
+    private boolean validateField(RadioButtonGroup<String> group) {
+        if (group.isEmpty()) {
+            group.addClassName("mandatory-field"); // Agrega estilo para resaltar
+            Notification.show("Bitte wählen Sie eine Option für: " + group.getLabel(),
+                    3000, Notification.Position.MIDDLE);
+            return false;
+        }
+        group.removeClassName("mandatory-field"); // Limpia el estilo si es válido
+        return true;
+    }
+
 
     private boolean validateAllFields() {
         boolean isValid = true;
@@ -362,8 +370,7 @@ public class Praktikumsformular extends Div {
         isValid &= validateField(nameStudentin);
         isValid &= validateField(vornameStudentin);
         isValid &= validateField(gebDatumStudentin);
-        isValid &= validateField(strasseStudentin);
-        isValid &= validateField(hausnummerStudentin);
+        isValid &= validateField(adresseStudentin);
         isValid &= validateField(plzStudentin);
         isValid &= validateField(ortStudentin);
         isValid &= validateField(telefonnummerStudentin);
@@ -373,12 +380,14 @@ public class Praktikumsformular extends Div {
         isValid &= validateField(studiensemester);
         isValid &= validateField(studiengang);
         isValid &= validateField(datumAntrag);
-
+        // checkbox validieren
+        isValid &= validateField(auslandspraktikumsOptionen);
         // Praktikumsdaten validieren
         isValid &= validateField(namePraktikumsstelle);
         isValid &= validateField(strassePraktikumsstelle);
         isValid &= validateField(plzPraktikumsstelle);
         isValid &= validateField(ortPraktikumsstelle);
+        isValid &= validateField(bundesland);
         isValid &= validateField(landPraktikumsstelle);
         isValid &= validateField(ansprechpartnerPraktikumsstelle);
         isValid &= validateField(telefonPraktikumsstelle);
@@ -467,29 +476,47 @@ public class Praktikumsformular extends Div {
         return field.getValue() != null ? field.getValue()
                                                .toString() : "";
     }
+    private String getValue(RadioButtonGroup<String> group) {
+        return group.getValue() != null ? group.getValue() : "";
+    }
 
 
     private String createJson(String statusAntrag) {
         return String.format(
-                "{" + "\"matrikelnummer\": \"%s\"," + "\"nameStudentin\": \"%s\"," + "\"vornameStudentin\": \"%s\"," +
-                "\"gebDatumStudentin\": \"%s\"," + "\"strasseStudentin\": \"%s\"," + "\"hausnummerStudentin\": %d," +
-                "\"plzStudentin\": %d," + "\"ortStudentin\": \"%s\"," + "\"telefonnummerStudentin\": \"%s\"," +
-                "\"emailStudentin\": \"%s\"," + "\"vorschlagPraktikumsbetreuerIn\": \"%s\"," +
-                "\"praktikumssemester\": \"%s\"," + "\"studiensemester\": %d," + "\"studiengang\": \"%s\"," +
-                "\"begleitendeLehrVeranstaltungen\": \"%s\"," + "\"voraussetzendeLeistungsnachweise\": %b," +
-                "\"fehlendeLeistungsnachweise\": \"%s\"," + "\"ausnahmeZulassung\": %b," + "\"datumAntrag\": \"%s\"," +
-                "\"namePraktikumsstelle\": \"%s\"," + "\"strassePraktikumsstelle\": \"%s\"," +
-                "\"plzPraktikumsstelle\": %d," + "\"ortPraktikumsstelle\": \"%s\"," +
-                "\"landPraktikumsstelle\": \"%s\"," + "\"ansprechpartnerPraktikumsstelle\": \"%s\"," +
-                "\"telefonPraktikumsstelle\": \"%s\"," + "\"emailPraktikumsstelle\": \"%s\"," +
-                "\"abteilung\": \"%s\"," + "\"taetigkeit\": \"%s\"," + "\"startdatum\": \"%s\"," +
-                "\"enddatum\": \"%s\"," + "\"statusAntrag\": \"%s\"" + "}",
+                "{" + "\"matrikelnummer\": \"%s\"," +
+                        "\"nameStudentin\": \"%s\"," +
+                        "\"vornameStudentin\": \"%s\"," +
+                "\"gebDatumStudentin\": \"%s\"," +
+                        "\"adresseStudentin\": \"%s\"," +
+                "\"plzStudentin\": %d," +
+                        "\"ortStudentin\": \"%s\"," +
+                        "\"telefonnummerStudentin\": \"%s\"," +
+                "\"emailStudentin\": \"%s\"," +
+                        "\"vorschlagPraktikumsbetreuerIn\": \"%s\"," +
+                "\"praktikumssemester\": \"%s\"," +
+                        "\"studiensemester\": %d," +
+                        "\"studiengang\": \"%s\"," +
+                        "\"datumAntrag\": \"%s\"," +
+                        "\"auslandspraktikum\": \"%b\"," + // auslandspraktikum hinzugefügt
+                        "\"namePraktikumsstelle\": \"%s\"," +
+                        "\"strassePraktikumsstelle\": \"%s\"," +
+                "\"plzPraktikumsstelle\": %d," +
+                        "\"ortPraktikumsstelle\": \"%s\"," +
+                        "\"bundesland\": \"%s\"," + //  bundesland hinzugfügt
+                        "\"landPraktikumsstelle\": \"%s\"," +
+                        "\"ansprechpartnerPraktikumsstelle\": \"%s\"," +
+                "\"telefonPraktikumsstelle\": \"%s\"," +
+                        "\"emailPraktikumsstelle\": \"%s\"," +
+                "\"abteilung\": \"%s\"," +
+                        "\"taetigkeit\": \"%s\"," +
+                        "\"startdatum\": \"%s\"," +
+                "\"enddatum\": \"%s\"," +
+                        "\"statusAntrag\": \"%s\"" + "}",
                 getValue(matrikelnummer),
                 getValue(nameStudentin),
                 getValue(vornameStudentin),
                 getValue(gebDatumStudentin),
-                getValue(strasseStudentin),
-                getIntValue(hausnummerStudentin),
+                getValue(adresseStudentin),
                 getIntValue(plzStudentin),
                 getValue(ortStudentin),
                 getValue(telefonnummerStudentin),
@@ -498,15 +525,13 @@ public class Praktikumsformular extends Div {
                 getValue(praktikumssemester),
                 getIntValue(studiensemester),
                 getValue(studiengang),
-                getValue(begleitendeLehrVeranstaltungen),
-                voraussetzendeLeistungsnachweise.getValue(),
-                getValue(fehlendeLeistungsnachweise),
-                ausnahmeZulassung.getValue(),
                 getValue(datumAntrag),
+                getValue(auslandspraktikumsOptionen).equals("Ja"),
                 getValue(namePraktikumsstelle),
                 getValue(strassePraktikumsstelle),
                 getIntValue(plzPraktikumsstelle),
                 getValue(ortPraktikumsstelle),
+                getValue(bundesland),
                 getValue(landPraktikumsstelle),
                 getValue(ansprechpartnerPraktikumsstelle),
                 getValue(telefonPraktikumsstelle),
@@ -569,8 +594,7 @@ public class Praktikumsformular extends Div {
             nameStudentin.setValue(antragJson.optString("nameStudentin", ""));
             vornameStudentin.setValue(antragJson.optString("vornameStudentin", ""));
             gebDatumStudentin.setValue(LocalDate.parse(antragJson.optString("gebDatumStudentin", "1970-01-01")));
-            strasseStudentin.setValue(antragJson.optString("strasseStudentin", ""));
-            hausnummerStudentin.setValue(antragJson.optDouble("hausnummerStudentin", 0.0));
+            adresseStudentin.setValue(antragJson.optString("strasseStudentin", ""));
             plzStudentin.setValue(antragJson.optDouble("plzStudentin", 0.0));
             ortStudentin.setValue(antragJson.optString("ortStudentin", ""));
             telefonnummerStudentin.setValue(antragJson.optString("telefonnummerStudentin", ""));
@@ -579,19 +603,15 @@ public class Praktikumsformular extends Div {
             praktikumssemester.setValue(antragJson.optString("praktikumssemester", ""));
             studiensemester.setValue(antragJson.optDouble("studiensemester", 0.0));
             studiengang.setValue(antragJson.optString("studiengang", ""));
-            begleitendeLehrVeranstaltungen.setValue(antragJson.optString("begleitendeLehrVeranstaltungen", ""));
-
-            // Zusatzinformationen
-            voraussetzendeLeistungsnachweise.setValue(antragJson.optBoolean("voraussetzendeLeistungsnachweise", false));
-            fehlendeLeistungsnachweise.setValue(antragJson.optString("fehlendeLeistungsnachweise", ""));
-            ausnahmeZulassung.setValue(antragJson.optBoolean("ausnahmeZulassung", false));
             datumAntrag.setValue(LocalDate.parse(antragJson.optString("datumAntrag", "1970-01-01")));
-
-            // Praktikumsdaten
+            // Checkbox Auslandpraktikum
+            boolean auslandspraktikumValue = antragJson.optBoolean("auslandspraktikum", false);
+            auslandspraktikumsOptionen.setValue(auslandspraktikumValue ? "Ja" : "Nein");
             namePraktikumsstelle.setValue(antragJson.optString("namePraktikumsstelle", ""));
             strassePraktikumsstelle.setValue(antragJson.optString("strassePraktikumsstelle", ""));
             plzPraktikumsstelle.setValue(antragJson.optDouble("plzPraktikumsstelle", 0.0));
             ortPraktikumsstelle.setValue(antragJson.optString("ortPraktikumsstelle", ""));
+            bundesland.setValue(antragJson.optString("bundesland", ""));
             landPraktikumsstelle.setValue(antragJson.optString("landPraktikumsstelle", ""));
             ansprechpartnerPraktikumsstelle.setValue(antragJson.optString("ansprechpartnerPraktikumsstelle", ""));
             telefonPraktikumsstelle.setValue(antragJson.optString("telefonPraktikumsstelle", ""));
