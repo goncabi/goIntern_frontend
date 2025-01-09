@@ -195,13 +195,51 @@ public class Startseite extends VerticalLayout {
             Notification.show("Fehler: " + e.getMessage());
         }
     }
+
+    //Dialog Bestätigung Leistungspunkte
+    private void createConfirmationPopup() {
+        // Popup-Fenster erstellen
+        Dialog popup = new Dialog();
+
+        // Nachricht im Popup
+        Span message = new Span("Hiermit bestätige ich, dass ich Module im Umfang von 60 Leistungspunkten absolviert habe.");
+
+        // Ja-Button
+        Button jaButton = new Button("Ja", event -> {
+            popup.close();
+            VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
+            getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+        });
+        jaButton.getStyle()
+                .set("margin-left", "auto")
+                .set("background-color", "#007bff")
+                .set("color", "white");
+
+        // Nein-Button
+        Button neinButton = new Button("Nein", event -> popup.close());
+
+        // Button-Layout erstellen
+        HorizontalLayout buttonLayout = new HorizontalLayout(neinButton, jaButton);
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        buttonLayout.setSpacing(true);
+
+        // Popup-Inhalt
+        VerticalLayout popupLayout = new VerticalLayout(message, buttonLayout);
+        popupLayout.setPadding(true);
+        popupLayout.setSpacing(true);
+
+        popup.add(popupLayout);
+        popup.open();
+    }
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
 
         H2 title = new H2("Willkommen auf der Startseite!");
+
+        // Button "Neuen Antrag erstellen" mit Popup-Verknüpfung
         Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
-            VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
-            getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+            createConfirmationPopup();
         });
         Span hintLabel = new Span("Hinweis: Ein Antrag kann nur einmal erstellt werden.");
 
@@ -209,7 +247,10 @@ public class Startseite extends VerticalLayout {
         return layout;
     }
 
-     // Anbindung zum Backend
+
+
+
+    // Anbindung zum Backend
     //Erklärung: Die Methode getAntragStatus returnt einen String.
     //Im Backend haben die Controller den Endpunkt getAntrag() und da wird ein Praktikumsantrag zurückgegeben und dann ein JSONString gemacht.
     // In der Methode getAntragStatus möchte ich ja nur den Status sehen
