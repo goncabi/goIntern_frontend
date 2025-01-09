@@ -17,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.json.JSONArray;
@@ -89,18 +90,35 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         add(header);
 
 
-
         // ComboBox für Statusfilter
         ComboBox<String> comboBox = new ComboBox<>("Nach Status filtern");
-        comboBox.setItems("Gespeichert", "Antrag eingereicht", "In Bearbeitung", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
+        comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
         comboBox.getStyle().set("width", "250px");
+
+        // Renderer für individuelles Styling
+        comboBox.setRenderer(new ComponentRenderer<>(item -> {
+            Span span = new Span(item);
+            if ("alle Anträge anzeigen".equals(item)) {
+                span.getStyle()
+                        .set("color", "steelblue")
+                        .set("font-weight", "bold");
+            }
+            return span;
+        }));
         comboBox.addValueChangeListener(e -> {
             if (e.getValue() != null) {
-                //hier verhindern, dass zwei status gleichzeitig gesucht werden können
-                badges.removeAll(); // Alle existierenden Badges entfernen
-                Span filterBadge = createFilterBadge(e.getValue()); // Neuen Badge erstellen
-                badges.add(filterBadge);
-                filterGridByStatus(e.getValue());
+                String selectedValue = e.getValue();
+                // Falls "alle anzeigen" gewählt wurde
+                if ("alle Anträge anzeigen".equals(selectedValue)) {
+                    badges.removeAll(); // Alle Badges entfernen
+                    grid.setItems(antraege); // alle anträge wieder laden
+                } else {
+                    //hier verhindern, dass zwei status gleichzeitig gesucht werden können
+                    badges.removeAll(); // Alle existierenden Badges entfernen
+                    Span filterBadge = createFilterBadge(e.getValue()); // Neuen Badge erstellen
+                    badges.add(filterBadge);
+                    filterGridByStatus(e.getValue());
+                }
             }
 
         });
@@ -456,9 +474,23 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     }
 
     private void filterGridByStatus(String status) {
-        List<Praktikumsantrag> filteredItems = antraege.stream()
-                                                       .filter(antrag -> antrag.getStatus().equalsIgnoreCase(status))
-                                                       .toList();
+        List<Praktikumsantrag> filteredItems;
+
+        if ("alle anzeigen".equals(status)) {
+            // Alle Anträge anzeigen
+            filteredItems = antraege;
+        } else {
+            // Status filtern, inklusive "Antrag offen"
+            filteredItems = antraege.stream()
+                    .filter(antrag -> {
+                        if ("Antrag offen".equals(status)) {
+                            return "Antrag eingereicht".equalsIgnoreCase(antrag.getStatus());
+                        } else {
+                            return antrag.getStatus().equalsIgnoreCase(status);
+                        }
+                    })
+                    .toList();
+        }
 
         grid.setItems(filteredItems);
 
@@ -467,28 +499,30 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
+
     private Span createStatusBadge(String status) {
         String theme;
 
+        // Status für Frontend anpassen: "offen" bei PB, bei Studentin "eingereicht"
+        if ("Antrag eingereicht".equals(status)) {
+            status = "Antrag offen";
+        }
+
         switch (status) {
-            case "Gespeichert":
-                theme = "badge contrast pill";
-                break;
-            case "Antrag eingereicht":
+            case "Antrag offen":
                 theme = "badge primary pill";
-                break;
-            case "In Bearbeitung":
-                theme = "badge contrast pill";
                 break;
             case "Abgelehnt":
                 theme = "badge error pill";
                 break;
             case "Zugelassen":
-            case "Absolviert":
                 theme = "badge success pill";
                 break;
             case "Derzeit im Praktikum":
                 theme = "badge pill";
+                break;
+            case "Absolviert":
+                theme = "badge light pill";
                 break;
             default:
                 theme = "badge";
