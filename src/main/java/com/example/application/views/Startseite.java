@@ -196,7 +196,7 @@ public class Startseite extends VerticalLayout {
         }
     }
 
-    //Dialog Bestätigung Leistungspunkte
+    //Dialog-Popup  Bestätigung ob man alle Leistungspunkte hat
     private void createConfirmationPopup() {
         // Popup-Fenster erstellen
         Dialog popup = new Dialog();
