@@ -291,8 +291,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("nameStudentin")), "Name:");
                 formLayout.addFormItem(new Span(json.getString("vornameStudentin")), "Vorname:");
                 formLayout.addFormItem(new Span(json.getString("gebDatumStudentin")), "Geburtsdatum:");
-                formLayout.addFormItem(new Span(json.getString("strasseStudentin")), "Straße:");
-                formLayout.addFormItem(new Span(json.getString("hausnummerStudentin")), "Hausnummer:");
+                formLayout.addFormItem(new Span(json.getString("strasseStudentin") + " " + json.getString("hausnummerStudentin")), "Straße und Hausnummer:");
                 formLayout.addFormItem(new Span(json.getString("plzStudentin")), "Postleitzahl:");
                 formLayout.addFormItem(new Span(json.getString("ortStudentin")), "Ort:");
                 formLayout.addFormItem(new Span(json.getString("telefonnummerStudentin")), "Telefonnummer:");
