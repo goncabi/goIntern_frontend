@@ -29,6 +29,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,6 +231,17 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return dialog;
     }
 
+    //methode zum formatieren der daten
+    private String formatDate(String isoDate) {
+        try {
+            LocalDate date = LocalDate.parse(isoDate); // ISO-Format (yyyy-MM-dd)
+            return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")); // Deutsches Format
+        } catch (DateTimeParseException e) {
+            return isoDate; // Fallback: ist originalwert, damit bei kommunikation mit backend alles klaüüt
+        }
+    }
+
+
     private List<Praktikumsantrag> eingegangeneAntraegePreviewListe() {
         List<Praktikumsantrag> antraege = new ArrayList<>();
         try {
@@ -291,13 +305,14 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 );
 
 
+
                 formLayout.getElement().getStyle().set("--vaadin-form-item-label-width", "300px");
 
 
                 formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:");
                 formLayout.addFormItem(new Span(json.getString("nameStudentin")), "Name:");
                 formLayout.addFormItem(new Span(json.getString("vornameStudentin")), "Vorname:");
-                formLayout.addFormItem(new Span(json.getString("gebDatumStudentin")), "Geburtsdatum:");
+                formLayout.addFormItem(new Span(formatDate(json.getString("gebDatumStudentin"))), "Geburtsdatum:");
                 formLayout.addFormItem(new Span(json.getString("strasseStudentin") + " " + json.getString("hausnummerStudentin")), "Straße und Hausnummer:");
                 formLayout.addFormItem(new Span(json.getString("plzStudentin")), "Postleitzahl:");
                 formLayout.addFormItem(new Span(json.getString("ortStudentin")), "Ort:");
@@ -311,7 +326,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("voraussetzendeLeistungsnachweise")), "Vorraussetzende Leistungsnachweise:");
                 formLayout.addFormItem(new Span(json.getString("fehlendeLeistungsnachweise")), "Fehlende Leistungsnachweise:");
                 formLayout.addFormItem(new Span(json.getString("ausnahmeZulassung")), "Antrag auf Ausnahmezulassung:");
-                formLayout.addFormItem(new Span(json.getString("datumAntrag")), "Datum des Antrags:");
+                formLayout.addFormItem(new Span(formatDate(json.getString("datumAntrag"))), "Datum des Antrags:");
                 formLayout.addFormItem(new Span(json.getString("namePraktikumsstelle")), "Name der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("strassePraktikumsstelle")), "Straße der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("plzPraktikumsstelle")), "Postleitzahl der Praktikumsstelle:");
@@ -322,8 +337,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("emailPraktikumsstelle")), "E-Mail-Adresse der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("abteilung")), "Abteilung:");
                 formLayout.addFormItem(new Span(json.getString("taetigkeit")), "Tätigkeit als Praktikant*in:");
-                formLayout.addFormItem(new Span(json.getString("startdatum")), "Startdatum des Praktikums:");
-                formLayout.addFormItem(new Span(json.getString("enddatum")), "Startdatum des Praktikums:");
+                formLayout.addFormItem(new Span(formatDate(json.getString("startdatum"))), "Startdatum des Praktikums:");
+                formLayout.addFormItem(new Span(formatDate(json.getString("enddatum"))), "Enddatum des Praktikums:");
 
                 Button abbrechen = new Button("Abbrechen", event -> dialog.close());
 

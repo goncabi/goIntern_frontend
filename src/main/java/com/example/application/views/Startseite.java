@@ -19,6 +19,12 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 @Route("studentin/startseite")
 @PageTitle("Startseite")
 
@@ -223,19 +229,43 @@ public class Startseite extends VerticalLayout {
     // In der Methode getAntragStatus möchte ich ja nur den Status sehen
     // deswegen wird von dem JSON String nur das entsprechende Feld zum key statusAntrag dann ausgegeben.
     private String getAntragStatus(String matrikelnummer) {
-        String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
+        // Schritt 1: Status im Backend aktualisieren
+        String updateUrl = backendUrl + "antrag/updateStatus/" + matrikelnummer;
         try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(updateUrl))
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+            HttpResponse<String> updateResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (updateResponse.statusCode() == 200) {
+                Notification.show("Status erfolgreich aktualisiert.", 3000, Notification.Position.TOP_CENTER);
+            } else {
+                Notification.show("Fehler beim Aktualisieren des Status: " + updateResponse.body(), 3000, Notification.Position.TOP_CENTER);
+            }
+        } catch (IOException | InterruptedException e) {
+            Notification.show("Fehler beim Aktualisieren des Status: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            return "Fehler";
+        }
+
+        // Schritt 2: Den aktuellen Status aus dem Backend abrufen
+        String statusUrl = backendUrl + "antrag/getantrag/" + matrikelnummer;
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(statusUrl, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 String jsonstring = response.getBody();
-                JSONObject jsonobjekt = new JSONObject(jsonstring); // hier haben wir den jasonstring in das jsonobjekt reingetan
-                return jsonobjekt.getString("statusAntrag"); // an dem jsonObjekt wird die getString Methode mit dem key statusAntrag aufgerufen.
+                JSONObject jsonobjekt = new JSONObject(jsonstring);
+                return jsonobjekt.getString("statusAntrag");
             }
         } catch (Exception e) {
-            Notification.show("Fehler: " + e.getMessage());
+            Notification.show("Fehler beim Abrufen des Status: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
         }
+
         return "nicht gefunden";
     }
+
 
     private String getAntragNotiz(String matrikelnummer) {
 
