@@ -111,7 +111,7 @@ public class Startseite extends VerticalLayout {
     }
 
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
-       private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
+    private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle()
                 .set("border", "1px solid #ccc")
@@ -124,53 +124,66 @@ public class Startseite extends VerticalLayout {
 
         H2 heading = new H2("Mein Antrag");
         String status = getAntragStatus(matrikelnummer);
-        H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
+        H3 statusLabel = new H3("Status: " + status);
 
-           Button bearbeitenButton = new Button("Bearbeiten");
+        // Bearbeiten-Button
+        Button bearbeitenButton = new Button("Bearbeiten");
 
-           // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
-           bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
+        // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann ist Bearbeitung erlaubt
+        bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
 
-           if (!bearbeitenButton.isEnabled()) {
-               bearbeitenButton.getStyle()
-                               .set("background-color", "#d3d3d3") // Grau
-                               .set("color", "#808080")
-                               .set("cursor", "not-allowed");
-           } else {
-               bearbeitenButton.addClickListener(event -> {
-                   VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
-                   getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-               });
-           }
-
-            Button loeschenButton = new Button("Löschen", event -> {
-            Dialog confirmDialog = new Dialog();
-            confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
-
-            Button jaButton = new Button("Ja", e -> {
-                loeschenAntrag(matrikelnummer); // hier noch hargecoded. Da muss eine Variable hin und das geht erst wenn sich eingeloggt und die Backend-Frontend-Anbindung fuer Login implementiert wurde.
-                confirmDialog.close();
-                Notification.show("Antrag gelöscht.");
-                UI.getCurrent().getPage().reload(); //Seite neu laden nach löschen
+        if (!bearbeitenButton.isEnabled()) {
+            bearbeitenButton.getStyle()
+                    .set("background-color", "#d3d3d3") // Grau
+                    .set("color", "#808080")
+                    .set("cursor", "not-allowed");
+        } else {
+            bearbeitenButton.addClickListener(event -> {
+                VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
+                getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
             });
+        }
 
-            Button neinButton = new Button("Nein", e -> confirmDialog.close());
-            confirmDialog.add(new HorizontalLayout(neinButton, jaButton));
-            confirmDialog.open();
-        });
+        // Lösch-Button
+        Button loeschenButton = new Button("Löschen");
+
+        // Lösch-Button sperren, wenn der Status "Antrag eingereicht" ist
+        loeschenButton.setEnabled(!"Antrag eingereicht".equalsIgnoreCase(status));
+
+        if (!loeschenButton.isEnabled()) {
+            loeschenButton.getStyle()
+                    .set("background-color", "#d3d3d3") // Grau
+                    .set("color", "#808080")
+                    .set("cursor", "not-allowed");
+        } else {
+            loeschenButton.addClickListener(event -> {
+                Dialog confirmDialog = new Dialog();
+                confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
+
+                Button jaButton = new Button("Ja", e -> {
+                    loeschenAntrag(matrikelnummer);
+                    confirmDialog.close();
+                    Notification.show("Antrag gelöscht.");
+                    UI.getCurrent().getPage().reload(); // Seite neu laden nach Löschen
+                });
+
+                Button neinButton = new Button("Nein", e -> confirmDialog.close());
+                confirmDialog.add(new HorizontalLayout(neinButton, jaButton));
+                confirmDialog.open();
+            });
+        }
 
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
         buttonLayout.setWidthFull();
-        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);// Buttons rechts anordnen
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
-        //Kommentar- /Notizfeld für die Kommentare die PB beim Ablehnen für Studentinnen hinterlässt
+        // Kommentar- / Notizfeld
         Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
         kommentarToggle.getStyle()
                 .set("color", "#007bff")
                 .set("font-size", "14px")
                 .set("cursor", "pointer")
                 .set("margin-top", "10px");
-
 
         VerticalLayout kommentarContent = new VerticalLayout();
         kommentarContent.setVisible(false);
@@ -191,9 +204,10 @@ public class Startseite extends VerticalLayout {
             kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
         });
 
-        container.add(heading, statuslabel, buttonLayout, kommentarToggle, kommentarContent);
+        container.add(heading, statusLabel, buttonLayout, kommentarToggle, kommentarContent);
         return container;
     }
+
 
     private void loeschenAntrag(String matrikelnummer) {
         String url = backendUrl + "antrag/" + matrikelnummer;
