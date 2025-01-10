@@ -23,6 +23,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 
 import com.vaadin.flow.router.Route;
@@ -41,7 +43,7 @@ public class Praktikumsformular extends Div {
     private  TextField nameStudentin;
     private  TextField vornameStudentin;
     private  DatePicker gebDatumStudentin;
-    private  TextField adresseStudentin;
+    private  TextField strasseUndHausnummerStudentin;
     private  NumberField plzStudentin;
     private  TextField ortStudentin;
     private  TextField bundesland;
@@ -80,7 +82,8 @@ public class Praktikumsformular extends Div {
         nameStudentin = createTextField("Name der Studentin *");
         vornameStudentin = createTextField("Vorname der Studentin *");
         gebDatumStudentin = createDatePicker("Geburtsdatum *");
-        adresseStudentin = createTextField("Straße und Hausnummer der Studentin *");
+        gebDatumStudentin.setLocale(Locale.GERMANY);
+        strasseUndHausnummerStudentin = createTextField("Straße und Hausnummer der Studentin *");
         plzStudentin = createNumberField("Postleitzahl der Studentin *");
         ortStudentin = createTextField("Ort der Studentin *");
         telefonnummerStudentin = createTextField("Telefonnummer der Studentin *");
@@ -92,6 +95,8 @@ public class Praktikumsformular extends Div {
 
 
         datumAntrag = createDatePicker("Datum des Antrags *");
+        datumAntrag.setLocale(Locale.GERMANY);
+
         // Checkbox-Feld für Auslandspraktikum
         auslandspraktikumsOptionen = new RadioButtonGroup<>();
         auslandspraktikumsOptionen.setLabel("Ich mache mein Praktikum im Ausland");
@@ -111,7 +116,9 @@ public class Praktikumsformular extends Div {
         abteilung = createTextField("Abteilung *");
         taetigkeit = createTextArea("Tätigkeit der Praktikantin / des Praktikanten *");
         startdatum = createDatePicker("Startdatum des Praktikums *");
+        startdatum.setLocale(Locale.GERMANY);
         enddatum = createDatePicker("Enddatum des Praktikums *");
+        enddatum.setLocale(Locale.GERMANY);
 
         // Matrikelnummer aus der Session holen
         String matrikelnummerValue = (String) VaadinSession.getCurrent()
@@ -167,7 +174,7 @@ public class Praktikumsformular extends Div {
                                  nameStudentin,
                                  vornameStudentin,
                                  gebDatumStudentin,
-                                 adresseStudentin,
+                                 strasseUndHausnummerStudentin,
                                  plzStudentin,
                                  ortStudentin,
                                  telefonnummerStudentin,
@@ -370,7 +377,7 @@ public class Praktikumsformular extends Div {
         isValid &= validateField(nameStudentin);
         isValid &= validateField(vornameStudentin);
         isValid &= validateField(gebDatumStudentin);
-        isValid &= validateField(adresseStudentin);
+        isValid &= validateField(strasseUndHausnummerStudentin);
         isValid &= validateField(plzStudentin);
         isValid &= validateField(ortStudentin);
         isValid &= validateField(telefonnummerStudentin);
@@ -482,6 +489,21 @@ public class Praktikumsformular extends Div {
 
 
     private String createJson(String statusAntrag) {
+        //nutzt das lesbare formate für daten
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String formattedGebDatum = gebDatumStudentin.getValue() != null
+                ? gebDatumStudentin.getValue().format(formatter)
+                : ""; // Überprüfen, ob ein Datum eingetragen wurde
+        String formattedDatumAntrag = datumAntrag.getValue() != null
+                ? datumAntrag.getValue().format(formatter)
+                : "";
+        String formattedStartdatum = startdatum.getValue() != null
+                ? startdatum.getValue().format(formatter)
+                : "";
+        String formattedEnddatum = enddatum.getValue() != null
+                ? enddatum.getValue().format(formatter)
+                : "";
+
         return String.format(
                 "{" + "\"matrikelnummer\": \"%s\"," +
                         "\"nameStudentin\": \"%s\"," +
@@ -515,8 +537,8 @@ public class Praktikumsformular extends Div {
                 getValue(matrikelnummer),
                 getValue(nameStudentin),
                 getValue(vornameStudentin),
-                getValue(gebDatumStudentin),
-                getValue(adresseStudentin),
+                formattedGebDatum,
+                getValue(strasseUndHausnummerStudentin),
                 getIntValue(plzStudentin),
                 getValue(ortStudentin),
                 getValue(telefonnummerStudentin),
@@ -525,7 +547,7 @@ public class Praktikumsformular extends Div {
                 getValue(praktikumssemester),
                 getIntValue(studiensemester),
                 getValue(studiengang),
-                getValue(datumAntrag),
+                formattedDatumAntrag,
                 getValue(auslandspraktikumsOptionen).equals("Ja"),
                 getValue(namePraktikumsstelle),
                 getValue(strassePraktikumsstelle),
@@ -538,8 +560,8 @@ public class Praktikumsformular extends Div {
                 getValue(emailPraktikumsstelle),
                 getValue(abteilung),
                 getValue(taetigkeit),
-                getValue(startdatum),
-                getValue(enddatum),
+                formattedStartdatum,
+                formattedEnddatum,
                 statusAntrag);
     }
 
@@ -590,11 +612,15 @@ public class Praktikumsformular extends Div {
     }
     private void fillFormFields(JSONObject antragJson) {
         try {
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
             // Studentendaten
             nameStudentin.setValue(antragJson.optString("nameStudentin", ""));
             vornameStudentin.setValue(antragJson.optString("vornameStudentin", ""));
-            gebDatumStudentin.setValue(LocalDate.parse(antragJson.optString("gebDatumStudentin", "1970-01-01")));
-            adresseStudentin.setValue(antragJson.optString("strasseStudentin", ""));
+            String gebDatumString = antragJson.optString("gebDatumStudentin", "01.01.1990");
+            gebDatumStudentin.setValue(LocalDate.parse(gebDatumString, formatter));
+            strasseUndHausnummerStudentin.setValue(antragJson.optString("strasseStudentin", ""));
             plzStudentin.setValue(antragJson.optDouble("plzStudentin", 0.0));
             ortStudentin.setValue(antragJson.optString("ortStudentin", ""));
             telefonnummerStudentin.setValue(antragJson.optString("telefonnummerStudentin", ""));
@@ -603,7 +629,9 @@ public class Praktikumsformular extends Div {
             praktikumssemester.setValue(antragJson.optString("praktikumssemester", ""));
             studiensemester.setValue(antragJson.optDouble("studiensemester", 0.0));
             studiengang.setValue(antragJson.optString("studiengang", ""));
-            datumAntrag.setValue(LocalDate.parse(antragJson.optString("datumAntrag", "1970-01-01")));
+            String datumAntragString = antragJson.optString("datumAntrag", "10.01.2025");
+            datumAntrag.setValue(LocalDate.parse(datumAntragString, formatter));
+
             // Checkbox Auslandpraktikum
             boolean auslandspraktikumValue = antragJson.optBoolean("auslandspraktikum", false);
             auslandspraktikumsOptionen.setValue(auslandspraktikumValue ? "Ja" : "Nein");
@@ -618,8 +646,10 @@ public class Praktikumsformular extends Div {
             emailPraktikumsstelle.setValue(antragJson.optString("emailPraktikumsstelle", ""));
             abteilung.setValue(antragJson.optString("abteilung", ""));
             taetigkeit.setValue(antragJson.optString("taetigkeit", ""));
-            startdatum.setValue(LocalDate.parse(antragJson.optString("startdatum", "1970-01-01")));
-            enddatum.setValue(LocalDate.parse(antragJson.optString("enddatum", "1970-01-01"))); // Aquí estaba el problema
+            String startdatumString = antragJson.optString("startdatum", "03.03.2025");
+            startdatum.setValue(LocalDate.parse(startdatumString, formatter));
+            String enddatumString = antragJson.optString("enddatum", "30.09.2025");
+            enddatum.setValue(LocalDate.parse(enddatumString, formatter));
 
         } catch (Exception e) {
             Notification.show("Fehler beim Laden der Felder: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
