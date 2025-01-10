@@ -4,7 +4,6 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -26,6 +25,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 
 import com.vaadin.flow.router.Route;
@@ -54,12 +55,6 @@ public class Praktikumsformular extends Div {
     private  TextField praktikumssemester;
     private  NumberField studiensemester;
     private  TextField studiengang;
-    private  TextArea begleitendeLehrVeranstaltungen;
-
-    // Zusatzinformationen
-    private  Checkbox voraussetzendeLeistungsnachweise;
-    private  TextArea fehlendeLeistungsnachweise;
-    private  Checkbox ausnahmeZulassung;
     private  DatePicker datumAntrag;
 
     // Praktikumsdaten
@@ -67,6 +62,7 @@ public class Praktikumsformular extends Div {
     private  TextField strassePraktikumsstelle;
     private  NumberField plzPraktikumsstelle;
     private  TextField ortPraktikumsstelle;
+    private TextField bundeslandPraktikumsstelle;
     private  TextField landPraktikumsstelle;
     private  TextField ansprechpartnerPraktikumsstelle;
     private  TextField telefonPraktikumsstelle;
@@ -89,6 +85,7 @@ public class Praktikumsformular extends Div {
         nameStudentin = createTextField("Name der Studentin *");
         vornameStudentin = createTextField("Vorname der Studentin *");
         gebDatumStudentin = createDatePicker("Geburtsdatum *");
+        gebDatumStudentin.setLocale(Locale.GERMANY);
         strasseStudentin = createTextField("Straße der Studentin *");
         hausnummerStudentin = createNumberField("Hausnummer der Studentin *");
         plzStudentin = createNumberField("Postleitzahl der Studentin *");
@@ -99,17 +96,14 @@ public class Praktikumsformular extends Div {
         praktikumssemester = createTextField("Praktikumssemester (SoSe / WS) *");
         studiensemester = createNumberField("Studiensemester *");
         studiengang = createTextField("Studiengang *");
-        begleitendeLehrVeranstaltungen = createTextArea("Begleitende Lehrveranstaltungen *");
-
-        voraussetzendeLeistungsnachweise = new Checkbox("Voraussetzende Leistungsnachweise *");
-        fehlendeLeistungsnachweise = createTextArea("Fehlende Leistungsnachweise *");
-        ausnahmeZulassung = new Checkbox("Antrag auf Ausnahmezulassung *");
         datumAntrag = createDatePicker("Datum des Antrags *");
+        datumAntrag.setLocale(Locale.GERMANY);
 
         namePraktikumsstelle = createTextField("Name der Praktikumsstelle *");
         strassePraktikumsstelle = createTextField("Straße der Praktikumsstelle *");
         plzPraktikumsstelle = createNumberField("Postleitzahl der Praktikumsstelle *");
         ortPraktikumsstelle = createTextField("Ort der Praktikumsstelle *");
+        bundeslandPraktikumsstelle = createTextField("Bundesland der Praktikumsstelle *");
         landPraktikumsstelle = createTextField("Land der Praktikumsstelle *");
         ansprechpartnerPraktikumsstelle = createTextField("Ansprechpartner der Praktikumsstelle *");
         telefonPraktikumsstelle = createTextField("Telefon der Praktikumsstelle *");
@@ -117,7 +111,9 @@ public class Praktikumsformular extends Div {
         abteilung = createTextField("Abteilung *");
         taetigkeit = createTextArea("Tätigkeit der Praktikantin / des Praktikanten *");
         startdatum = createDatePicker("Startdatum des Praktikums *");
+        startdatum.setLocale(Locale.GERMANY);
         enddatum = createDatePicker("Enddatum des Praktikums *");
+        enddatum.setLocale(Locale.GERMANY);
 
         // Matrikelnummer aus der Session holen
         String matrikelnummerValue = (String) VaadinSession.getCurrent()
@@ -179,7 +175,7 @@ public class Praktikumsformular extends Div {
 
         // Layout für Studentendaten
         FormLayout studentendatenLayout = new FormLayout();
-        H2 studentendatenHeader = new H2("Studentendaten");
+        H2 studentendatenHeader = new H2("Studierendendaten");
         studentendatenLayout.add(studentendatenHeader);
 
         // Layout für Studentendaten konfigurieren
@@ -202,10 +198,6 @@ public class Praktikumsformular extends Div {
                                  praktikumssemester,
                                  studiensemester,
                                  studiengang,
-                                 begleitendeLehrVeranstaltungen,
-                                 voraussetzendeLeistungsnachweise,
-                                 fehlendeLeistungsnachweise,
-                                 ausnahmeZulassung,
                                  datumAntrag);
 
         studentendatenContainer.add(studentendatenLayout);
@@ -239,6 +231,7 @@ public class Praktikumsformular extends Div {
                                   strassePraktikumsstelle,
                                   plzPraktikumsstelle,
                                   ortPraktikumsstelle,
+                                  bundeslandPraktikumsstelle,
                                   landPraktikumsstelle,
                                   ansprechpartnerPraktikumsstelle,
                                   telefonPraktikumsstelle,
@@ -379,6 +372,7 @@ public class Praktikumsformular extends Div {
         isValid &= validateField(strassePraktikumsstelle);
         isValid &= validateField(plzPraktikumsstelle);
         isValid &= validateField(ortPraktikumsstelle);
+        isValid &= validateField(bundeslandPraktikumsstelle);
         isValid &= validateField(landPraktikumsstelle);
         isValid &= validateField(ansprechpartnerPraktikumsstelle);
         isValid &= validateField(telefonPraktikumsstelle);
@@ -470,24 +464,35 @@ public class Praktikumsformular extends Div {
 
 
     private String createJson(String statusAntrag) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String formattedGebDatum = gebDatumStudentin.getValue() != null
+                ? gebDatumStudentin.getValue().format(formatter)
+                :"";
+        String formattedantragsDatum = datumAntrag.getValue() != null
+                ? datumAntrag.getValue().format(formatter)
+                :"";
+        String formattedStartdatum = startdatum.getValue() != null
+                ? startdatum.getValue().format(formatter)
+                :"";
+        String formattedEnddatum = enddatum.getValue() != null
+                ? enddatum.getValue().format(formatter)
+                :"";
         return String.format(
                 "{" + "\"matrikelnummer\": \"%s\"," + "\"nameStudentin\": \"%s\"," + "\"vornameStudentin\": \"%s\"," +
                 "\"gebDatumStudentin\": \"%s\"," + "\"strasseStudentin\": \"%s\"," + "\"hausnummerStudentin\": %d," +
                 "\"plzStudentin\": %d," + "\"ortStudentin\": \"%s\"," + "\"telefonnummerStudentin\": \"%s\"," +
                 "\"emailStudentin\": \"%s\"," + "\"vorschlagPraktikumsbetreuerIn\": \"%s\"," +
                 "\"praktikumssemester\": \"%s\"," + "\"studiensemester\": %d," + "\"studiengang\": \"%s\"," +
-                "\"begleitendeLehrVeranstaltungen\": \"%s\"," + "\"voraussetzendeLeistungsnachweise\": %b," +
-                "\"fehlendeLeistungsnachweise\": \"%s\"," + "\"ausnahmeZulassung\": %b," + "\"datumAntrag\": \"%s\"," +
-                "\"namePraktikumsstelle\": \"%s\"," + "\"strassePraktikumsstelle\": \"%s\"," +
-                "\"plzPraktikumsstelle\": %d," + "\"ortPraktikumsstelle\": \"%s\"," +
-                "\"landPraktikumsstelle\": \"%s\"," + "\"ansprechpartnerPraktikumsstelle\": \"%s\"," +
+               "\"datumAntrag\": \"%s\"," + "\"namePraktikumsstelle\": \"%s\"," + "\"strassePraktikumsstelle\": \"%s\"," +
+                "\"plzPraktikumsstelle\": %d," + "\"ortPraktikumsstelle\": \"%s\"," + "\"bundeslandPraktikumsstelle\": \"%s\"," +
+                        "\"landPraktikumsstelle\": \"%s\"," + "\"ansprechpartnerPraktikumsstelle\": \"%s\"," +
                 "\"telefonPraktikumsstelle\": \"%s\"," + "\"emailPraktikumsstelle\": \"%s\"," +
                 "\"abteilung\": \"%s\"," + "\"taetigkeit\": \"%s\"," + "\"startdatum\": \"%s\"," +
                 "\"enddatum\": \"%s\"," + "\"statusAntrag\": \"%s\"" + "}",
                 getValue(matrikelnummer),
                 getValue(nameStudentin),
                 getValue(vornameStudentin),
-                getValue(gebDatumStudentin),
+                formattedGebDatum,
                 getValue(strasseStudentin),
                 getIntValue(hausnummerStudentin),
                 getIntValue(plzStudentin),
@@ -498,23 +503,20 @@ public class Praktikumsformular extends Div {
                 getValue(praktikumssemester),
                 getIntValue(studiensemester),
                 getValue(studiengang),
-                getValue(begleitendeLehrVeranstaltungen),
-                voraussetzendeLeistungsnachweise.getValue(),
-                getValue(fehlendeLeistungsnachweise),
-                ausnahmeZulassung.getValue(),
-                getValue(datumAntrag),
+                formattedantragsDatum,
                 getValue(namePraktikumsstelle),
                 getValue(strassePraktikumsstelle),
                 getIntValue(plzPraktikumsstelle),
                 getValue(ortPraktikumsstelle),
+                getValue(bundeslandPraktikumsstelle),
                 getValue(landPraktikumsstelle),
                 getValue(ansprechpartnerPraktikumsstelle),
                 getValue(telefonPraktikumsstelle),
                 getValue(emailPraktikumsstelle),
                 getValue(abteilung),
                 getValue(taetigkeit),
-                getValue(startdatum),
-                getValue(enddatum),
+                formattedStartdatum,
+                formattedEnddatum,
                 statusAntrag);
     }
 
@@ -565,10 +567,15 @@ public class Praktikumsformular extends Div {
     }
     private void fillFormFields(JSONObject antragJson) {
         try {
+            // ISO-Format für das Parsing verwenden
+            DateTimeFormatter deutschesDatumFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+
             // Studentendaten
             nameStudentin.setValue(antragJson.optString("nameStudentin", ""));
             vornameStudentin.setValue(antragJson.optString("vornameStudentin", ""));
-            gebDatumStudentin.setValue(LocalDate.parse(antragJson.optString("gebDatumStudentin", "1970-01-01")));
+            String gebDatumStr = antragJson.optString("gebDatumStudentin", "01.01.1981");
+            gebDatumStudentin.setValue(LocalDate.parse(gebDatumStr, deutschesDatumFormat));
             strasseStudentin.setValue(antragJson.optString("strasseStudentin", ""));
             hausnummerStudentin.setValue(antragJson.optDouble("hausnummerStudentin", 0.0));
             plzStudentin.setValue(antragJson.optDouble("plzStudentin", 0.0));
@@ -579,27 +586,25 @@ public class Praktikumsformular extends Div {
             praktikumssemester.setValue(antragJson.optString("praktikumssemester", ""));
             studiensemester.setValue(antragJson.optDouble("studiensemester", 0.0));
             studiengang.setValue(antragJson.optString("studiengang", ""));
-            begleitendeLehrVeranstaltungen.setValue(antragJson.optString("begleitendeLehrVeranstaltungen", ""));
-
-            // Zusatzinformationen
-            voraussetzendeLeistungsnachweise.setValue(antragJson.optBoolean("voraussetzendeLeistungsnachweise", false));
-            fehlendeLeistungsnachweise.setValue(antragJson.optString("fehlendeLeistungsnachweise", ""));
-            ausnahmeZulassung.setValue(antragJson.optBoolean("ausnahmeZulassung", false));
-            datumAntrag.setValue(LocalDate.parse(antragJson.optString("datumAntrag", "1970-01-01")));
+            String datumAntragStr = antragJson.optString("datumAntrag", "10.01.2025");
+            datumAntrag.setValue(LocalDate.parse(datumAntragStr, deutschesDatumFormat));
 
             // Praktikumsdaten
             namePraktikumsstelle.setValue(antragJson.optString("namePraktikumsstelle", ""));
             strassePraktikumsstelle.setValue(antragJson.optString("strassePraktikumsstelle", ""));
             plzPraktikumsstelle.setValue(antragJson.optDouble("plzPraktikumsstelle", 0.0));
             ortPraktikumsstelle.setValue(antragJson.optString("ortPraktikumsstelle", ""));
+            bundeslandPraktikumsstelle.setValue(antragJson.optString("bundeslandPraktikumsstelle", ""));
             landPraktikumsstelle.setValue(antragJson.optString("landPraktikumsstelle", ""));
             ansprechpartnerPraktikumsstelle.setValue(antragJson.optString("ansprechpartnerPraktikumsstelle", ""));
             telefonPraktikumsstelle.setValue(antragJson.optString("telefonPraktikumsstelle", ""));
             emailPraktikumsstelle.setValue(antragJson.optString("emailPraktikumsstelle", ""));
             abteilung.setValue(antragJson.optString("abteilung", ""));
             taetigkeit.setValue(antragJson.optString("taetigkeit", ""));
-            startdatum.setValue(LocalDate.parse(antragJson.optString("startdatum", "1970-01-01")));
-            enddatum.setValue(LocalDate.parse(antragJson.optString("enddatum", "1970-01-01"))); // Aquí estaba el problema
+            String startdatumStr = antragJson.optString("startdatum", "01.04.2025");
+            startdatum.setValue(LocalDate.parse(startdatumStr, deutschesDatumFormat));
+            String enddatumStr = antragJson.optString("enddatum", "30.09.2025");
+            enddatum.setValue(LocalDate.parse(enddatumStr, deutschesDatumFormat));
 
         } catch (Exception e) {
             Notification.show("Fehler beim Laden der Felder: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);

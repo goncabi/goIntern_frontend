@@ -203,8 +203,10 @@ public class Startseite extends VerticalLayout {
             VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
             getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
         });
-        Span hintLabel = new Span("Hinweis: Ein Antrag kann nur einmal erstellt werden.");
-
+        Span hintLabel = new Span("Hinweis: Hier kannst du deinen Praktikumsantrag anlegen und absenden.<br>"
+                + "Du kannst du Antrag auch zwischenspeichern, damit du ihn später weiterbearbeiten kannst.<br>"
+                        + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
+        hintLabel.getElement().setProperty("innerHTML", hintLabel.getText()); // Damit die <br> korrekt interpretiert werden
         layout.add(title, newRequestButton, hintLabel);
         return layout;
     }

@@ -231,16 +231,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return dialog;
     }
 
-    //methode zum formatieren der daten
-    private String formatDate(String isoDate) {
-        try {
-            LocalDate date = LocalDate.parse(isoDate); // ISO-Format (yyyy-MM-dd)
-            return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")); // Deutsches Format
-        } catch (DateTimeParseException e) {
-            return isoDate; // Fallback: ist originalwert, damit bei kommunikation mit backend alles klaüüt
-        }
-    }
-
 
     private List<Praktikumsantrag> eingegangeneAntraegePreviewListe() {
         List<Praktikumsantrag> antraege = new ArrayList<>();
@@ -323,7 +313,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("nameStudentin")), "Name:");
                 formLayout.addFormItem(new Span(json.getString("vornameStudentin")), "Vorname:");
                 formLayout.addFormItem(new Span(formatDate(json.getString("gebDatumStudentin"))), "Geburtsdatum:");
-                formLayout.addFormItem(new Span(json.getString("strasseStudentin") + " " + json.getString("hausnummerStudentin")), "Straße und Hausnummer:");
+                formLayout.addFormItem(new Span(json.getString("strasseHausnummerStudentin")), "Straße und Hausnummer:");
                 formLayout.addFormItem(new Span(json.getString("plzStudentin")), "Postleitzahl:");
                 formLayout.addFormItem(new Span(json.getString("ortStudentin")), "Ort:");
                 formLayout.addFormItem(new Span(json.getString("telefonnummerStudentin")), "Telefonnummer:");
@@ -332,15 +322,13 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("praktikumssemester")), "Praktikumssemester (SoSe / WiSe):");
                 formLayout.addFormItem(new Span(json.getString("studiensemester")), "Studiensemester:");
                 formLayout.addFormItem(new Span(json.getString("studiengang")), "Studiengang:");
-                formLayout.addFormItem(new Span(json.getString("begleitendeLehrVeranstaltungen")), "Begleitende Lehrveranstaltungen:");
-                formLayout.addFormItem(new Span(json.getString("voraussetzendeLeistungsnachweise")), "Vorraussetzende Leistungsnachweise:");
-                formLayout.addFormItem(new Span(json.getString("fehlendeLeistungsnachweise")), "Fehlende Leistungsnachweise:");
-                formLayout.addFormItem(new Span(json.getString("ausnahmeZulassung")), "Antrag auf Ausnahmezulassung:");
+                formLayout.addFormItem(new Span(json.getString("auslandspraktikum")), "Auslandpraktikum:");
                 formLayout.addFormItem(new Span(formatDate(json.getString("datumAntrag"))), "Datum des Antrags:");
                 formLayout.addFormItem(new Span(json.getString("namePraktikumsstelle")), "Name der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("strassePraktikumsstelle")), "Straße der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("plzPraktikumsstelle")), "Postleitzahl der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("ortPraktikumsstelle")), "Ort der Praktikumsstelle:");
+                formLayout.addFormItem(new Span(json.getString("bundeslandPraktikumsstelle")), "Bundesland des Praktikums:");
                 formLayout.addFormItem(new Span(json.getString("landPraktikumsstelle")), "Land der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("ansprechpartnerPraktikumsstelle")), "Ansprechpartner*in der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("telefonPraktikumsstelle")), "Telefon der Praktikumsstelle:");
