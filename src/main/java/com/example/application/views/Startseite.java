@@ -72,19 +72,24 @@ public class Startseite extends VerticalLayout {
 
     private Dialog createLogoutConfirmationDialog() {
         Dialog dialog = new Dialog();
-        Span message = new Span("Möchten Sie sich wirklich ausloggen?");
+
+        // Nachricht
+        H1 message = new H1("Möchten Sie sich wirklich ausloggen?");
+
+        // Buttons
         Button yesButton = new Button("Ja", event -> {
             dialog.close();
-            // navigiert zur Login-Seite
-            getUI().ifPresent(ui -> ui.navigate("login"));
+            UI.getCurrent().navigate("login");
         });
 
         Button cancelButton = new Button("Abbrechen", event -> dialog.close());
 
+        // Layout für die Buttons
         HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
-        buttons.setSpacing(true);
+        buttons.setWidthFull();
+        buttons.setJustifyContentMode(JustifyContentMode.BETWEEN);
+
         VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
-        dialogLayout.setSpacing(true);
         dialog.add(dialogLayout);
 
         return dialog;
