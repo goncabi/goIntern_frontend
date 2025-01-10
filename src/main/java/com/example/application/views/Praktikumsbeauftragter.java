@@ -279,6 +279,16 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return span;
     }
 
+    //methode zum formatieren der daten
+    private String formatDate(String isoDate) {
+        try {
+            LocalDate date = LocalDate.parse(isoDate); // ISO-Format (yyyy-MM-dd)
+            return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")); // Deutsches Format
+        } catch (DateTimeParseException e) {
+            return isoDate; // Fallback: ist originalwert, damit bei kommunikation mit backend alles klaüüt
+        }
+    }
+
 
     private void vollstaendigenAntragAnzeigenImPopUp(String matrikelnummer) {
         try {

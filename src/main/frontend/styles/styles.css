@@ -6,7 +6,7 @@
     height: 100vh !important; /* Volle Höhe des Viewports */
     margin: 0 !important;
     padding: 0 !important;
-    background: linear-gradient(135deg, #ff0080, #ff80bf) !important;
+    background: linear-gradient(135deg, #2F5A83, #244567) !important;
     overflow: hidden !important;
 }
 
@@ -52,7 +52,7 @@ html, body {
 .button {
     width: 100%;
     padding: 12px;
-    background-color: #ff4081;
+    background-color: #2F5A83;
     border: none;
     color: #fff;
     font-size: 16px;
@@ -63,18 +63,18 @@ html, body {
 }
 
 .button:hover {
-    background-color: #e03570;
+    background-color: #244567;
 }
 
 /* Link-Stil für Passwort vergessen */
 .link, .forgot-password-link {
-    color: #ff0080;
+    color: #2F5A83;
     text-decoration: underline;
     font-size: 0.9em;
 }
 
 .link:hover, .forgot-password-link:hover {
-    color: #ff4da6;
+    color: #2F5A83;
     text-decoration: underline;
 }
 
@@ -121,7 +121,7 @@ html, body {
 
 /* Zusatz für Hover-Effekt beim Button */
 .button:hover {
-    background-color: #d7335b; /* Etwas dunkleres Rot beim Hover */
+    background-color: #8DC63F; /* Etwas dunkleres Rot beim Hover */
 }
 
 /* Richtig beantwortet */
@@ -159,8 +159,8 @@ html, body {
 
 /* Hover und Fokus für Dropdown */
 .dropdown:hover, .dropdown:focus {
-    border-color: #ff4081;
-    box-shadow: 0 0 5px rgba(255, 64, 129, 0.5);
+    border-color: #2F5A83;
+    box-shadow: 0 0 5px #1C3650;
 }
 
 

@@ -19,12 +19,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
 @Route("studentin/startseite")
 @PageTitle("Startseite")
 
@@ -71,15 +65,7 @@ public class Startseite extends VerticalLayout {
 
     private Dialog createLogoutConfirmationDialog() {
         Dialog dialog = new Dialog();
-        H1 message= new H1("Möchten Sie sich wirklich ausloggen?");
-
-        // Hinweisnotiz
-        Span hinweis = new Span("Sicherheitshinweis: Bitte denk daran, den Tab zu schließen, nachdem du dich ausgeloggt hast.");
-        hinweis.getStyle()
-                .set("color", "gray") // Graue Schriftfarbe
-                .set("font-size", "medium") // Kleinere Schriftgröße
-                .set("margin-top", "20px"); // Etwas Abstand nach oben
-
+        Span message = new Span("Möchten Sie sich wirklich ausloggen?");
         Button yesButton = new Button("Ja", event -> {
             dialog.close();
             // navigiert zur Login-Seite
@@ -88,9 +74,9 @@ public class Startseite extends VerticalLayout {
 
         Button cancelButton = new Button("Abbrechen", event -> dialog.close());
 
-        HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
+        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
         buttons.setSpacing(true);
-        VerticalLayout dialogLayout = new VerticalLayout(message, hinweis, buttons);
+        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
         dialogLayout.setSpacing(true);
         dialog.add(dialogLayout);
 
@@ -229,43 +215,19 @@ public class Startseite extends VerticalLayout {
     // In der Methode getAntragStatus möchte ich ja nur den Status sehen
     // deswegen wird von dem JSON String nur das entsprechende Feld zum key statusAntrag dann ausgegeben.
     private String getAntragStatus(String matrikelnummer) {
-        // Schritt 1: Status im Backend aktualisieren
-        String updateUrl = backendUrl + "antrag/updateStatus/" + matrikelnummer;
+        String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
         try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(updateUrl))
-                    .header("Content-Type", "application/json")
-                    .PUT(HttpRequest.BodyPublishers.noBody())
-                    .build();
-
-            HttpResponse<String> updateResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (updateResponse.statusCode() == 200) {
-                Notification.show("Status erfolgreich aktualisiert.", 3000, Notification.Position.TOP_CENTER);
-            } else {
-                Notification.show("Fehler beim Aktualisieren des Status: " + updateResponse.body(), 3000, Notification.Position.TOP_CENTER);
-            }
-        } catch (IOException | InterruptedException e) {
-            Notification.show("Fehler beim Aktualisieren des Status: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
-            return "Fehler";
-        }
-
-        // Schritt 2: Den aktuellen Status aus dem Backend abrufen
-        String statusUrl = backendUrl + "antrag/getantrag/" + matrikelnummer;
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(statusUrl, HttpMethod.GET, null, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 String jsonstring = response.getBody();
-                JSONObject jsonobjekt = new JSONObject(jsonstring);
-                return jsonobjekt.getString("statusAntrag");
+                JSONObject jsonobjekt = new JSONObject(jsonstring); // hier haben wir den jasonstring in das jsonobjekt reingetan
+                return jsonobjekt.getString("statusAntrag"); // an dem jsonObjekt wird die getString Methode mit dem key statusAntrag aufgerufen.
             }
         } catch (Exception e) {
-            Notification.show("Fehler beim Abrufen des Status: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            Notification.show("Fehler: " + e.getMessage());
         }
-
         return "nicht gefunden";
     }
-
 
     private String getAntragNotiz(String matrikelnummer) {
 
