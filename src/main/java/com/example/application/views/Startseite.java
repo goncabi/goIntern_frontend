@@ -85,7 +85,7 @@ public class Startseite extends VerticalLayout {
         Button cancelButton = new Button("Abbrechen", event -> dialog.close());
 
         // Layout für die Buttons
-        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
+        HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton); // Reihenfolge geändert
         buttons.setWidthFull();
         buttons.setJustifyContentMode(JustifyContentMode.BETWEEN);
 
@@ -94,6 +94,7 @@ public class Startseite extends VerticalLayout {
 
         return dialog;
     }
+
     private boolean hasAntrag(String matrikelnummer) {
         String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
         try {
