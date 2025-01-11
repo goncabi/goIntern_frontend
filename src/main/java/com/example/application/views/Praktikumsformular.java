@@ -26,6 +26,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
 
@@ -565,17 +566,26 @@ public class Praktikumsformular extends Div {
         }
         return null;
     }
+
+    private LocalDate parseDateFromGermanFormat(String dateStr) {
+        DateTimeFormatter deutschesDatumFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        try {
+            return LocalDate.parse(dateStr, deutschesDatumFormat);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Datum konnte nicht im deutschen Format geparst werden: " + dateStr);
+        }
+    }
+
+
     private void fillFormFields(JSONObject antragJson) {
         try {
-            // ISO-Format für das Parsing verwenden
-            DateTimeFormatter deutschesDatumFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
 
             // Studentendaten
             nameStudentin.setValue(antragJson.optString("nameStudentin", ""));
             vornameStudentin.setValue(antragJson.optString("vornameStudentin", ""));
             String gebDatumStr = antragJson.optString("gebDatumStudentin", "01.01.1981");
-            gebDatumStudentin.setValue(LocalDate.parse(gebDatumStr, deutschesDatumFormat));
+            gebDatumStudentin.setValue(parseDateFromGermanFormat(gebDatumStr));
             strasseStudentin.setValue(antragJson.optString("strasseStudentin", ""));
             hausnummerStudentin.setValue(antragJson.optDouble("hausnummerStudentin", 0.0));
             plzStudentin.setValue(antragJson.optDouble("plzStudentin", 0.0));
@@ -587,7 +597,7 @@ public class Praktikumsformular extends Div {
             studiensemester.setValue(antragJson.optDouble("studiensemester", 0.0));
             studiengang.setValue(antragJson.optString("studiengang", ""));
             String datumAntragStr = antragJson.optString("datumAntrag", "10.01.2025");
-            datumAntrag.setValue(LocalDate.parse(datumAntragStr, deutschesDatumFormat));
+            datumAntrag.setValue(parseDateFromGermanFormat(datumAntragStr));
 
             // Praktikumsdaten
             namePraktikumsstelle.setValue(antragJson.optString("namePraktikumsstelle", ""));
@@ -602,9 +612,9 @@ public class Praktikumsformular extends Div {
             abteilung.setValue(antragJson.optString("abteilung", ""));
             taetigkeit.setValue(antragJson.optString("taetigkeit", ""));
             String startdatumStr = antragJson.optString("startdatum", "01.04.2025");
-            startdatum.setValue(LocalDate.parse(startdatumStr, deutschesDatumFormat));
+            startdatum.setValue(parseDateFromGermanFormat(startdatumStr));
             String enddatumStr = antragJson.optString("enddatum", "30.09.2025");
-            enddatum.setValue(LocalDate.parse(enddatumStr, deutschesDatumFormat));
+            enddatum.setValue(parseDateFromGermanFormat(enddatumStr));
 
         } catch (Exception e) {
             Notification.show("Fehler beim Laden der Felder: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
