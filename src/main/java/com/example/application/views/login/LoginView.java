@@ -89,7 +89,7 @@ public class LoginView extends VerticalLayout {
                         String matrikelnummer = jsonResponse.optString("matrikelnummer", null);
                         // Rolle prüfen
                         if ("Praktikumsbeauftragte/r".equals(roleSelection.getValue())) {
-                            Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
+
                             if (usernameField.getValue() != null) {
 
                                 VaadinSession.getCurrent().setAttribute("username", usernameField.getValue());
