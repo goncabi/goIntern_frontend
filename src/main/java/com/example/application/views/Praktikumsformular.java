@@ -572,7 +572,7 @@ public class Praktikumsformular extends Div {
         try {
             return LocalDate.parse(dateStr, deutschesDatumFormat);
         } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Datum konnte nicht im deutschen Format geparst werden: " + dateStr);
+            throw new IllegalArgumentException("Datum konnte nicht im deutschen Format angezeigt werden: " + dateStr);
         }
     }
 
