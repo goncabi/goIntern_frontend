@@ -66,18 +66,17 @@ public class Antragsuebersicht extends VerticalLayout {
         Span message = new Span("Möchten Sie sich wirklich ausloggen?");
 
         // Buttons
+        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
         Button yesButton = new Button("Ja", event -> {
             dialog.close();
             // navigiert zur Login-Seite
             getUI().ifPresent(ui -> ui.navigate("login"));
         });
 
-        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
-
         // Layout für die Buttons
         HorizontalLayout buttons = new HorizontalLayout();
         buttons.setWidthFull(); // Volle Breite für die Ausrichtung
-        buttons.add(yesButton, cancelButton);
+        buttons.add(cancelButton, yesButton);
 
         // Ausrichtung der Buttons: Ja nach links, Abbrechen nach rechts
         buttons.setJustifyContentMode(JustifyContentMode.BETWEEN);
@@ -89,8 +88,6 @@ public class Antragsuebersicht extends VerticalLayout {
 
         return dialog;
     }
-
-
 
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
         private VerticalLayout createMeinAntragContainer() {
@@ -121,18 +118,20 @@ public class Antragsuebersicht extends VerticalLayout {
         Button bearbeitenButton = new Button("Bearbeiten", event -> {
             getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
         }); // navigiert zum eigenen Praktikumsformular zum Bearbeiten
+
         Button loeschenButton = new Button("Löschen", event -> {
             Dialog confirmDialog = new Dialog();
             confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
 
+
+            Button cancelButton = new Button("Abbrechen", e -> confirmDialog.close());
             Button jaButton = new Button("Ja", e -> {
                 loeschenAntrag("123476"); // hier noch hargecoded. Da muss eine Variable hin und das geht erst wenn sich eingeloggt und die Backend-Frontend-Anbindung fuer Login implementiert wurde.
                 confirmDialog.close();
                 Notification.show("Antrag gelöscht.");
             });
 
-            Button neinButton = new Button("Nein", e -> confirmDialog.close());
-            confirmDialog.add(new HorizontalLayout(jaButton, neinButton));
+            confirmDialog.add(new HorizontalLayout(cancelButton, jaButton));
             confirmDialog.open();
         });
 
