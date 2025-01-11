@@ -294,18 +294,19 @@ public class Praktikumsformular extends Div {
                 ConfirmDialog dialog = new ConfirmDialog();
                 dialog.setHeader("Daten nicht gespeichert");
                 dialog.setText("Möchten Sie die Eingabe wirklich verwerfen?");
+                dialog.setCancelButton("Abbrechen",
+                        cancelEvent -> dialog.close());
                 dialog.setConfirmButton("Ja",
                                         confirmEvent -> UI.getCurrent().getPage().setLocation("studentin/startseite"));// Navigiere nach "Startseite"
-                dialog.setCancelButton("Nein",
-                                       cancelEvent -> dialog.close());
+
                 dialog.open();
             } else {
                 UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Startseite"
             }
         });
 
-        Div buttonContainer = new Div(speichernButton,
-                                      abbrechenButton,
+        Div buttonContainer = new Div(abbrechenButton,
+                                      speichernButton,
                                       absendenButton);
         buttonContainer.addClassName("button-container"); //hinzufügen aus css
 

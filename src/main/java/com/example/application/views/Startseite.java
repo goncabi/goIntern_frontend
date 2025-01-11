@@ -73,15 +73,16 @@ public class Startseite extends VerticalLayout {
     private Dialog createLogoutConfirmationDialog() {
         Dialog dialog = new Dialog();
         Span message = new Span("Möchten Sie sich wirklich ausloggen?");
+        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
         Button yesButton = new Button("Ja", event -> {
             dialog.close();
             // navigiert zur Login-Seite
             getUI().ifPresent(ui -> ui.navigate("login"));
         });
 
-        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
 
-        HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
+
+        HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
         buttons.setSpacing(true);
         VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
         dialog.add(dialogLayout);
@@ -141,6 +142,7 @@ public class Startseite extends VerticalLayout {
             Dialog confirmDialog = new Dialog();
             confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
 
+            Button cancelButton = new Button("Abbrechen", e -> confirmDialog.close());
             Button jaButton = new Button("Ja", e -> {
                 loeschenAntrag(matrikelnummer); // hier noch hargecoded. Da muss eine Variable hin und das geht erst wenn sich eingeloggt und die Backend-Frontend-Anbindung fuer Login implementiert wurde.
                 confirmDialog.close();
@@ -148,8 +150,8 @@ public class Startseite extends VerticalLayout {
                 UI.getCurrent().getPage().reload(); //Seite neu laden nach löschen
             });
 
-            Button neinButton = new Button("Nein", e -> confirmDialog.close());
-            confirmDialog.add(new HorizontalLayout(neinButton, jaButton));
+
+            confirmDialog.add(new HorizontalLayout(cancelButton, jaButton));
             confirmDialog.open();
         });
 
