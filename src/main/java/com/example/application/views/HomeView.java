@@ -2,21 +2,40 @@ package com.example.application.views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.Lumo;
+import com.vaadin.flow.component.html.Image;
 
 @Route("")
 @CssImport("./styles/styles.css")
 public class HomeView extends VerticalLayout {
 
     public HomeView() {
-        addClassName("view-container"); // Verwende den zentralen Container-Stil
+        addClassName("view-container"); //zentraler Container-Stil
 
+        //Banner mit Überschrift GoIntern
+        Header banner = new Header();
+        banner.addClassName("banner");
+
+        H1 bannerTitle = new H1("GoIntern");
+        bannerTitle.addClassName("banner-title");
+
+        // Bild hinzufügen
+        Image logo = new Image("images/FB4_FIW.jpg", "Logo");
+        logo.addClassName("banner-logo");
+
+        banner.add(bannerTitle, logo);
+        add(banner);
+
+        // animierte Linie
+        Span animatedLine = createAnimatedLine();
+        add(animatedLine);
+
+        // Formular-Container
         Div formContainer = new Div();
         formContainer.addClassName("form-container");
 
@@ -39,5 +58,30 @@ public class HomeView extends VerticalLayout {
 
     private void openRegister() {
         getUI().ifPresent(ui -> ui.navigate("register"));
+    }
+
+    private Span createAnimatedLine() {
+        String svgAnimation = """
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" style="width: 100%; height: auto; position: absolute;">
+                <path d="M0,300 L125,200 L250,300 L375,150 L425,200 L500,0"
+                    style="fill:none;stroke:#8DC63F;stroke-width:14;opacity:0;">
+                    <animate attributeName="opacity"
+                        from="0" to="1"
+                        dur="2s"
+                        fill="freeze" />
+                </path>
+            </svg>
+        """;
+
+        Span svgContainer = new Span();
+        svgContainer.getElement().setProperty("innerHTML", svgAnimation);
+        svgContainer.getStyle().set("position", "absolute")
+                .set("top", "0")
+                .set("left", "0")
+                .set("width", "100%")
+                .set("height", "100%");
+
+
+        return svgContainer;
     }
 }

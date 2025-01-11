@@ -335,12 +335,11 @@ public class Praktikumsformular extends Div {
         Paragraph sternchenHinweis = new Paragraph("Hinweis: Felder mit * sind Pflichtfelder, die vor dem Absenden ausgefüllt werden müssen. Sie können den Antrag jedoch auch speichern, ohne alle Pflichtfelder auszufüllen.");
 
         sternchenHinweis.getStyle()
-                        .set("color",
-                             "gray")
-                        .set("font-size",
-                             "0.9em")
-                        .set("margin-bottom",
-                             "20px");
+                .set("color", "gray")
+                .set("font-size", "0.9em")
+                .set("margin-bottom", "20px")
+                .set("margin-left", "20px"); // Abstand von links hinzufügen
+
 
         // Hinzufügen aller Container und Buttons
         add(sternchenHinweis, studentendatenContainer,

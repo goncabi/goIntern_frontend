@@ -19,6 +19,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpResponse;
+
+
 @Route("studentin/startseite")
 @PageTitle("Startseite")
 
@@ -77,11 +84,11 @@ public class Startseite extends VerticalLayout {
         HorizontalLayout buttons = new HorizontalLayout(yesButton, cancelButton);
         buttons.setSpacing(true);
         VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
-        dialogLayout.setSpacing(true);
         dialog.add(dialogLayout);
 
         return dialog;
     }
+
     private boolean hasAntrag(String matrikelnummer) {
         String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
         try {
@@ -195,6 +202,47 @@ public class Startseite extends VerticalLayout {
             Notification.show("Fehler: " + e.getMessage());
         }
     }
+
+    //Dialog-Popup  Bestätigung ob man alle Leistungspunkte hat
+    private void createConfirmationPopup() {
+        // Popup erstellt
+        Dialog popup = new Dialog();
+
+        // Nachricht
+        Span message = new Span("Hiermit bestätige ich, dass ich Module im Umfang von 60 Leistungspunkten absolviert habe.");
+        message.getStyle()
+                .set("font-size", "16px")
+                .set("text-align", "center");
+
+        // Ja
+        Button jaButton = new Button("Ja", event -> {
+            popup.close();
+            VaadinSession.getCurrent().setAttribute("neuerAntrag", true);
+            getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+        });
+        jaButton.addThemeName("primary");
+
+        // Nein
+        Button neinButton = new Button("Nein", event -> popup.close());
+        neinButton.addThemeName("secondary");
+
+        // Layout
+        HorizontalLayout buttonLayout = new HorizontalLayout(neinButton, jaButton);
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        // Popup-Layout
+        VerticalLayout popupLayout = new VerticalLayout(message, buttonLayout);
+        popupLayout.setPadding(true);
+        popupLayout.setSpacing(true);
+        popupLayout.setAlignItems(Alignment.CENTER);
+
+        popup.add(popupLayout);
+        popup.setWidth("400px");
+        popup.setHeight("200px");
+        popup.open();
+    }
+
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
 

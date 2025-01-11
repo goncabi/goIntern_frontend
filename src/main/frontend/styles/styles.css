@@ -163,6 +163,33 @@ html, body {
     box-shadow: 0 0 5px #1C3650;
 }
 
+.banner {
+    background-color: white;
+    text-align: center;
+    padding: 20px 0;
+    width: calc(100% - 250px);
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    margin: 0;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) /* dezente Trennung */
+}
+
+.banner-title {
+    font-size: 50px;
+    color: #333;
+    margin: 0; /* Entfernt zusätzlichen Abstand um die Überschrift */
+    font-weight: bold;
+}
+
+.banner-logo {
+    width: 50px; /* Größe des Logos */
+    height: auto; /* Seitenverhältnis beibehalten */
+    margin-right: 20px; /* Abstand zum rechten Rand */
+    align-self: flex-end; /* Positioniere das Logo am unteren Rand des Containers */
+}
+
 
 
 
