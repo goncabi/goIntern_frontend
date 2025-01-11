@@ -260,7 +260,7 @@ public class Praktikumsformular extends Div {
 
         Button speichernButton = new Button("Speichern");
         speichernButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
-
+        speichernButton.addClassName("speichern-button1");
         speichernButton.addClickListener(e -> {
             try {
                 String json = createJson("GESPEICHERT");
@@ -280,6 +280,7 @@ public class Praktikumsformular extends Div {
 
 
         Button absendenButton = new Button("Absenden");
+        absendenButton.addClassName("absenden-button1");
         absendenButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
                                         ButtonVariant.LUMO_SUCCESS);
 
@@ -287,6 +288,7 @@ public class Praktikumsformular extends Div {
 
         // Abbrechen Button
         Button abbrechenButton = new Button("Abbrechen");
+        abbrechenButton.addClassName("abbrechen-button1");
         abbrechenButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         abbrechenButton.addClickListener(e -> {
 
@@ -308,7 +310,7 @@ public class Praktikumsformular extends Div {
         Div buttonContainer = new Div(abbrechenButton,
                                       speichernButton,
                                       absendenButton);
-        buttonContainer.addClassName("button-container"); //hinzufügen aus css
+        buttonContainer.addClassName("button-container1"); //hinzufügen aus css
 
         absendenButton.addClickListener(e -> {
             if(validateAllFields()) {
