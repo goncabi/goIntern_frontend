@@ -27,8 +27,7 @@ public class MainLayout extends AppLayout {
     private H1 viewTitle;
 
     public MainLayout() {
-        setPrimarySection(Section.DRAWER);
-        addDrawerContent();
+
         addHeaderContent();
     }
 
@@ -39,7 +38,7 @@ public class MainLayout extends AppLayout {
         viewTitle = new H1();
         viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
-        addToNavbar(true, toggle, viewTitle);
+        addToNavbar(true, viewTitle);
     }
 
     private void addDrawerContent() {
@@ -76,7 +75,7 @@ public class MainLayout extends AppLayout {
     @Override
     protected void afterNavigation() {
         super.afterNavigation();
-        viewTitle.setText(getCurrentPageTitle());
+        viewTitle.setText("");
     }
 
     private String getCurrentPageTitle() {
