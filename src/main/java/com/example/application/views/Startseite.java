@@ -43,7 +43,10 @@ public class Startseite extends VerticalLayout {
             return;
         }
         //header
-        H1 title = new H1("Antragsübersicht");
+        //H1 title = new H1("Antragsübersicht");
+
+        String pageTitle = hasAntrag(matrikelnummer) ? "Antragsübersicht" : "Willkommen auf der Startseite";
+        H1 title = new H1(pageTitle);
 
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("position", "absolute")
@@ -210,7 +213,7 @@ public class Startseite extends VerticalLayout {
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
 
-        H2 title = new H2("Willkommen auf der Startseite!");
+        //H2 title = new H2("Willkommen auf der Startseite!");
         Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
             // Dialog
             Dialog popup = new Dialog();
@@ -257,7 +260,7 @@ public class Startseite extends VerticalLayout {
                 + "Du kannst du Antrag auch zwischenspeichern, damit du ihn später weiterbearbeiten kannst.<br>"
                         + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
         hintLabel.getElement().setProperty("innerHTML", hintLabel.getText()); // Damit die <br> korrekt interpretiert werden
-        layout.add(title, newRequestButton, hintLabel);
+        layout.add(newRequestButton, hintLabel);
         return layout;
     }
 
