@@ -225,40 +225,44 @@ public class Startseite extends VerticalLayout {
 
     //Dialog-Popup  Bestätigung ob man alle Leistungspunkte hat
     private void createConfirmationPopup() {
-        // Popup-Fenster erstellen
+        // Popup erstellt
         Dialog popup = new Dialog();
 
-        // Nachricht im Popup
+        // Nachricht
         Span message = new Span("Hiermit bestätige ich, dass ich Module im Umfang von 60 Leistungspunkten absolviert habe.");
+        message.getStyle()
+                .set("font-size", "16px")
+                .set("text-align", "center");
 
-        // Ja-Button
+        // Ja
         Button jaButton = new Button("Ja", event -> {
             popup.close();
-            VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
+            VaadinSession.getCurrent().setAttribute("neuerAntrag", true);
             getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
         });
-        jaButton.getStyle()
-                .set("margin-left", "auto")
-                .set("background-color", "#007bff")
-                .set("color", "white");
+        jaButton.addThemeName("primary");
 
-        // Nein-Button
+        // Nein
         Button neinButton = new Button("Nein", event -> popup.close());
+        neinButton.addThemeName("secondary");
 
-        // Button-Layout erstellen
+        // Layout
         HorizontalLayout buttonLayout = new HorizontalLayout(neinButton, jaButton);
         buttonLayout.setWidthFull();
-        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-        buttonLayout.setSpacing(true);
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
-        // Popup-Inhalt
+        // Popup-Layout
         VerticalLayout popupLayout = new VerticalLayout(message, buttonLayout);
         popupLayout.setPadding(true);
         popupLayout.setSpacing(true);
+        popupLayout.setAlignItems(Alignment.CENTER);
 
         popup.add(popupLayout);
+        popup.setWidth("400px");
+        popup.setHeight("200px");
         popup.open();
     }
+
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
 
