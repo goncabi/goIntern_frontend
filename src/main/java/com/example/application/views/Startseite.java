@@ -212,7 +212,7 @@ public class Startseite extends VerticalLayout {
 
         H2 title = new H2("Willkommen auf der Startseite!");
         Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
-            // Zeige den Dialog
+            // Dialog
             Dialog popup = new Dialog();
 
             // Nachricht im Dialog
@@ -221,7 +221,7 @@ public class Startseite extends VerticalLayout {
                     .set("font-size", "16px")
                     .set("text-align", "center");
 
-            // "Ja"-Button: Navigiert zur Formular-Seite
+            // Ja Button: Navigiert zur Formular-Seite
             Button jaButton = new Button("Ja", e -> {
                 popup.close();
                 VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
@@ -229,16 +229,16 @@ public class Startseite extends VerticalLayout {
             });
             jaButton.addThemeName("primary");
 
-            // "Nein"-Button: Schließt nur den Dialog
+            // Nein Schließt nur den Dialog
             Button neinButton = new Button("Nein", e -> popup.close());
             neinButton.addThemeName("secondary");
 
-            // Layout für Buttons
+            // Buttons
             HorizontalLayout buttonLayout = new HorizontalLayout(neinButton, jaButton);
             buttonLayout.setWidthFull();
             buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
-            // Layout für den Dialog
+            // Dialog
             VerticalLayout popupLayout = new VerticalLayout(message, buttonLayout);
             popupLayout.setPadding(true);
             popupLayout.setSpacing(true);
