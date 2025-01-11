@@ -205,54 +205,54 @@ public class Startseite extends VerticalLayout {
         }
     }
 
-    //Dialog-Popup  Bestätigung ob man alle Leistungspunkte hat
-    private void createConfirmationPopup() {
-        // Popup erstellt
-        Dialog popup = new Dialog();
 
-        // Nachricht
-        Span message = new Span("Hiermit bestätige ich, dass ich Module im Umfang von 60 Leistungspunkten absolviert habe.");
-        message.getStyle()
-                .set("font-size", "16px")
-                .set("text-align", "center");
-
-        // Ja
-        Button jaButton = new Button("Ja", event -> {
-            popup.close();
-            VaadinSession.getCurrent().setAttribute("neuerAntrag", true);
-            getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-        });
-        jaButton.addThemeName("primary");
-
-        // Nein
-        Button neinButton = new Button("Nein", event -> popup.close());
-        neinButton.addThemeName("secondary");
-
-        // Layout
-        HorizontalLayout buttonLayout = new HorizontalLayout(neinButton, jaButton);
-        buttonLayout.setWidthFull();
-        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-
-        // Popup-Layout
-        VerticalLayout popupLayout = new VerticalLayout(message, buttonLayout);
-        popupLayout.setPadding(true);
-        popupLayout.setSpacing(true);
-        popupLayout.setAlignItems(Alignment.CENTER);
-
-        popup.add(popupLayout);
-        popup.setWidth("400px");
-        popup.setHeight("200px");
-        popup.open();
-    }
 
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
 
         H2 title = new H2("Willkommen auf der Startseite!");
         Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
-            VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
-            getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+            // Dialog
+            Dialog popup = new Dialog();
+
+            // Nachricht im Dialog
+            Span message = new Span("Hiermit bestätige ich, dass ich Module im Umfang von 60 Leistungspunkten absolviert habe.");
+            message.getStyle()
+                    .set("font-size", "16px")
+                    .set("text-align", "center");
+
+            // Ja Button: Navigiert zur Formular-Seite
+            Button jaButton = new Button("Ja", e -> {
+                popup.close();
+                VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
+                getUI().ifPresent(ui -> ui.navigate("praktikumsformular")); // Weiterleitung
+            });
+            jaButton.addThemeName("primary");
+
+            // Nein Schließt nur den Dialog
+            Button neinButton = new Button("Nein", e -> popup.close());
+            neinButton.addThemeName("secondary");
+
+            // Buttons
+            HorizontalLayout buttonLayout = new HorizontalLayout(neinButton, jaButton);
+            buttonLayout.setWidthFull();
+            buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+            // Dialog
+            VerticalLayout popupLayout = new VerticalLayout(message, buttonLayout);
+            popupLayout.setPadding(true);
+            popupLayout.setSpacing(true);
+            popupLayout.setAlignItems(Alignment.CENTER);
+
+            popup.add(popupLayout);
+            popup.setWidth("400px");
+            popup.setHeight("200px");
+
+            // Dialog öffnen
+            popup.open();
         });
+
+
         Span hintLabel = new Span("Hinweis: Hier kannst du deinen Praktikumsantrag anlegen und absenden.<br>"
                 + "Du kannst du Antrag auch zwischenspeichern, damit du ihn später weiterbearbeiten kannst.<br>"
                         + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
