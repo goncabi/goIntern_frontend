@@ -1,20 +1,16 @@
-vaadin-scroller[slot="drawer"] {
-  padding: var(--lumo-space-s);
+
+/* Verhindert, dass Platz für den Drawer reserviert wird */
+[part="drawer"] {
+  display: none !important;
 }
 
-vaadin-side-nav-item vaadin-icon {
-  padding: 0;
+[part="content"] {
+  margin-top: 0 !important;
 }
 
-[slot="drawer"]:is(header, footer) {
-  display: flex;
-  align-items: center;
-  gap: var(--lumo-space-s);
-  padding: var(--lumo-space-s) var(--lumo-space-m);
-  min-height: var(--lumo-size-xl);
-  box-sizing: border-box;
+/* Entfernt auch den Navbar-Bereich*/
+[part="navbar"] {
+  display: none !important;
 }
 
-[slot="drawer"]:is(header, footer):is(:empty) {
-  display: none;
-}
+
