@@ -9,6 +9,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
@@ -125,6 +126,43 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
 
         });
+        // Suchleiste
+        TextField searchField = new TextField();
+        searchField.setPlaceholder("Nach Name oder Matrikelnummer suchen...");
+        searchField.setClearButtonVisible(true);
+        searchField.setWidth("250px");
+
+// Listener hinzufügen
+        searchField.addValueChangeListener(event -> {
+            String searchTerm = event.getValue().toLowerCase(); // Suche in Kleinbuchstaben
+            if (searchTerm.isEmpty()) {
+                // Zeigt alle einträge wenn suchleiste leer ist
+                grid.setItems(antraege);
+            } else {
+                // Filtere die Liste anhand der Name oder Matrikelnummer
+                List<Praktikumsantrag> filteredItems = antraege.stream()
+                        .filter(antrag -> antrag.getName().toLowerCase().contains(searchTerm) ||
+                                antrag.getMatrikelnummer().toLowerCase().contains(searchTerm))
+                        .toList();
+
+                // Aktualisiere das Grid mit den gefilterten Einträgen
+                grid.setItems(filteredItems);
+
+                if (filteredItems.isEmpty()) {
+                    Notification.show("Keine Ergebnisse für: " + searchTerm, 3000, Notification.Position.MIDDLE);
+                }
+            }
+
+        });
+// Filter-Layout anpassen: Statusfilter und Suchleiste nebeneinander
+        HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
+        filterLayout.setAlignItems(Alignment.BASELINE);
+        filterLayout.setSpacing(true);
+        filterLayout.setWidthFull();
+
+// Filter-Layout vor dem Grid hinzufügen
+        add(filterLayout);
+
 
         badges = new HorizontalLayout();
         badges.getStyle().set("flex-wrap", "wrap");
@@ -141,7 +179,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         grid.setColumns("name", "matrikelnummer");
 
         grid.addComponentColumn(antrag -> createStatusBadge(antrag.getStatus()))
-            .setHeader("Status");
+                .setHeader("Status");
 
         // Spalte für "Antrag anzeigen"
         grid.addComponentColumn(antrag -> {
@@ -180,7 +218,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return nachrichten;
     }
     //innere Klasse für die Nachrichten
-        public record NotificationMessage(String message, String date) {
+    public record NotificationMessage(String message, String date) {
     }
     //Methode, um Nachrichten zu löschen
     private void nachrichtenLoeschen(String username) {
