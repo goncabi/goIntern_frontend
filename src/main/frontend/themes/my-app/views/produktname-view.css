@@ -19,6 +19,42 @@
   --cv-checkerboard-color2: hsl(0 0% 100% / 0.05);
   --cv-checkerboard-size: 16px;
 }
+/* Hintergrund des gesamten Menüs */
+vaadin-context-menu-overlay::part(overlay) {
+  background-color: #e0f4fd; /* Hellblauer Hintergrund */
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Schatten */
+  padding: 10px;
+}
+
+/* Styling des Headers „Alle Nachrichten gelesen?“ */
+vaadin-context-menu-item:first-child::part(content) {
+  font-weight: bold;
+  color: #2F5A83;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: right;
+  width: 100%;
+  margin-left: 0;
+}
+
+/* Hover-Effekt für den Header */
+vaadin-context-menu-item:first-child:hover::part(content) {
+  color: #8DC63F;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Styling für die Nachrichten */
+vaadin-context-menu-item:not(:first-child)::part(content) {
+  font-style: italic; /* Kursivschrift */
+  color: #6c757d;
+  margin: 5px 0; /* Abstand zwischen Nachrichten */
+  outline: none;
+  box-shadow: none;
+}
+
+
 
 .produktname-view[dragging] {
   --cv-checkerboard-color1: hsl(var(--cv-blue) / 0.2);
