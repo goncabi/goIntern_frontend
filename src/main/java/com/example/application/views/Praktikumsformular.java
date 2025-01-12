@@ -46,8 +46,7 @@ public class Praktikumsformular extends Div {
     private  TextField nameStudentin;
     private  TextField vornameStudentin;
     private  DatePicker gebDatumStudentin;
-    private  TextField strasseStudentin;
-    private  NumberField hausnummerStudentin;
+    private  TextField strasseHausnummerStudentin;
     private  NumberField plzStudentin;
     private  TextField ortStudentin;
     private  TextField telefonnummerStudentin;
@@ -87,8 +86,7 @@ public class Praktikumsformular extends Div {
         vornameStudentin = createTextField("Vorname der Studentin *");
         gebDatumStudentin = createDatePicker("Geburtsdatum *");
         gebDatumStudentin.setLocale(Locale.GERMANY);
-        strasseStudentin = createTextField("Straße der Studentin *");
-        hausnummerStudentin = createNumberField("Hausnummer der Studentin *");
+        strasseHausnummerStudentin = createTextField("Straße und Hausnummer der Studentin *");
         plzStudentin = createNumberField("Postleitzahl der Studentin *");
         ortStudentin = createTextField("Ort der Studentin *");
         telefonnummerStudentin = createTextField("Telefonnummer der Studentin *");
@@ -101,7 +99,7 @@ public class Praktikumsformular extends Div {
         datumAntrag.setLocale(Locale.GERMANY);
 
         namePraktikumsstelle = createTextField("Name der Praktikumsstelle *");
-        strassePraktikumsstelle = createTextField("Straße der Praktikumsstelle *");
+        strassePraktikumsstelle = createTextField("Straße und Hausnummer der Praktikumsstelle *");
         plzPraktikumsstelle = createNumberField("Postleitzahl der Praktikumsstelle *");
         ortPraktikumsstelle = createTextField("Ort der Praktikumsstelle *");
         bundeslandPraktikumsstelle = createTextField("Bundesland der Praktikumsstelle *");
@@ -189,8 +187,7 @@ public class Praktikumsformular extends Div {
                                  nameStudentin,
                                  vornameStudentin,
                                  gebDatumStudentin,
-                                 strasseStudentin,
-                                 hausnummerStudentin,
+                strasseHausnummerStudentin,
                                  plzStudentin,
                                  ortStudentin,
                                  telefonnummerStudentin,
@@ -258,6 +255,7 @@ public class Praktikumsformular extends Div {
         // Anfangs unsichtbar
         pflichtfeldHinweis.setVisible(false);
 
+        //Speichern Button
         Button speichernButton = new Button("Speichern");
         speichernButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         speichernButton.addClassName("speichern-button1");
@@ -358,8 +356,7 @@ public class Praktikumsformular extends Div {
         isValid &= validateField(nameStudentin);
         isValid &= validateField(vornameStudentin);
         isValid &= validateField(gebDatumStudentin);
-        isValid &= validateField(strasseStudentin);
-        isValid &= validateField(hausnummerStudentin);
+        isValid &= validateField(strasseHausnummerStudentin);
         isValid &= validateField(plzStudentin);
         isValid &= validateField(ortStudentin);
         isValid &= validateField(telefonnummerStudentin);
@@ -482,7 +479,7 @@ public class Praktikumsformular extends Div {
                 :"";
         return String.format(
                 "{" + "\"matrikelnummer\": \"%s\"," + "\"nameStudentin\": \"%s\"," + "\"vornameStudentin\": \"%s\"," +
-                "\"gebDatumStudentin\": \"%s\"," + "\"strasseStudentin\": \"%s\"," + "\"hausnummerStudentin\": %d," +
+                "\"gebDatumStudentin\": \"%s\"," + "\"strasseHausnummerStudentin\": \"%s\"," +
                 "\"plzStudentin\": %d," + "\"ortStudentin\": \"%s\"," + "\"telefonnummerStudentin\": \"%s\"," +
                 "\"emailStudentin\": \"%s\"," + "\"vorschlagPraktikumsbetreuerIn\": \"%s\"," +
                 "\"praktikumssemester\": \"%s\"," + "\"studiensemester\": %d," + "\"studiengang\": \"%s\"," +
@@ -496,8 +493,7 @@ public class Praktikumsformular extends Div {
                 getValue(nameStudentin),
                 getValue(vornameStudentin),
                 formattedGebDatum,
-                getValue(strasseStudentin),
-                getIntValue(hausnummerStudentin),
+                getValue(strasseHausnummerStudentin),
                 getIntValue(plzStudentin),
                 getValue(ortStudentin),
                 getValue(telefonnummerStudentin),
@@ -588,8 +584,7 @@ public class Praktikumsformular extends Div {
             vornameStudentin.setValue(antragJson.optString("vornameStudentin", ""));
             String gebDatumStr = antragJson.optString("gebDatumStudentin", "01.01.1981");
             gebDatumStudentin.setValue(parseDateFromGermanFormat(gebDatumStr));
-            strasseStudentin.setValue(antragJson.optString("strasseStudentin", ""));
-            hausnummerStudentin.setValue(antragJson.optDouble("hausnummerStudentin", 0.0));
+            strasseHausnummerStudentin.setValue(antragJson.optString("strasseHausnummerStudentin", ""));
             plzStudentin.setValue(antragJson.optDouble("plzStudentin", 0.0));
             ortStudentin.setValue(antragJson.optString("ortStudentin", ""));
             telefonnummerStudentin.setValue(antragJson.optString("telefonnummerStudentin", ""));

@@ -1,16 +1,10 @@
 package com.example.application.views;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.*;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 import com.vaadin.flow.component.button.Button;
@@ -19,12 +13,8 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
-import java.awt.*;
 
 @Route("antragsuebersicht")
 @PageTitle("Antragsübersicht")
