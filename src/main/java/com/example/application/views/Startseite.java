@@ -19,12 +19,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpResponse;
-
 
 @Route("studentin/startseite")
 @PageTitle("Startseite")
