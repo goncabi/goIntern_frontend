@@ -4,15 +4,15 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -28,14 +28,18 @@ import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -43,40 +47,39 @@ import org.springframework.web.client.RestTemplate;
 @CssImport("./styles.css")
 public class Praktikumsformular extends Div {
     // Studentendaten
-    private  TextField matrikelnummer;
-    private  TextField nameStudentin;
-    private  TextField vornameStudentin;
-    private  DatePicker gebDatumStudentin;
-    private  TextField strasseHausnummerStudentin;
-    private  NumberField plzStudentin;
-    private  TextField ortStudentin;
-    private  TextField telefonnummerStudentin;
-    private  EmailField emailStudentin;
-    private  TextField vorschlagPraktikumsbetreuerIn;
-    private  TextField praktikumssemester;
-    private  NumberField studiensemester;
-    private  TextField studiengang;
-    private  DatePicker datumAntrag;
+    private TextField matrikelnummer;
+    private TextField nameStudentin;
+    private TextField vornameStudentin;
+    private DatePicker gebDatumStudentin;
+    private TextField strasseHausnummerStudentin;
+    private NumberField plzStudentin;
+    private TextField ortStudentin;
+    private TextField telefonnummerStudentin;
+    private EmailField emailStudentin;
+    private TextField vorschlagPraktikumsbetreuerIn;
+    private TextField praktikumssemester;
+    private NumberField studiensemester;
+    private TextField studiengang;
+    private DatePicker datumAntrag;
 
     // Praktikumsdaten
-    private  TextField namePraktikumsstelle;
-    private  TextField strassePraktikumsstelle;
-    private  NumberField plzPraktikumsstelle;
-    private  TextField ortPraktikumsstelle;
-    private TextField bundeslandPraktikumsstelle;
+    private TextField namePraktikumsstelle;
+    private TextField strassePraktikumsstelle;
+    private NumberField plzPraktikumsstelle;
+    private TextField ortPraktikumsstelle;
+    private final ComboBox<String> bundeslandBox = new ComboBox<>("Bundesland");
     private RadioButtonGroup<String> auslandspraktikumsOptionen;
-    private  TextField landPraktikumsstelle;
-    private  TextField ansprechpartnerPraktikumsstelle;
-    private  TextField telefonPraktikumsstelle;
-    private  EmailField emailPraktikumsstelle;
-    private  TextField abteilung;
-    private  TextArea taetigkeit;
-    private  DatePicker startdatum;
-    private  DatePicker enddatum;
+    private TextField landPraktikumsstelle;
+    private TextField ansprechpartnerPraktikumsstelle;
+    private TextField telefonPraktikumsstelle;
+    private EmailField emailPraktikumsstelle;
+    private TextField abteilung;
+    private TextArea taetigkeit;
+    private DatePicker startdatum;
+    private DatePicker enddatum;
 
     private boolean gespeichert = false; // Standardwert: nicht gespeichert
     private final RestTemplate restTemplate = new RestTemplate();
-
 
 
     public Praktikumsformular() {
@@ -112,7 +115,15 @@ public class Praktikumsformular extends Div {
         strassePraktikumsstelle = createTextField("Straße und Hausnummer der Praktikumsstelle *");
         plzPraktikumsstelle = createNumberField("Postleitzahl der Praktikumsstelle *");
         ortPraktikumsstelle = createTextField("Ort der Praktikumsstelle *");
-        bundeslandPraktikumsstelle = createTextField("Bundesland der Praktikumsstelle *");
+
+        // Drop-Down mit Optionen für das Bundesland, alphabetisch geordnet
+        List<String> sortedBundeslaender = BUNDESLANDER_MAP.values().stream()
+                .sorted()
+                .collect(Collectors.toList());
+
+        bundeslandBox.setItems(sortedBundeslaender);
+        bundeslandBox.setItemLabelGenerator(value -> value);  // lesbarer Name, s. map unten im code
+
 
         landPraktikumsstelle = createTextField("Land der Praktikumsstelle *");
         ansprechpartnerPraktikumsstelle = createTextField("Ansprechpartner der Praktikumsstelle *");
@@ -125,18 +136,19 @@ public class Praktikumsformular extends Div {
         enddatum = createDatePicker("Enddatum des Praktikums *");
         enddatum.setLocale(Locale.GERMANY);
 
+
         // Matrikelnummer aus der Session holen
         String matrikelnummerValue = (String) VaadinSession.getCurrent()
-                                                           .getAttribute("matrikelnummer");
+                .getAttribute("matrikelnummer");
         Boolean neuerAntrag = (Boolean) VaadinSession.getCurrent()
-                                                     .getAttribute("neuerAntrag");
+                .getAttribute("neuerAntrag");
 
-        if(matrikelnummerValue == null) {
+        if (matrikelnummerValue == null) {
             Notification.show("Matrikelnummer nicht gefunden. Bitte erneut einloggen.",
-                              3000,
-                              Notification.Position.TOP_CENTER);
+                    3000,
+                    Notification.Position.TOP_CENTER);
             UI.getCurrent()
-              .navigate("login");
+                    .navigate("login");
             return;
         }
 
@@ -145,42 +157,92 @@ public class Praktikumsformular extends Div {
         matrikelnummer.setValue(matrikelnummerValue);
         matrikelnummer.setReadOnly(true);
 
-        if(neuerAntrag != null && neuerAntrag) {
+        if (neuerAntrag != null && neuerAntrag) {
             // Neuer Antrag stellen: Formular bleibt leer
             Notification.show("Erstellen Sie einen neuen Antrag.",
-                              3000,
-                              Notification.Position.TOP_CENTER);
+                    3000,
+                    Notification.Position.TOP_CENTER);
         } else {
             // Bearbeiten: Daten aus dem Backend laden
             JSONObject antragJson = getPraktikumsantragFromBackend(matrikelnummerValue);
-            if(antragJson == null) {
+            if (antragJson == null) {
                 Notification.show("Kein Antrag gefunden!",
-                                  3000,
-                                  Notification.Position.TOP_CENTER);
+                        3000,
+                        Notification.Position.TOP_CENTER);
             } else {
                 fillFormFields(antragJson);
             }
         }
 
 
-
         // Container für Studentendaten
         Div studentendatenContainer = new Div();
         studentendatenContainer.getStyle()
-                               .set("padding",
-                                    "20px");
+                .set("padding",
+                        "20px");
         studentendatenContainer.getStyle()
-                               .set("border",
-                                    "1px solid #ccc");
+                .set("border",
+                        "1px solid #ccc");
         studentendatenContainer.getStyle()
-                               .set("border-radius",
-                                    "8px");
+                .set("border-radius",
+                        "8px");
         studentendatenContainer.getStyle()
-                               .set("margin-bottom",
-                                    "20px");
+                .set("margin-bottom",
+                        "20px");
         studentendatenContainer.getStyle()
-                               .set("background-color",
-                                    "#f9f9f9");
+                .set("background-color",
+                        "#f9f9f9");
+
+        //berechnen button implementieren
+        final Button berechnenButton = new Button("Arbeitstage berechnen");
+        berechnenButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS,
+                ButtonVariant.LUMO_SMALL);
+        berechnenButton.getStyle().set("margin-left", "0");
+        berechnenButton.addClassName("berechnen-button");
+
+        // Hinweistext
+        Span hinweisArbeitstage = new Span("Hinweis: Für ein Praktikum sind mindestens 75 Arbeitstage (600 Stunden) sind erforderlich. Beachte, dass bei einem Auslands-Praktikum Feiertage nicht mit berechnet werden können. Diese müsstest du eigenständig recherchieren und von der Anzahl der Arbeitstage abziehen.");
+        hinweisArbeitstage.getStyle()
+                .set("color", "gray")
+                .set("font-size", "0.9em")
+                .set("margin-bottom", "20px")
+                .set("margin-left", "20px");
+
+
+        // Klick-Listener für den Button
+        berechnenButton.addClickListener(event -> {
+            LocalDate startDatum = startdatum.getValue();
+            LocalDate endDatum = enddatum.getValue();
+            String selectedName = bundeslandBox.getValue();
+            String bundesland = BUNDESLANDER_MAP.entrySet().stream()
+                    .filter(entry -> entry.getValue().equals(selectedName))
+                    .map(Map.Entry::getKey)
+                    .findFirst()
+                    .orElse(null);
+
+            if (startDatum == null || endDatum == null || bundesland == null) {
+                Notification.show("Bitte fülle alle notwendigen Felder aus, damit die Arbeitstage berechnet werden können.", 3000,
+                        Notification.Position.TOP_CENTER);
+                return;
+            }
+
+            try {
+                int arbeitstage = berechneArbeitstage(startDatum, endDatum, bundesland);
+                Notification.show("Anzahl der Arbeitstage: " + arbeitstage, 4000, Notification.Position.TOP_CENTER);
+            } catch (Exception e) {
+                Notification.show("Fehler bei der Berechnung: " + e.getMessage());
+            }
+        });
+
+        // Container für Berechnen-Button
+        Div berechnenButtonContainer = new Div();
+        berechnenButtonContainer.getStyle()
+                .set("display", "flex") // Flexbox für bessere Kontrolle
+                .set("justify-content", "flex-start") // Links ausrichten
+                .set("width", "auto"); // Nur so breit wie der Inhalt
+
+        berechnenButtonContainer.add(berechnenButton);
+
 
 
         // Layout für Studentendaten
@@ -190,41 +252,41 @@ public class Praktikumsformular extends Div {
 
         // Layout für Studentendaten konfigurieren
         studentendatenLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0",
-                                                                              1)
-                                                // 1 Spalte auf allen Bildschirmgrößen
+                        1)
+                // 1 Spalte auf allen Bildschirmgrößen
         );
 
         studentendatenLayout.add(matrikelnummer,
-                                 nameStudentin,
-                                 vornameStudentin,
-                                 gebDatumStudentin,
+                nameStudentin,
+                vornameStudentin,
+                gebDatumStudentin,
                 strasseHausnummerStudentin,
-                                 plzStudentin,
-                                 ortStudentin,
-                                 telefonnummerStudentin,
-                                 emailStudentin,
-                                 vorschlagPraktikumsbetreuerIn,
-                                 praktikumssemester,
-                                 studiensemester,
-                                 studiengang,
-                                 datumAntrag);
+                plzStudentin,
+                ortStudentin,
+                telefonnummerStudentin,
+                emailStudentin,
+                vorschlagPraktikumsbetreuerIn,
+                praktikumssemester,
+                studiensemester,
+                studiengang,
+                datumAntrag);
 
         studentendatenContainer.add(studentendatenLayout);
 
         // Container für Praktikumsdaten
         Div praktikumsdatenContainer = new Div();
         praktikumsdatenContainer.getStyle()
-                                .set("padding",
-                                     "20px");
+                .set("padding",
+                        "20px");
         praktikumsdatenContainer.getStyle()
-                                .set("border",
-                                     "1px solid #ccc");
+                .set("border",
+                        "1px solid #ccc");
         praktikumsdatenContainer.getStyle()
-                                .set("border-radius",
-                                     "8px");
+                .set("border-radius",
+                        "8px");
         praktikumsdatenContainer.getStyle()
-                                .set("background-color",
-                                     "#f9f9f9");
+                .set("background-color",
+                        "#f9f9f9");
 
         // Layout für Praktikumsdaten
         FormLayout praktikumsdatenLayout = new FormLayout();
@@ -233,37 +295,41 @@ public class Praktikumsformular extends Div {
 
         // Layout für Praktikumsdaten konfigurieren (ein Feld pro Zeile)
         praktikumsdatenLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0",
-                                                                               1)
-                                                 // 1 Spalte auf allen Bildschirmgrößen
+                        1)
+                // 1 Spalte auf allen Bildschirmgrößen
         );
         praktikumsdatenLayout.add(auslandspraktikumsOptionen,
                 namePraktikumsstelle,
-                                  strassePraktikumsstelle,
-                                  plzPraktikumsstelle,
-                                  ortPraktikumsstelle,
-                                  bundeslandPraktikumsstelle,
-                                  landPraktikumsstelle,
-                                  ansprechpartnerPraktikumsstelle,
-                                  telefonPraktikumsstelle,
-                                  emailPraktikumsstelle,
-                                  abteilung,
-                                  taetigkeit,
-                                  startdatum,
-                                  enddatum);
+                strassePraktikumsstelle,
+                plzPraktikumsstelle,
+                ortPraktikumsstelle,
+                bundeslandBox,
+                landPraktikumsstelle,
+                ansprechpartnerPraktikumsstelle,
+                telefonPraktikumsstelle,
+                emailPraktikumsstelle,
+                abteilung,
+                taetigkeit,
+                startdatum,
+                enddatum,
+                berechnenButtonContainer,
+                hinweisArbeitstage);
 
         praktikumsdatenContainer.add(praktikumsdatenLayout);
+
+
 
         // Pflichtfeldhinweis und Absenden-Button
         Paragraph pflichtfeldHinweis = new Paragraph("* Pflichtfeld");
         pflichtfeldHinweis.getStyle()
-                          .set("color",
-                               "red");
+                .set("color",
+                        "red");
         pflichtfeldHinweis.getStyle()
-                          .set("font-size",
-                               "0.9em");
+                .set("font-size",
+                        "0.9em");
         pflichtfeldHinweis.getStyle()
-                          .set("margin-top",
-                               "20px");
+                .set("margin-top",
+                        "20px");
         // Anfangs unsichtbar
         pflichtfeldHinweis.setVisible(false);
 
@@ -275,16 +341,15 @@ public class Praktikumsformular extends Div {
             try {
                 String json = createJson("Gespeichert");
                 sendJsonToBackend(json,
-                                  "http://localhost:3000/api/antrag/speichern",
-                                  "Antrag erfolgreich gespeichert!");
+                        "http://localhost:3000/api/antrag/speichern",
+                        "Antrag erfolgreich gespeichert!");
                 gespeichert = true; // Daten wurden gespeichert
                 UI.getCurrent().navigate("studentin/startseite"); // Navigiere nach "Startseite"
 
-            }
-            catch(Exception ex) {
+            } catch (Exception ex) {
                 Notification.show("Ein Fehler ist aufgetreten: " + ex.getMessage(),
-                                  3000,
-                                  Notification.Position.TOP_CENTER);
+                        3000,
+                        Notification.Position.TOP_CENTER);
             }
         });
 
@@ -292,8 +357,7 @@ public class Praktikumsformular extends Div {
         Button absendenButton = new Button("Absenden");
         absendenButton.addClassName("absenden-button1");
         absendenButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
-                                        ButtonVariant.LUMO_SUCCESS);
-
+                ButtonVariant.LUMO_SUCCESS);
 
 
         // Abbrechen Button
@@ -302,14 +366,14 @@ public class Praktikumsformular extends Div {
         abbrechenButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         abbrechenButton.addClickListener(e -> {
 
-            if(!gespeichert) {
+            if (!gespeichert) {
                 ConfirmDialog dialog = new ConfirmDialog();
                 dialog.setHeader("Daten nicht gespeichert");
                 dialog.setText("Möchten Sie die Eingabe wirklich verwerfen?");
                 dialog.setCancelButton("Abbrechen",
                         cancelEvent -> dialog.close());
                 dialog.setConfirmButton("Ja",
-                                        confirmEvent -> UI.getCurrent().getPage().setLocation("studentin/startseite"));// Navigiere nach "Startseite"
+                        confirmEvent -> UI.getCurrent().getPage().setLocation("studentin/startseite"));// Navigiere nach "Startseite"
 
                 dialog.open();
             } else {
@@ -318,30 +382,29 @@ public class Praktikumsformular extends Div {
         });
 
         Div buttonContainer = new Div(abbrechenButton,
-                                      speichernButton,
-                                      absendenButton);
+                speichernButton,
+                absendenButton);
         buttonContainer.addClassName("button-container1"); //hinzufügen aus css
 
         absendenButton.addClickListener(e -> {
-            if(validateAllFields()) {
+            if (validateAllFields()) {
                 pflichtfeldHinweis.setVisible(false);
                 try {
                     String json = createJson("Antrag eingereicht");
                     sendJsonToBackend(json,
-                                      "http://localhost:3000/api/antrag/uebermitteln",
-                                      "Antrag erfolgreich eingereicht!");
+                            "http://localhost:3000/api/antrag/uebermitteln",
+                            "Antrag erfolgreich eingereicht!");
                     UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Startseite"
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
                     Notification.show("Ein Fehler ist aufgetreten: " + ex.getMessage(),
-                                      3000,
-                                      Notification.Position.TOP_CENTER);
+                            3000,
+                            Notification.Position.TOP_CENTER);
                 }
             } else {
                 pflichtfeldHinweis.setVisible(true);
                 Notification.show("Bitte alle Pflichtfelder ausfüllen!",
-                                  3000,
-                                  Notification.Position.MIDDLE);
+                        3000,
+                        Notification.Position.MIDDLE);
             }
         });
 
@@ -356,8 +419,8 @@ public class Praktikumsformular extends Div {
 
         // Hinzufügen aller Container und Buttons
         add(sternchenHinweis, studentendatenContainer,
-            praktikumsdatenContainer,
-            buttonContainer);
+                praktikumsdatenContainer,
+                buttonContainer);
     }
 
     private boolean validateAllFields() {
@@ -387,7 +450,10 @@ public class Praktikumsformular extends Div {
         isValid &= validateField(strassePraktikumsstelle);
         isValid &= validateField(plzPraktikumsstelle);
         isValid &= validateField(ortPraktikumsstelle);
-        isValid &= validateField(bundeslandPraktikumsstelle);
+
+        //combo-box validieren
+        isValid &= bundeslandBox.getValue() != null;
+
         isValid &= validateField(landPraktikumsstelle);
         isValid &= validateField(ansprechpartnerPraktikumsstelle);
         isValid &= validateField(telefonPraktikumsstelle);
@@ -422,7 +488,7 @@ public class Praktikumsformular extends Div {
 
     // Validierungsmethoden für Pflichtfelder
     private boolean validateField(TextField field) {
-        if(field.isEmpty()) {
+        if (field.isEmpty()) {
             field.addClassName("mandatory-field");
             return false;
         }
@@ -431,7 +497,7 @@ public class Praktikumsformular extends Div {
     }
 
     private boolean validateField(NumberField field) {
-        if(field.isEmpty()) {
+        if (field.isEmpty()) {
             field.addClassName("mandatory-field");
             return false;
         }
@@ -440,7 +506,7 @@ public class Praktikumsformular extends Div {
     }
 
     private boolean validateField(EmailField field) {
-        if(field.isEmpty()) {
+        if (field.isEmpty()) {
             field.addClassName("mandatory-field");
             return false;
         }
@@ -449,7 +515,7 @@ public class Praktikumsformular extends Div {
     }
 
     private boolean validateField(DatePicker field) {
-        if(field.isEmpty()) {
+        if (field.isEmpty()) {
             field.addClassName("mandatory-field");
             return false;
         }
@@ -458,7 +524,7 @@ public class Praktikumsformular extends Div {
     }
 
     private boolean validateField(TextArea field) {
-        if(field.isEmpty()) {
+        if (field.isEmpty()) {
             field.addClassName("mandatory-field");
             return false;
         }
@@ -476,7 +542,6 @@ public class Praktikumsformular extends Div {
         group.removeClassName("mandatory-field"); // Limpia el estilo si es válido
         return true;
     }
-
 
 
     private String createJson(String statusAntrag) {
@@ -544,7 +609,7 @@ public class Praktikumsformular extends Div {
                 getValueOrEmpty(strassePraktikumsstelle),
                 getIntValueOrZero(plzPraktikumsstelle),
                 getValueOrEmpty(ortPraktikumsstelle),
-                getValueOrEmpty(bundeslandPraktikumsstelle),
+                bundeslandBox.getValue(),
                 getValueOrEmpty(landPraktikumsstelle),
                 getValueOrEmpty(ansprechpartnerPraktikumsstelle),
                 getValueOrEmpty(telefonPraktikumsstelle),
@@ -574,23 +639,23 @@ public class Praktikumsformular extends Div {
         // Verwende den HttpClient
 
         HttpRequest request = HttpRequest.newBuilder()
-                                         .uri(URI.create(url))
-                                         .header("Content-Type",
-                                                 "application/json")
-                                         .POST(HttpRequest.BodyPublishers.ofString(json))
-                                         .build();
+                .uri(URI.create(url))
+                .header("Content-Type",
+                        "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
 
         HttpResponse<String> response = client.send(request,
-                                                    HttpResponse.BodyHandlers.ofString());
+                HttpResponse.BodyHandlers.ofString());
 
-        if(response.statusCode() == 200 || response.statusCode() == 201) {
+        if (response.statusCode() == 200 || response.statusCode() == 201) {
             Notification.show(successMessage,
-                              3000,
-                              Notification.Position.TOP_CENTER);
+                    3000,
+                    Notification.Position.TOP_CENTER);
         } else {
             Notification.show("Fehler: " + response.body(),
-                              3000,
-                              Notification.Position.TOP_CENTER);
+                    3000,
+                    Notification.Position.TOP_CENTER);
         }
     }
 
@@ -598,29 +663,19 @@ public class Praktikumsformular extends Div {
         String url = "http://localhost:3000/api/antrag/getantrag/" + matrikelnummer;
         try {
             ResponseEntity<String> response = restTemplate.exchange(url,
-                                                                    HttpMethod.GET,
-                                                                    null,
-                                                                    String.class);
-            if(response.getStatusCode()
-                       .is2xxSuccessful()) {
+                    HttpMethod.GET,
+                    null,
+                    String.class);
+            if (response.getStatusCode()
+                    .is2xxSuccessful()) {
                 return new JSONObject(response.getBody()); // Devuelve el JSON como objeto
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             Notification.show("Fehler beim Abrufen des Antrags: " + e.getMessage(),
-                              3000,
-                              Notification.Position.TOP_CENTER);
+                    3000,
+                    Notification.Position.TOP_CENTER);
         }
         return null;
-    }
-
-    private LocalDate parseDateFromGermanFormat(String dateStr) {
-        DateTimeFormatter deutschesDatumFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        try {
-            return LocalDate.parse(dateStr, deutschesDatumFormat);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Datum konnte nicht im deutschen Format angezeigt werden: " + dateStr);
-        }
     }
 
 
@@ -660,7 +715,7 @@ public class Praktikumsformular extends Div {
             strassePraktikumsstelle.setValue(antragJson.optString("strassePraktikumsstelle", ""));
             plzPraktikumsstelle.setValue(antragJson.optDouble("plzPraktikumsstelle", 0.0));
             ortPraktikumsstelle.setValue(antragJson.optString("ortPraktikumsstelle", ""));
-            bundeslandPraktikumsstelle.setValue(antragJson.optString("bundeslandPraktikumsstelle", ""));
+            bundeslandBox.setValue(antragJson.optString("bundeslandPraktikumsstelle", null));
             landPraktikumsstelle.setValue(antragJson.optString("landPraktikumsstelle", ""));
             ansprechpartnerPraktikumsstelle.setValue(antragJson.optString("ansprechpartnerPraktikumsstelle", ""));
             telefonPraktikumsstelle.setValue(antragJson.optString("telefonPraktikumsstelle", ""));
@@ -677,5 +732,83 @@ public class Praktikumsformular extends Div {
         }
     }
 
+    private int berechneArbeitstage(LocalDate startDate, LocalDate endDate, String bundesland) {
+        // Feiertage abrufen
+        Set<LocalDate> feiertage = fetchFeiertage(startDate, endDate, bundesland);
+
+        int arbeitstage = 0;
+
+        // Iteration über den Zeitraum
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            // Prüfen, ob der Tag ein Arbeitstag ist (Montag bis Freitag)
+            if (date.getDayOfWeek().getValue() >= 1 && date.getDayOfWeek().getValue() <= 5 && !feiertage.contains(date)) {
+                arbeitstage++;
+            }
+        }
+
+        return arbeitstage;
+    }
+
+    private Set<LocalDate> fetchFeiertage(LocalDate startDate, LocalDate endDate, String bundesland) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = String.format("https://get.api-feiertage.de?years=%d,%d&states=%s",
+                startDate.getYear(), endDate.getYear(), bundesland.toLowerCase());
+
+        Set<LocalDate> feiertage = new HashSet<>();
+
+        try {
+            String response = restTemplate.getForObject(url, String.class);
+            if (response != null) {
+                JSONArray jsonArray = new JSONArray(response);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    try {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        LocalDate feiertag = LocalDate.parse(jsonObject.getString("date"));
+                        feiertage.add(feiertag);
+                    } catch (JSONException | DateTimeParseException e) {
+                        System.err.println("Fehler beim Verarbeiten eines Feiertage-Eintrags: " + e.getMessage());
+                    }
+                }
+            } else {
+                System.err.println("Die Antwort vom Feiertage-API war null.");
+            }
+        } catch (RestClientException e) {
+            System.err.println("Fehler beim Abrufen der Feiertage: " + e.getMessage());
+        } catch (JSONException e) {
+            System.err.println("Fehler beim Verarbeiten des JSON-Objekts: " + e.getMessage());
+        }
+
+        return feiertage;
+    }
+
+
+    private LocalDate parseDateFromGermanFormat(String dateStr) {
+        DateTimeFormatter deutschesDatumFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        try {
+            return LocalDate.parse(dateStr, deutschesDatumFormat);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Datum konnte nicht im deutschen Format angezeigt werden: " + dateStr);
+        }
+    }
+
+    //bundesländer lesbarer machen im drop-down menu
+    private static final Map<String, String> BUNDESLANDER_MAP = Map.ofEntries(
+            Map.entry("BW", "Baden-Württemberg"),
+            Map.entry("BY", "Bayern"),
+            Map.entry("BE", "Berlin"),
+            Map.entry("BB", "Brandenburg"),
+            Map.entry("HB", "Bremen"),
+            Map.entry("HH", "Hamburg"),
+            Map.entry("HE", "Hessen"),
+            Map.entry("MV", "Mecklenburg-Vorpommern"),
+            Map.entry("NI", "Niedersachsen"),
+            Map.entry("NW", "Nordrhein-Westfalen"),
+            Map.entry("RP", "Rheinland-Pfalz"),
+            Map.entry("SL", "Saarland"),
+            Map.entry("SN", "Sachsen"),
+            Map.entry("ST", "Sachsen-Anhalt"),
+            Map.entry("SH", "Schleswig-Holstein"),
+            Map.entry("TH", "Thüringen")
+    );
 
 }
