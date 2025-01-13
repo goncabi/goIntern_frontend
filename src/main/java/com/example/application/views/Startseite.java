@@ -115,8 +115,11 @@ public class Startseite extends VerticalLayout {
         H2 heading = new H2("Mein Antrag");
 
         String status = getAntragStatus(matrikelnummer);
-        //H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
         Span statusLabel = createStatusLabel(status);
+
+        HorizontalLayout headerLayout = new HorizontalLayout(heading, statusLabel);
+        headerLayout.setAlignItems(Alignment.CENTER);
+        headerLayout.setSpacing(true);
 
         Button bearbeitenButton = new Button("Bearbeiten");
 
@@ -187,7 +190,7 @@ public class Startseite extends VerticalLayout {
             kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
         });
 
-        container.add(heading, statusLabel, buttonLayout, kommentarToggle, kommentarContent);
+        container.add(headerLayout, buttonLayout, kommentarToggle, kommentarContent);
         return container;
 
     }
@@ -195,15 +198,17 @@ public class Startseite extends VerticalLayout {
     private Span createStatusLabel(String status) {
         Span statusLabel = new Span(status);
         statusLabel.getElement().getStyle()
-                .set("padding", "4px 8px")
-                .set("border-radius", "8px")
+                .set("padding", "2px 6px")
+                .set("border-radius", "12px")
                 .set("font-weight", "bold")
                 .set("color", "#fff")
-                .set("font-size", "14px");
+                .set("font-size", "12px");
+
+
 
         switch (status.toLowerCase()) {
             case "gespeichert":
-                statusLabel.getElement().getStyle().set("background-color", "#ffc107"); // Gelb
+                statusLabel.getElement().getStyle().set("background-color", "#244567"); //BG Blau
                 break;
             case "eingereicht":
                 statusLabel.getElement().getStyle().set("background-color", "#007bff"); // Blau
