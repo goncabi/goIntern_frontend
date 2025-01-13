@@ -99,6 +99,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
         comboBox.getStyle().set("width", "250px");
 
+
+
         // Renderer für individuelles Styling
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
             Span span = new Span(item);
@@ -128,9 +130,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         });
         // Suchleiste
         TextField searchField = new TextField();
-        searchField.setPlaceholder("Nach Name oder Matrikelnummer suchen...");
+        searchField.setPlaceholder("Suchleiste");
         searchField.setClearButtonVisible(true);
         searchField.setWidth("250px");
+
+
 
 // Listener hinzufügen
         searchField.addValueChangeListener(event -> {
@@ -165,6 +169,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 .set("flex-direction", "row")
                 .set("align-items", "center")
                 .set("gap", "15px"); // Abstand zwischen den Elementen
+
 // Filter-Layout vor dem Grid hinzufügen
         add(filterLayout);
 
