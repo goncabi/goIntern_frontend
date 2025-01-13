@@ -160,8 +160,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         filterLayout.setSpacing(true);
         filterLayout.setPadding(false);
         filterLayout.setWidthFull();
-        filterLayout.getStyle().set("flex-wrap", "nowrap");
-
+        filterLayout.getStyle()
+                .set("display", "flex")
+                .set("flex-direction", "row")
+                .set("align-items", "center")
+                .set("gap", "15px"); // Abstand zwischen den Elementen
 // Filter-Layout vor dem Grid hinzufügen
         add(filterLayout);
 
