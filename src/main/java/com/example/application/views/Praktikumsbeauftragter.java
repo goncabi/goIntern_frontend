@@ -197,7 +197,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         grid.setItems(antraege);
 
-        add(title, comboBox, badges, grid);
+        add(title, badges, grid);
     }
 
     //Methode, um Nachrichten aus Backend zu holen
