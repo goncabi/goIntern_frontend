@@ -99,6 +99,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
         comboBox.getStyle().set("width", "250px");
 
+
+
         // Renderer für individuelles Styling
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
             Span span = new Span(item);
@@ -128,9 +130,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         });
         // Suchleiste
         TextField searchField = new TextField();
-        searchField.setPlaceholder("Nach Name oder Matrikelnummer suchen...");
+        searchField.setPlaceholder("Suchleiste");
         searchField.setClearButtonVisible(true);
         searchField.setWidth("250px");
+
+
 
 // Listener hinzufügen
         searchField.addValueChangeListener(event -> {
@@ -154,11 +158,17 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
 
         });
-// Filter-Layout anpassen: Statusfilter und Suchleiste nebeneinander
+//Statusfilter und Suchleiste nebeneinander
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
-        filterLayout.setAlignItems(Alignment.BASELINE);
+        filterLayout.setAlignItems(Alignment.CENTER);
         filterLayout.setSpacing(true);
+        filterLayout.setPadding(false);
         filterLayout.setWidthFull();
+        filterLayout.getStyle()
+                .set("display", "flex")
+                .set("flex-direction", "row")
+                .set("align-items", "center")
+                .set("gap", "15px"); // Abstand zwischen den Elementen
 
 // Filter-Layout vor dem Grid hinzufügen
         add(filterLayout);
@@ -192,7 +202,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         grid.setItems(antraege);
 
-        add(title, comboBox, badges, grid);
+        add(title, badges, grid);
     }
 
     //Methode, um Nachrichten aus Backend zu holen
