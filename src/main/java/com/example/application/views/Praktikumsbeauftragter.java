@@ -154,11 +154,13 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
 
         });
-// Filter-Layout anpassen: Statusfilter und Suchleiste nebeneinander
+//Statusfilter und Suchleiste nebeneinander
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
-        filterLayout.setAlignItems(Alignment.BASELINE);
+        filterLayout.setAlignItems(Alignment.CENTER);
         filterLayout.setSpacing(true);
+        filterLayout.setPadding(false);
         filterLayout.setWidthFull();
+        filterLayout.getStyle().set("flex-wrap", "nowrap");
 
 // Filter-Layout vor dem Grid hinzufügen
         add(filterLayout);
