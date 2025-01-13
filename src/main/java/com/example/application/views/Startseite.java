@@ -36,9 +36,8 @@ public class Startseite extends VerticalLayout {
             getUI().ifPresent(ui -> ui.navigate("login"));
             return;
         }
-        //header
-        //H1 title = new H1("Antragsübersicht");
 
+        //header
         String pageTitle = hasAntrag(matrikelnummer) ? "Antragsübersicht" : "Willkommen auf der Startseite";
         H1 title = new H1(pageTitle);
 
@@ -78,7 +77,6 @@ public class Startseite extends VerticalLayout {
         });
 
 
-
         HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
         buttons.setSpacing(true);
         VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
@@ -103,7 +101,7 @@ public class Startseite extends VerticalLayout {
     }
 
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
-       private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
+    private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle()
                 .set("border", "1px solid #ccc")
@@ -115,27 +113,29 @@ public class Startseite extends VerticalLayout {
                 .set("max-width", "600px");
 
         H2 heading = new H2("Mein Antrag");
+
         String status = getAntragStatus(matrikelnummer);
-        H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
+        //H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
+        Span statusLabel = createStatusLabel(status);
 
-           Button bearbeitenButton = new Button("Bearbeiten");
+        Button bearbeitenButton = new Button("Bearbeiten");
 
-           // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
-           bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
+        // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
+        bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
 
-           if (!bearbeitenButton.isEnabled()) {
-               bearbeitenButton.getStyle()
-                               .set("background-color", "#d3d3d3") // Grau
-                               .set("color", "#808080")
-                               .set("cursor", "not-allowed");
-           } else {
-               bearbeitenButton.addClickListener(event -> {
-                   VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
-                   getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-               });
-           }
+        if (!bearbeitenButton.isEnabled()) {
+            bearbeitenButton.getStyle()
+                    .set("background-color", "#d3d3d3") // Grau
+                    .set("color", "#808080")
+                    .set("cursor", "not-allowed");
+        } else {
+            bearbeitenButton.addClickListener(event -> {
+                VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
+                getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+            });
+        }
 
-            Button loeschenButton = new Button("Löschen", event -> {
+        Button loeschenButton = new Button("Löschen", event -> {
             Dialog confirmDialog = new Dialog();
             confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
 
@@ -172,7 +172,10 @@ public class Startseite extends VerticalLayout {
                 .set("border-radius", "4px")
                 .set("padding", "8px")
                 .set("background-color", "#f5f5f5")
-                .set("width", "100%");
+                .set("width", "100%")
+                .set("max-height", "200px")
+                .set("overflow-y", "auto");
+
 
         String notiz = getAntragNotiz(matrikelnummer);
         Span kommentarText = new Span(notiz);
@@ -184,9 +187,42 @@ public class Startseite extends VerticalLayout {
             kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
         });
 
-        container.add(heading, statuslabel, buttonLayout, kommentarToggle, kommentarContent);
+        container.add(heading, statusLabel, buttonLayout, kommentarToggle, kommentarContent);
         return container;
+
     }
+
+    private Span createStatusLabel(String status) {
+        Span statusLabel = new Span(status);
+        statusLabel.getElement().getStyle()
+                .set("padding", "4px 8px")
+                .set("border-radius", "8px")
+                .set("font-weight", "bold")
+                .set("color", "#fff")
+                .set("font-size", "14px");
+
+        switch (status.toLowerCase()) {
+            case "gespeichert":
+                statusLabel.getElement().getStyle().set("background-color", "#ffc107"); // Gelb
+                break;
+            case "eingereicht":
+                statusLabel.getElement().getStyle().set("background-color", "#007bff"); // Blau
+                break;
+            case "abgelehnt":
+                statusLabel.getElement().getStyle().set("background-color", "#dc3545"); // Rot
+                break;
+            case "zugelassen":
+                statusLabel.getElement().getStyle().set("background-color", "#28a745"); // Grün
+                break;
+
+            default:
+                statusLabel.getElement().getStyle().set("background-color", "#6c757d"); // Default: Grau
+                break;
+        }
+
+        return statusLabel;
+    }
+
 
     private void loeschenAntrag(String matrikelnummer) {
         String url = backendUrl + "antrag/" + matrikelnummer;
@@ -203,11 +239,9 @@ public class Startseite extends VerticalLayout {
     }
 
 
-
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
 
-        //H2 title = new H2("Willkommen auf der Startseite!");
         Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
             // Dialog
             Dialog popup = new Dialog();
