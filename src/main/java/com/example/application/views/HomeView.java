@@ -15,23 +15,34 @@ import com.vaadin.flow.component.html.Image;
 public class HomeView extends VerticalLayout {
 
     public HomeView() {
-        addClassName("view-container"); //zentraler Container-Stil
+        addClassName("view-container"); // zentraler Container-Stil
 
-        //Banner mit Überschrift GoIntern
+        // Erstelle den Header-Banner
         Header banner = new Header();
         banner.addClassName("banner");
 
+        // Neues Logo vor der Überschrift
+        Image logoBeforeTitle = new Image("images/GoIntern-Logo.png", "GoIntern Logo");
+        logoBeforeTitle.addClassName("logo-before");
+
+        // Überschrift
         H1 bannerTitle = new H1("GoIntern");
         bannerTitle.addClassName("banner-title");
 
-        // Bild hinzufügen
-        Image logo = new Image("images/FB4_FIW.jpg", "Logo");
-        logo.addClassName("banner-logo");
+        // Container für Logo und Überschrift
+        Div logoAndTitleContainer = new Div();
+        logoAndTitleContainer.addClassName("logo-title-container");
+        logoAndTitleContainer.add(logoBeforeTitle, bannerTitle);
 
-        banner.add(bannerTitle, logo);
+        // Bereits vorhandenes grünes Logo rechts
+        Image greenLogo = new Image("images/FB4_FIW.jpg", "Grünes Logo");
+        greenLogo.addClassName("banner-logo");
+
+        // Füge den Container (Logo + Überschrift) und das rechte Logo in den Banner ein
+        banner.add(logoAndTitleContainer, greenLogo);
         add(banner);
 
-        // animierte Linie
+        // Animierte Linie
         Span animatedLine = createAnimatedLine();
         add(animatedLine);
 
@@ -80,7 +91,6 @@ public class HomeView extends VerticalLayout {
                 .set("left", "0")
                 .set("width", "100%")
                 .set("height", "100%");
-
 
         return svgContainer;
     }

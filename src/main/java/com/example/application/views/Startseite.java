@@ -201,19 +201,19 @@ public class Startseite extends VerticalLayout {
 
         switch (status) {
             case "Gespeichert":
-                theme = "badge primary pill"; // Blau
+                theme = "badge primary pill";
                 break;
             case "Eingereicht":
-                theme = "badge info pill"; // Blau
+                theme = "badge info pill";
                 break;
             case "Abgelehnt":
-                theme = "badge error pill"; // Rot
+                theme = "badge error pill";
                 break;
             case "Zugelassen":
-                theme = "badge success pill"; // Grün
+                theme = "badge success pill"; 
                 break;
             default:
-                theme = "badge light pill"; // Grau
+                theme = "badge light pill";
                 break;
         }
 
