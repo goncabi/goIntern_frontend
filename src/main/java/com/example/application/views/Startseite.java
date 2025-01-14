@@ -192,12 +192,24 @@ public class Startseite extends VerticalLayout {
 
         List<String> notizen = getAntragNotiz(matrikelnummer);
         for (String notiz: notizen) {
+            VerticalLayout kommentarBox = new VerticalLayout();
+            kommentarBox.getStyle()
+                    .set("border", "1px solid #ddd")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px")
+                    .set("margin-bottom", "10px")
+                    .set("background-color", "#f9f9f9")
+                    .set("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)");
+
             Span kommentarText = new Span(notiz);
             kommentarText.getStyle()
-                    .set("display", "block")
-                    .set("margin-bottom", "8px");
-            kommentarContent.add(kommentarText);
+                    .set("font-size", "14px")
+                    .set("color", "#333");
+
+            kommentarBox.add(kommentarText);
+            kommentarContent.add(kommentarBox);
         }
+
 
         kommentarToggle.addClickListener(event -> {
             boolean isVisible = kommentarContent.isVisible();
