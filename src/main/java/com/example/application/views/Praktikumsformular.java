@@ -95,7 +95,7 @@ public class Praktikumsformular extends Div {
         telefonnummerStudentin = createTextField("Telefonnummer der Studentin *");
         emailStudentin = createEmailField("E-Mail-Adresse der Studentin *");
         vorschlagPraktikumsbetreuerIn = createTextField("Vorgeschlagener Praktikumsbetreuer (an der HTW) *");
-        praktikumssemester = createTextField("Praktikumssemester (SoSe / WS) *");
+        praktikumssemester = createTextField("Praktikumssemester (SoSe / WiSe) *");
         studiensemester = createNumberField("Studiensemester (bitte als Zahl eingeben) *");
         studiengang = createTextField("Studiengang *");
         datumAntrag = createDatePicker("Datum des Antrags *");
@@ -744,7 +744,7 @@ public class Praktikumsformular extends Div {
         }
     }
 
-    private int berechneArbeitstageOhneFeiertage(LocalDate startDate, LocalDate endDate) {
+    public int berechneArbeitstageOhneFeiertage(LocalDate startDate, LocalDate endDate) {
         int arbeitstage = 0;
 
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
@@ -757,7 +757,7 @@ public class Praktikumsformular extends Div {
         return arbeitstage;
     }
 
-    private int berechneArbeitstageMitFeiertagen(LocalDate startDate, LocalDate endDate, String bundesland) {
+    public int berechneArbeitstageMitFeiertagen(LocalDate startDate, LocalDate endDate, String bundesland) {
         // Feiertage abrufen
         Set<LocalDate> feiertage = fetchFeiertage(startDate, endDate, bundesland);
 
@@ -774,7 +774,7 @@ public class Praktikumsformular extends Div {
         return arbeitstage;
     }
 
-    private Set<LocalDate> fetchFeiertage(LocalDate startDate, LocalDate endDate, String bundesland) {
+    public Set<LocalDate> fetchFeiertage(LocalDate startDate, LocalDate endDate, String bundesland) {
         RestTemplate restTemplate = new RestTemplate();
         String url = String.format("https://get.api-feiertage.de?years=%d,%d&states=%s",
                 startDate.getYear(), endDate.getYear(), bundesland.toLowerCase());
