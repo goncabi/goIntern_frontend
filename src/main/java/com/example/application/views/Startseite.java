@@ -19,6 +19,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Route("studentin/startseite")
 @PageTitle("Startseite")
@@ -137,7 +140,7 @@ public class Startseite extends VerticalLayout {
                 getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
             });
         }
-         //Lösch Button
+         //Löschen Button
         Button loeschenButton = new Button("Löschen");
         loeschenButton.setEnabled("Abgelehnt".equalsIgnoreCase(status) || "Zugelassen".equalsIgnoreCase(status));
         if (!loeschenButton.isEnabled()) {
@@ -187,9 +190,14 @@ public class Startseite extends VerticalLayout {
                 .set("overflow-y", "auto");
 
 
-        String notiz = getAntragNotiz(matrikelnummer);
-        Span kommentarText = new Span(notiz);
-        kommentarContent.add(kommentarText);
+        List<String> notizen = getAntragNotiz(matrikelnummer);
+        for (String notiz: notizen) {
+            Span kommentarText = new Span(notiz);
+            kommentarText.getStyle()
+                    .set("display", "block")
+                    .set("margin-bottom", "8px");
+            kommentarContent.add(kommentarText);
+        }
 
         kommentarToggle.addClickListener(event -> {
             boolean isVisible = kommentarContent.isVisible();
@@ -322,9 +330,10 @@ public class Startseite extends VerticalLayout {
         return "nicht gefunden";
     }
 
-    private String getAntragNotiz(String matrikelnummer) {
+    private List<String> getAntragNotiz(String matrikelnummer) {
 
         String url = backendUrl + "nachrichten/" + matrikelnummer;
+        List<String> notizen = new ArrayList<>();
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -332,19 +341,20 @@ public class Startseite extends VerticalLayout {
                 JSONArray jsonarray = new JSONArray(jsonstring);
 
                 //Wollen hier checken ob das Array ein Eintrag hat:
-                if(jsonarray.length() > 0){ //wenn das Array mindestens ein element hat. Also die länge größer 0 ist, dann hat es eine Nachricht vom PB bekommen.
+                //if(jsonarray.length() > 0){ //wenn das Array mindestens ein element hat. Also die länge größer 0 ist, dann hat es eine Nachricht vom PB bekommen.
 
-                    //das was an der 0ten Stelle ist, wollen wir bekommen
-                    JSONObject jsonObject = jsonarray.getJSONObject(0);
+                for (int i = 0; i < jsonarray.length(); i++) {
+                    JSONObject jsonObject = jsonarray.getJSONObject(i);
                     String nachricht = jsonObject.getString("nachricht");
-                    return nachricht;
+                    notizen.add(nachricht);
 
                 }
             }
         } catch (Exception e) {
             Notification.show("Fehler beim Abrufen des Kommentars: " + e.getMessage());
         }
-        return "Keine Kommentare vorhanden.";
+        //return "Keine Kommentare vorhanden.";
+        return notizen.isEmpty() ? List.of("Keine Kommentare vorhanden.") : notizen;
     }
 
     //Anbindung zum Backend AntragAnzeigen
