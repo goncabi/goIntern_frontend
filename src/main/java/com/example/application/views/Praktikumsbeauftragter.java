@@ -95,9 +95,15 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
         // ComboBox für Statusfilter
-        ComboBox<String> comboBox = new ComboBox<>("Nach Status filtern");
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.setPlaceholder("Nach Status filtern");
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
-        comboBox.getStyle().set("width", "250px");
+        comboBox.setWidth("250px");
+        comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
+
+
+
+
 
 
 
@@ -133,6 +139,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.setPlaceholder("Suchleiste");
         searchField.setClearButtonVisible(true);
         searchField.setWidth("250px");
+        searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
+
+
+
+
 
 
 
@@ -161,6 +172,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 //Statusfilter und Suchleiste nebeneinander
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
         filterLayout.setAlignItems(Alignment.CENTER);
+        filterLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         filterLayout.setSpacing(true);
         filterLayout.setPadding(false);
         filterLayout.setWidthFull();
