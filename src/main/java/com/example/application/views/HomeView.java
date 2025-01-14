@@ -22,7 +22,7 @@ public class HomeView extends VerticalLayout {
         banner.addClassName("banner");
 
         // Neues Logo vor der Überschrift
-        Image logoBeforeTitle = new Image("images/GoIntern_Logo.png", "GoIntern Logo");
+        Image logoBeforeTitle = new Image("images/GoIntern-Logo.png", "GoIntern Logo");
         logoBeforeTitle.addClassName("logo-before");
 
         // Überschrift
