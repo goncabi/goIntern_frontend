@@ -103,10 +103,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
 
-
-
-
-
         // Renderer für individuelles Styling
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
             Span span = new Span(item);
@@ -130,6 +126,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     Span filterBadge = createFilterBadge(e.getValue()); // Neuen Badge erstellen
                     badges.add(filterBadge);
                     filterGridByStatus(e.getValue());
+                    comboBox.clear(); // ComboBox zurücksetzen
+                    grid.setItems(antraege);
                 }
             }
 
