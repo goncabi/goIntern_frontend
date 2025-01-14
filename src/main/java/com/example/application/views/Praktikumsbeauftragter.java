@@ -43,7 +43,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     private List<Praktikumsantrag> antraege;
     private boolean bereitsGenehmigtOderAbgelehnt = false;
     private HorizontalLayout badges;
-    private Praktikumsformular praktikumsformular = new Praktikumsformular();
+    private final Praktikumsformular praktikumsformular = new Praktikumsformular();
 
 
     public Praktikumsbeauftragter() {
@@ -381,7 +381,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("praktikumssemester")), "Praktikumssemester (SoSe / WiSe):");
                 formLayout.addFormItem(new Span(json.getString("studiensemester")), "Studiensemester:");
                 formLayout.addFormItem(new Span(json.getString("studiengang")), "Studiengang:");
-                formLayout.addFormItem(new Span(json.getBoolean("auslandspraktikum") ? "Ja" : "Nein"), "Auslandpraktikum:");
+                formLayout.addFormItem(new Span(json.getBoolean("auslandspraktikum") ? "Ja" : "Nein"), "Auslandspraktikum:");
                 formLayout.addFormItem(new Span(formatDate(json.getString("datumAntrag"))), "Datum des Antrags:");
                 formLayout.addFormItem(new Span(json.getString("namePraktikumsstelle")), "Name der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("strassePraktikumsstelle")), "Straße und Hausnummer der Praktikumsstelle:");
