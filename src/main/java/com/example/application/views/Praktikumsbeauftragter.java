@@ -43,6 +43,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     private List<Praktikumsantrag> antraege;
     private boolean bereitsGenehmigtOderAbgelehnt = false;
     private HorizontalLayout badges;
+    private Praktikumsformular praktikumsformular = new Praktikumsformular();
 
 
     public Praktikumsbeauftragter() {
@@ -103,10 +104,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
 
-
-
-
-
         // Renderer für individuelles Styling
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
             Span span = new Span(item);
@@ -130,6 +127,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     Span filterBadge = createFilterBadge(e.getValue()); // Neuen Badge erstellen
                     badges.add(filterBadge);
                     filterGridByStatus(e.getValue());
+                    comboBox.clear(); // ComboBox zurücksetzen
+                    grid.setItems(antraege);
+
+
                 }
             }
 
@@ -364,8 +365,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                         new FormLayout.ResponsiveStep("0", 1)
                 );
 
-
-
                 formLayout.getElement().getStyle().set("--vaadin-form-item-label-width", "300px");
 
 
@@ -382,13 +381,13 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("praktikumssemester")), "Praktikumssemester (SoSe / WiSe):");
                 formLayout.addFormItem(new Span(json.getString("studiensemester")), "Studiensemester:");
                 formLayout.addFormItem(new Span(json.getString("studiengang")), "Studiengang:");
-                formLayout.addFormItem(new Span(json.getString("auslandspraktikum")), "Auslandpraktikum:");
+                formLayout.addFormItem(new Span(json.getBoolean("auslandspraktikum") ? "Ja" : "Nein"), "Auslandpraktikum:");
                 formLayout.addFormItem(new Span(formatDate(json.getString("datumAntrag"))), "Datum des Antrags:");
                 formLayout.addFormItem(new Span(json.getString("namePraktikumsstelle")), "Name der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("strassePraktikumsstelle")), "Straße und Hausnummer der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("plzPraktikumsstelle")), "Postleitzahl der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("ortPraktikumsstelle")), "Ort der Praktikumsstelle:");
-                formLayout.addFormItem(new Span(json.getString("bundeslandPraktikumsstelle")), "Bundesland des Praktikums:");
+                formLayout.addFormItem(new Span(json.getString("bundeslandPraktikumsstelle")), "Bundesland der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("landPraktikumsstelle")), "Land der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("ansprechpartnerPraktikumsstelle")), "Ansprechpartner*in der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("telefonPraktikumsstelle")), "Telefon der Praktikumsstelle:");
@@ -397,6 +396,31 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("taetigkeit")), "Tätigkeit als Praktikant*in:");
                 formLayout.addFormItem(new Span(formatDate(json.getString("startdatum"))), "Startdatum des Praktikums:");
                 formLayout.addFormItem(new Span(formatDate(json.getString("enddatum"))), "Enddatum des Praktikums:");
+
+
+                // Berechnung der Arbeitstage
+                LocalDate startDate;
+                LocalDate endDate;
+
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");  // Format anpassen
+                    startDate = LocalDate.parse(json.getString("startdatum"), formatter);  // Parsing mit Format
+                    endDate = LocalDate.parse(json.getString("enddatum"), formatter);  // Parsing mit Format
+                } catch (DateTimeParseException e) {
+                    throw new RuntimeException("Fehler beim Parsen des Datums: " + e.getMessage());
+                }
+
+                boolean auslandspraktikum = json.getBoolean("auslandspraktikum");
+                String bundesland = json.getString("bundeslandPraktikumsstelle");
+
+                int arbeitstage;
+                if (auslandspraktikum) {
+                    arbeitstage = praktikumsformular.berechneArbeitstageOhneFeiertage(startDate, endDate);
+                } else {
+                    arbeitstage = praktikumsformular.berechneArbeitstageMitFeiertagen(startDate, endDate, bundesland);
+                }
+                formLayout.addFormItem(new Span(String.valueOf(arbeitstage)), "Arbeitstage:");
+
 
                 Button abbrechen = new Button("Abbrechen", event -> dialog.close());
 
@@ -528,29 +552,13 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             Notification.show("Fehler beim Genehmigen des Antrags: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
         }
     }
-    private void aktualisiereListeUndGrid() {
-        try {
-            // Abrufen der neuen Liste der Anträge
-            List<Praktikumsantrag> neueListe = eingegangeneAntraegePreviewListe();
 
-            // Aktualisieren des Grids
-            aktualisiereAntraegeListeImFrontend(neueListe);
-
-        } catch (Exception e) {
-            Notification.show("Fehler beim Aktualisieren der Liste: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
-        }
-    }
 
     private void aktualisiereAntraegeListeImFrontend(List<Praktikumsantrag> neueListe) {
         grid.setItems(neueListe);
 
     }
 
-
-
-    private void aktualisiereGrid() {
-        grid.getDataProvider().refreshAll();
-    }
 
     private void filterGridByStatus(String status) {
         List<Praktikumsantrag> filteredItems;
@@ -654,22 +662,4 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
-    public class AblehnungsRequest {
-        private String matrikelnummer;
-        private String kommentar;
-
-        public String getKommentar() {
-            return kommentar;
-        }
-
-        public String getMatrikelnummer() {
-            return matrikelnummer;
-        }
-
-        public void setKommentar(String kommentar) {
-            this.kommentar = kommentar;
-        }
-
-        public void setMatrikelnummer(String matrikelnummer) {}
-    }
 }

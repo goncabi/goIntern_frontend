@@ -11,8 +11,6 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -97,8 +95,8 @@ public class Praktikumsformular extends Div {
         telefonnummerStudentin = createTextField("Telefonnummer der Studentin *");
         emailStudentin = createEmailField("E-Mail-Adresse der Studentin *");
         vorschlagPraktikumsbetreuerIn = createTextField("Vorgeschlagener Praktikumsbetreuer (an der HTW) *");
-        praktikumssemester = createTextField("Praktikumssemester (SoSe / WS) *");
-        studiensemester = createNumberField("Studiensemester *");
+        praktikumssemester = createTextField("Praktikumssemester (SoSe / WiSe) *");
+        studiensemester = createNumberField("Studiensemester (bitte als Zahl eingeben) *");
         studiengang = createTextField("Studiengang *");
         datumAntrag = createDatePicker("Datum des Antrags *");
         datumAntrag.setLocale(Locale.GERMANY);
@@ -110,6 +108,16 @@ public class Praktikumsformular extends Div {
         auslandspraktikumsOptionen.setItems("Ja", "Nein");
         auslandspraktikumsOptionen.setValue("Nein"); // default
         add(auslandspraktikumsOptionen);
+
+        auslandspraktikumsOptionen.addValueChangeListener(event -> {
+            if ("Ja".equals(event.getValue())) {
+                bundeslandBox.setEnabled(false);
+                bundeslandBox.setValue("keine Angabe notwendig");
+            } else {
+                bundeslandBox.setEnabled(true);
+                bundeslandBox.clear();
+            }
+        });
 
         namePraktikumsstelle = createTextField("Name der Praktikumsstelle *");
         strassePraktikumsstelle = createTextField("Straße und Hausnummer der Praktikumsstelle *");
@@ -214,25 +222,29 @@ public class Praktikumsformular extends Div {
             LocalDate startDatum = startdatum.getValue();
             LocalDate endDatum = enddatum.getValue();
             String selectedName = bundeslandBox.getValue();
-            String bundesland = BUNDESLANDER_MAP.entrySet().stream()
-                    .filter(entry -> entry.getValue().equals(selectedName))
-                    .map(Map.Entry::getKey)
-                    .findFirst()
-                    .orElse(null);
+            String bundesland = "Ja".equals(auslandspraktikumsOptionen.getValue()) ? null :
+                    BUNDESLANDER_MAP.entrySet().stream()
+                            .filter(entry -> entry.getValue().equals(selectedName))
+                            .map(Map.Entry::getKey)
+                            .findFirst()
+                            .orElse(null);
 
-            if (startDatum == null || endDatum == null || bundesland == null) {
+            if (startDatum == null || endDatum == null || ("Nein".equals(auslandspraktikumsOptionen.getValue()) && bundesland == null)) {
                 Notification.show("Bitte fülle alle notwendigen Felder aus, damit die Arbeitstage berechnet werden können.", 3000,
                         Notification.Position.TOP_CENTER);
                 return;
             }
 
             try {
-                int arbeitstage = berechneArbeitstage(startDatum, endDatum, bundesland);
+                int arbeitstage = "Ja".equals(auslandspraktikumsOptionen.getValue())
+                        ? berechneArbeitstageOhneFeiertage(startDatum, endDatum)
+                        : berechneArbeitstageMitFeiertagen(startDatum, endDatum, bundesland);
                 Notification.show("Anzahl der Arbeitstage: " + arbeitstage, 4000, Notification.Position.TOP_CENTER);
             } catch (Exception e) {
                 Notification.show("Fehler bei der Berechnung: " + e.getMessage());
             }
         });
+
 
         // Container für Berechnen-Button
         Div berechnenButtonContainer = new Div();
@@ -732,7 +744,20 @@ public class Praktikumsformular extends Div {
         }
     }
 
-    private int berechneArbeitstage(LocalDate startDate, LocalDate endDate, String bundesland) {
+    public int berechneArbeitstageOhneFeiertage(LocalDate startDate, LocalDate endDate) {
+        int arbeitstage = 0;
+
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            // Prüfen, ob der Tag ein Arbeitstag ist (Montag bis Freitag)
+            if (date.getDayOfWeek().getValue() >= 1 && date.getDayOfWeek().getValue() <= 5) {
+                arbeitstage++;
+            }
+        }
+
+        return arbeitstage;
+    }
+
+    public int berechneArbeitstageMitFeiertagen(LocalDate startDate, LocalDate endDate, String bundesland) {
         // Feiertage abrufen
         Set<LocalDate> feiertage = fetchFeiertage(startDate, endDate, bundesland);
 
@@ -749,7 +774,7 @@ public class Praktikumsformular extends Div {
         return arbeitstage;
     }
 
-    private Set<LocalDate> fetchFeiertage(LocalDate startDate, LocalDate endDate, String bundesland) {
+    public Set<LocalDate> fetchFeiertage(LocalDate startDate, LocalDate endDate, String bundesland) {
         RestTemplate restTemplate = new RestTemplate();
         String url = String.format("https://get.api-feiertage.de?years=%d,%d&states=%s",
                 startDate.getYear(), endDate.getYear(), bundesland.toLowerCase());
@@ -759,15 +784,25 @@ public class Praktikumsformular extends Div {
         try {
             String response = restTemplate.getForObject(url, String.class);
             if (response != null) {
-                JSONArray jsonArray = new JSONArray(response);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    try {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        LocalDate feiertag = LocalDate.parse(jsonObject.getString("date"));
-                        feiertage.add(feiertag);
-                    } catch (JSONException | DateTimeParseException e) {
-                        System.err.println("Fehler beim Verarbeiten eines Feiertage-Eintrags: " + e.getMessage());
+                // API-Antwort als JSONObject parsen
+                JSONObject jsonObject = new JSONObject(response);
+
+                // Prüfen, ob schlüssel "feiertage" existiert - also wenn feiertage im array, dann gibt es ihn
+                if (jsonObject.has("feiertage")) {
+                    JSONArray holidaysArray = jsonObject.getJSONArray("feiertage");
+
+                    // Feiertage durchgehen
+                    for (int i = 0; i < holidaysArray.length(); i++) {
+                        JSONObject holiday = holidaysArray.getJSONObject(i);
+
+                        LocalDate feiertag = LocalDate.parse(holiday.getString("date"));
+
+                        if (!feiertag.isBefore(startDate) && !feiertag.isAfter(endDate)) {
+                            feiertage.add(feiertag);
+                        }
                     }
+                } else {
+                    System.err.println("Die API-Antwort enthält keinen Schlüssel 'feiertage'.");
                 }
             } else {
                 System.err.println("Die Antwort vom Feiertage-API war null.");
@@ -780,7 +815,6 @@ public class Praktikumsformular extends Div {
 
         return feiertage;
     }
-
 
     private LocalDate parseDateFromGermanFormat(String dateStr) {
         DateTimeFormatter deutschesDatumFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");

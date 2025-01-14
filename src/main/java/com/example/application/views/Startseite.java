@@ -19,6 +19,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Route("studentin/startseite")
 @PageTitle("Startseite")
@@ -36,9 +39,8 @@ public class Startseite extends VerticalLayout {
             getUI().ifPresent(ui -> ui.navigate("login"));
             return;
         }
-        //header
-        //H1 title = new H1("Antragsübersicht");
 
+        //header
         String pageTitle = hasAntrag(matrikelnummer) ? "Antragsübersicht" : "Willkommen auf der Startseite";
         H1 title = new H1(pageTitle);
 
@@ -47,7 +49,6 @@ public class Startseite extends VerticalLayout {
                 .set("top", "10px")
                 .set("right", "10px");
         logoutButton.addClickListener(event -> {
-            // Zeige Bestätigungsdialog
             Dialog confirmDialog = createLogoutConfirmationDialog();
             confirmDialog.open();
         });
@@ -57,14 +58,12 @@ public class Startseite extends VerticalLayout {
         header.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         header.getStyle().set("position", "relative");
+
         // Antrag anzeigen oder "Neuen Antrag erstellen"
         Component content = hasAntrag(matrikelnummer) ? createMeinAntragContainer(matrikelnummer) : createStartseite();
 
         // Elemente hinzufügen
         add(header, content);
-
-        //VerticalLayout meinAntragContainer = createMeinAntragContainer();
-        //add(header, meinAntragContainer);
     }
 
     private Dialog createLogoutConfirmationDialog() {
@@ -76,7 +75,6 @@ public class Startseite extends VerticalLayout {
             // navigiert zur Login-Seite
             getUI().ifPresent(ui -> ui.navigate("login"));
         });
-
 
 
         HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
@@ -103,7 +101,7 @@ public class Startseite extends VerticalLayout {
     }
 
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
-       private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
+    private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
         VerticalLayout container = new VerticalLayout();
         container.getStyle()
                 .set("border", "1px solid #ccc")
@@ -115,48 +113,63 @@ public class Startseite extends VerticalLayout {
                 .set("max-width", "600px");
 
         H2 heading = new H2("Mein Antrag");
+
+
+        //Statuslabel und Anordnung am rechten Feldrand
         String status = getAntragStatus(matrikelnummer);
-        H3 statuslabel = new H3("Status: " + status); // hier wird das Label erstellt. Die H3 ist eine Ueberschrift. Der status ist von der getAntragStatus Methode.
+        Span statusLabel = createStatusBadge(status);
 
-           Button bearbeitenButton = new Button("Bearbeiten");
+        HorizontalLayout headerLayout = new HorizontalLayout(heading, statusLabel);
+        headerLayout.setAlignItems(Alignment.CENTER);
+        headerLayout.setWidthFull();
+        headerLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
-           // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
-           bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
+        Button bearbeitenButton = new Button("Bearbeiten");
 
-           if (!bearbeitenButton.isEnabled()) {
-               bearbeitenButton.getStyle()
-                               .set("background-color", "#d3d3d3") // Grau
-                               .set("color", "#808080")
-                               .set("cursor", "not-allowed");
-           } else {
-               bearbeitenButton.addClickListener(event -> {
-                   VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
-                   getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-               });
-           }
+        // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
+        bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
 
-            Button loeschenButton = new Button("Löschen", event -> {
-            Dialog confirmDialog = new Dialog();
-            confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
-
-            Button cancelButton = new Button("Abbrechen", e -> confirmDialog.close());
-            Button jaButton = new Button("Ja", e -> {
-                loeschenAntrag(matrikelnummer); // hier noch hargecoded. Da muss eine Variable hin und das geht erst wenn sich eingeloggt und die Backend-Frontend-Anbindung fuer Login implementiert wurde.
-                confirmDialog.close();
-                Notification.show("Antrag gelöscht.");
-                UI.getCurrent().getPage().reload(); //Seite neu laden nach löschen
+        if (!bearbeitenButton.isEnabled()) {
+            bearbeitenButton.getStyle()
+                    .set("background-color", "#d3d3d3") // Grau
+                    .set("color", "#808080")
+                    .set("cursor", "not-allowed");
+        } else {
+            bearbeitenButton.addClickListener(event -> {
+                VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
+                getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
             });
+        }
+         //Löschen Button
+        Button loeschenButton = new Button("Löschen");
+        loeschenButton.setEnabled("Abgelehnt".equalsIgnoreCase(status) || "Zugelassen".equalsIgnoreCase(status));
+        if (!loeschenButton.isEnabled()) {
+            loeschenButton.getStyle()
+                    .set("background-color", "#d3d3d3")
+                    .set("color", "#808080")
+                    .set("cursor", "not-allowed");
+        } else {
+            loeschenButton.addClickListener(event -> {
+                Dialog confirmDialog = new Dialog();
+                confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
 
+                Button cancelButton = new Button("Abbrechen", e -> confirmDialog.close());
+                Button jaButton = new Button("Ja", e -> {
+                    loeschenAntrag(matrikelnummer);
+                    confirmDialog.close();
+                    Notification.show("Antrag gelöscht.");
+                    UI.getCurrent().getPage().reload();
+                });
 
-            confirmDialog.add(new HorizontalLayout(cancelButton, jaButton));
-            confirmDialog.open();
-        });
-
+                confirmDialog.add(new HorizontalLayout(cancelButton, jaButton));
+                confirmDialog.open();
+            });
+        }
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);// Buttons rechts anordnen
 
-        //Kommentar- /Notizfeld für die Kommentare die PB beim Ablehnen für Studentinnen hinterlässt
+        //Kommentare des PB bei Ablehnung
         Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
         kommentarToggle.getStyle()
                 .set("color", "#007bff")
@@ -172,11 +185,31 @@ public class Startseite extends VerticalLayout {
                 .set("border-radius", "4px")
                 .set("padding", "8px")
                 .set("background-color", "#f5f5f5")
-                .set("width", "100%");
+                .set("width", "100%")
+                .set("max-height", "200px")
+                .set("overflow-y", "auto");
 
-        String notiz = getAntragNotiz(matrikelnummer);
-        Span kommentarText = new Span(notiz);
-        kommentarContent.add(kommentarText);
+
+        List<String> notizen = getAntragNotiz(matrikelnummer);
+        for (String notiz: notizen) {
+            VerticalLayout kommentarBox = new VerticalLayout();
+            kommentarBox.getStyle()
+                    .set("border", "1px solid #ddd")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px")
+                    .set("margin-bottom", "10px")
+                    .set("background-color", "#f9f9f9")
+                    .set("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)");
+
+            Span kommentarText = new Span(notiz);
+            kommentarText.getStyle()
+                    .set("font-size", "14px")
+                    .set("color", "#333");
+
+            kommentarBox.add(kommentarText);
+            kommentarContent.add(kommentarBox);
+        }
+
 
         kommentarToggle.addClickListener(event -> {
             boolean isVisible = kommentarContent.isVisible();
@@ -184,8 +217,41 @@ public class Startseite extends VerticalLayout {
             kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
         });
 
-        container.add(heading, statuslabel, buttonLayout, kommentarToggle, kommentarContent);
+        container.add(headerLayout, buttonLayout, kommentarToggle, kommentarContent);
         return container;
+
+    }
+
+
+    private Span createStatusBadge(String status) {
+        String theme;
+
+        switch (status) {
+            case "Gespeichert":
+                theme = "badge primary pill";
+                break;
+            case "Eingereicht":
+                theme = "badge info pill";
+                break;
+            case "Abgelehnt":
+                theme = "badge error pill";
+                break;
+            case "Zugelassen":
+                theme = "badge success pill"; 
+                break;
+            default:
+                theme = "badge light pill";
+                break;
+        }
+
+        Span badge = new Span(status);
+        badge.getElement().getThemeList().add(theme);
+        badge.getStyle()
+                .set("padding", "0.25rem 0.75rem")
+                .set("font-size", "0.9rem")
+                .set("border-radius", "50px");
+
+        return badge;
     }
 
     private void loeschenAntrag(String matrikelnummer) {
@@ -203,11 +269,9 @@ public class Startseite extends VerticalLayout {
     }
 
 
-
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
 
-        //H2 title = new H2("Willkommen auf der Startseite!");
         Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
             // Dialog
             Dialog popup = new Dialog();
@@ -278,9 +342,10 @@ public class Startseite extends VerticalLayout {
         return "nicht gefunden";
     }
 
-    private String getAntragNotiz(String matrikelnummer) {
+    private List<String> getAntragNotiz(String matrikelnummer) {
 
         String url = backendUrl + "nachrichten/" + matrikelnummer;
+        List<String> notizen = new ArrayList<>();
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -288,19 +353,20 @@ public class Startseite extends VerticalLayout {
                 JSONArray jsonarray = new JSONArray(jsonstring);
 
                 //Wollen hier checken ob das Array ein Eintrag hat:
-                if(jsonarray.length() > 0){ //wenn das Array mindestens ein element hat. Also die länge größer 0 ist, dann hat es eine Nachricht vom PB bekommen.
+                //if(jsonarray.length() > 0){ //wenn das Array mindestens ein element hat. Also die länge größer 0 ist, dann hat es eine Nachricht vom PB bekommen.
 
-                    //das was an der 0ten Stelle ist, wollen wir bekommen
-                    JSONObject jsonObject = jsonarray.getJSONObject(0);
+                for (int i = 0; i < jsonarray.length(); i++) {
+                    JSONObject jsonObject = jsonarray.getJSONObject(i);
                     String nachricht = jsonObject.getString("nachricht");
-                    return nachricht;
+                    notizen.add(nachricht);
 
                 }
             }
         } catch (Exception e) {
             Notification.show("Fehler beim Abrufen des Kommentars: " + e.getMessage());
         }
-        return "Keine Kommentare vorhanden.";
+        //return "Keine Kommentare vorhanden.";
+        return notizen.isEmpty() ? List.of("Keine Kommentare vorhanden.") : notizen;
     }
 
     //Anbindung zum Backend AntragAnzeigen
