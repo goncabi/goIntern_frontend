@@ -137,24 +137,31 @@ public class Startseite extends VerticalLayout {
                 getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
             });
         }
+         //Lösch Button
+        Button loeschenButton = new Button("Löschen");
+        loeschenButton.setEnabled("Abgelehnt".equalsIgnoreCase(status) || "Zugelassen".equalsIgnoreCase(status));
+        if (!loeschenButton.isEnabled()) {
+            loeschenButton.getStyle()
+                    .set("background-color", "#d3d3d3")
+                    .set("color", "#808080")
+                    .set("cursor", "not-allowed");
+        } else {
+            loeschenButton.addClickListener(event -> {
+                Dialog confirmDialog = new Dialog();
+                confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
 
-        Button loeschenButton = new Button("Löschen", event -> {
-            Dialog confirmDialog = new Dialog();
-            confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
+                Button cancelButton = new Button("Abbrechen", e -> confirmDialog.close());
+                Button jaButton = new Button("Ja", e -> {
+                    loeschenAntrag(matrikelnummer);
+                    confirmDialog.close();
+                    Notification.show("Antrag gelöscht.");
+                    UI.getCurrent().getPage().reload();
+                });
 
-            Button cancelButton = new Button("Abbrechen", e -> confirmDialog.close());
-            Button jaButton = new Button("Ja", e -> {
-                loeschenAntrag(matrikelnummer); // hier noch hargecoded. Da muss eine Variable hin und das geht erst wenn sich eingeloggt und die Backend-Frontend-Anbindung fuer Login implementiert wurde.
-                confirmDialog.close();
-                Notification.show("Antrag gelöscht.");
-                UI.getCurrent().getPage().reload(); //Seite neu laden nach löschen
+                confirmDialog.add(new HorizontalLayout(cancelButton, jaButton));
+                confirmDialog.open();
             });
-
-
-            confirmDialog.add(new HorizontalLayout(cancelButton, jaButton));
-            confirmDialog.open();
-        });
-
+        }
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);// Buttons rechts anordnen

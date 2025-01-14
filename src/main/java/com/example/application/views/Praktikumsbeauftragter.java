@@ -128,6 +128,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     filterGridByStatus(e.getValue());
                     comboBox.clear(); // ComboBox zurücksetzen
                     grid.setItems(antraege);
+
+
                 }
             }
 
