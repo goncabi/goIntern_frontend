@@ -759,15 +759,25 @@ public class Praktikumsformular extends Div {
         try {
             String response = restTemplate.getForObject(url, String.class);
             if (response != null) {
-                JSONArray jsonArray = new JSONArray(response);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    try {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        LocalDate feiertag = LocalDate.parse(jsonObject.getString("date"));
-                        feiertage.add(feiertag);
-                    } catch (JSONException | DateTimeParseException e) {
-                        System.err.println("Fehler beim Verarbeiten eines Feiertage-Eintrags: " + e.getMessage());
+                // API-Antwort als JSONObject parsen
+                JSONObject jsonObject = new JSONObject(response);
+
+                // Prüfen, ob schlüssel "feiertage" existiert - also wenn feiertage im array, dann gibt es ihn
+                if (jsonObject.has("feiertage")) {
+                    JSONArray holidaysArray = jsonObject.getJSONArray("feiertage");
+
+                    // Feiertage durchgehen
+                    for (int i = 0; i < holidaysArray.length(); i++) {
+                        JSONObject holiday = holidaysArray.getJSONObject(i);
+
+                        LocalDate feiertag = LocalDate.parse(holiday.getString("date"));
+
+                        if (!feiertag.isBefore(startDate) && !feiertag.isAfter(endDate)) {
+                            feiertage.add(feiertag);
+                        }
                     }
+                } else {
+                    System.err.println("Die API-Antwort enthält keinen Schlüssel 'feiertage'.");
                 }
             } else {
                 System.err.println("Die Antwort vom Feiertage-API war null.");
@@ -780,7 +790,6 @@ public class Praktikumsformular extends Div {
 
         return feiertage;
     }
-
 
     private LocalDate parseDateFromGermanFormat(String dateStr) {
         DateTimeFormatter deutschesDatumFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
