@@ -46,7 +46,6 @@ public class Startseite extends VerticalLayout {
                 .set("top", "10px")
                 .set("right", "10px");
         logoutButton.addClickListener(event -> {
-            // Zeige Bestätigungsdialog
             Dialog confirmDialog = createLogoutConfirmationDialog();
             confirmDialog.open();
         });
@@ -56,14 +55,12 @@ public class Startseite extends VerticalLayout {
         header.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         header.getStyle().set("position", "relative");
+
         // Antrag anzeigen oder "Neuen Antrag erstellen"
         Component content = hasAntrag(matrikelnummer) ? createMeinAntragContainer(matrikelnummer) : createStartseite();
 
         // Elemente hinzufügen
         add(header, content);
-
-        //VerticalLayout meinAntragContainer = createMeinAntragContainer();
-        //add(header, meinAntragContainer);
     }
 
     private Dialog createLogoutConfirmationDialog() {
@@ -114,12 +111,15 @@ public class Startseite extends VerticalLayout {
 
         H2 heading = new H2("Mein Antrag");
 
+
+        //Statuslabel und Anordnung am rechten Feldrand
         String status = getAntragStatus(matrikelnummer);
-        Span statusLabel = createStatusLabel(status);
+        Span statusLabel = createStatusBadge(status);
 
         HorizontalLayout headerLayout = new HorizontalLayout(heading, statusLabel);
         headerLayout.setAlignItems(Alignment.CENTER);
-        headerLayout.setSpacing(true);
+        headerLayout.setWidthFull();
+        headerLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
         Button bearbeitenButton = new Button("Bearbeiten");
 
@@ -159,7 +159,7 @@ public class Startseite extends VerticalLayout {
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);// Buttons rechts anordnen
 
-        //Kommentar- /Notizfeld für die Kommentare die PB beim Ablehnen für Studentinnen hinterlässt
+        //Kommentare des PB bei Ablehnung
         Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
         kommentarToggle.getStyle()
                 .set("color", "#007bff")
@@ -195,39 +195,37 @@ public class Startseite extends VerticalLayout {
 
     }
 
-    private Span createStatusLabel(String status) {
-        Span statusLabel = new Span(status);
-        statusLabel.getElement().getStyle()
-                .set("padding", "2px 6px")
-                .set("border-radius", "12px")
-                .set("font-weight", "bold")
-                .set("color", "#fff")
-                .set("font-size", "12px");
 
+    private Span createStatusBadge(String status) {
+        String theme;
 
-
-        switch (status.toLowerCase()) {
-            case "gespeichert":
-                statusLabel.getElement().getStyle().set("background-color", "#244567"); //BG Blau
+        switch (status) {
+            case "Gespeichert":
+                theme = "badge primary pill"; // Blau
                 break;
-            case "eingereicht":
-                statusLabel.getElement().getStyle().set("background-color", "#007bff"); // Blau
+            case "Eingereicht":
+                theme = "badge info pill"; // Blau
                 break;
-            case "abgelehnt":
-                statusLabel.getElement().getStyle().set("background-color", "#dc3545"); // Rot
+            case "Abgelehnt":
+                theme = "badge error pill"; // Rot
                 break;
-            case "zugelassen":
-                statusLabel.getElement().getStyle().set("background-color", "#28a745"); // Grün
+            case "Zugelassen":
+                theme = "badge success pill"; // Grün
                 break;
-
             default:
-                statusLabel.getElement().getStyle().set("background-color", "#6c757d"); // Default: Grau
+                theme = "badge light pill"; // Grau
                 break;
         }
 
-        return statusLabel;
-    }
+        Span badge = new Span(status);
+        badge.getElement().getThemeList().add(theme);
+        badge.getStyle()
+                .set("padding", "0.25rem 0.75rem")
+                .set("font-size", "0.9rem")
+                .set("border-radius", "50px");
 
+        return badge;
+    }
 
     private void loeschenAntrag(String matrikelnummer) {
         String url = backendUrl + "antrag/" + matrikelnummer;
