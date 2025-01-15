@@ -2,6 +2,7 @@ package com.example.application.views;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -25,6 +26,7 @@ import java.util.List;
 
 
 @Route("studentin/startseite")
+@CssImport("./styles/startseite.css")
 @PageTitle("Startseite")
 
 public class Startseite extends VerticalLayout {
@@ -48,6 +50,7 @@ public class Startseite extends VerticalLayout {
 
         //logout
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
+        logoutButton.addClassName("logout-button");
         logoutButton.getElement().getStyle().set("position", "absolute")
                 .set("top", "10px")
                 .set("right", "10px");
@@ -62,6 +65,7 @@ public class Startseite extends VerticalLayout {
             );
             confirmDialog.open();
         });
+
 
         HorizontalLayout header = new HorizontalLayout(title, logoutButton);
         header.setWidthFull();
@@ -94,26 +98,25 @@ public class Startseite extends VerticalLayout {
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
     private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
         VerticalLayout container = new VerticalLayout();
-        container.getStyle()
-                .set("border", "1px solid #ccc")
-                .set("border-radius", "8px")
-                .set("padding", "16px")
-                .set("background-color", "#f9f9f9")
-                .set("box-shadow", "0px 4px 6px rgba(0, 0, 0, 0.1)")
-                .set("width", "80%")
-                .set("max-width", "600px");
+        container.addClassName("mein-antrag-container");
+        container.addClassName("card");
 
         H2 heading = new H2("Mein Antrag");
-
 
         //Statuslabel und Anordnung am rechten Feldrand
         String status = getAntragStatus(matrikelnummer);
         Span statusLabel = createStatusBadge(status);
+        statusLabel.addClassName("status-label");
 
         HorizontalLayout headerLayout = new HorizontalLayout(heading, statusLabel);
         headerLayout.setAlignItems(Alignment.CENTER);
         headerLayout.setWidthFull();
         headerLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+
+        Div spacer = new Div();
+        spacer.setHeight("10px");
+        spacer.getStyle().set("width", "50%");
+
 
         Button bearbeitenButton = new Button("Bearbeiten");
 
@@ -132,7 +135,7 @@ public class Startseite extends VerticalLayout {
             });
         }
 
-         //Löschen Button
+        //Löschen Button
         Button loeschenButton = new Button("Löschen");
         loeschenButton.setEnabled("Abgelehnt".equalsIgnoreCase(status) || "Zugelassen".equalsIgnoreCase(status));
         if (!loeschenButton.isEnabled()) {
@@ -184,7 +187,7 @@ public class Startseite extends VerticalLayout {
 
 
         List<String> notizen = getAntragNotiz(matrikelnummer);
-        for (String notiz: notizen) {
+        for (String notiz : notizen) {
             VerticalLayout kommentarBox = new VerticalLayout();
             kommentarBox.getStyle()
                     .set("border", "1px solid #ddd")
@@ -210,11 +213,10 @@ public class Startseite extends VerticalLayout {
             kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
         });
 
-        container.add(headerLayout, buttonLayout, kommentarToggle, kommentarContent);
+        container.add(headerLayout, spacer, buttonLayout, kommentarToggle, kommentarContent);
         return container;
 
     }
-
 
     private Span createStatusBadge(String status) {
         String theme;
@@ -230,7 +232,7 @@ public class Startseite extends VerticalLayout {
                 theme = "badge error pill";
                 break;
             case "Zugelassen":
-                theme = "badge success pill"; 
+                theme = "badge success pill";
                 break;
             default:
                 theme = "badge light pill";

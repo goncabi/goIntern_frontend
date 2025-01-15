@@ -84,7 +84,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             confirmDialog.open();
         });
 
-        // Header mit Nachrichtenglocke und Logout-Icon
+
+        // Header mit Titel, Nachrichtenglocke und Logout-Icon
         HorizontalLayout header = new HorizontalLayout(notificationBell, logoutButton);
         header.setWidthFull();
         header.setJustifyContentMode(JustifyContentMode.END);
@@ -95,6 +96,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         // Füge die Überschrift über den Suchleisten hinzu
         add(title);
+
 
         // ComboBox für Statusfilter
         ComboBox<String> comboBox = new ComboBox<>();
