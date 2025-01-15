@@ -126,8 +126,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     Span filterBadge = createFilterBadge(e.getValue());
                     badges.add(filterBadge);
                     filterGridByStatus(e.getValue());
-                    comboBox.clear();
-                    grid.setItems(antraege);
+
                 }
             }
         });
@@ -147,6 +146,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 .set("margin-right", "5px");
 
         searchField.setPrefixComponent(searchIcon);
+
 
         // Listener hinzufügen
         searchField.addValueChangeListener(event -> {
