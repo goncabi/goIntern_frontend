@@ -5,6 +5,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -26,6 +27,10 @@ public class RegistrationView extends VerticalLayout {
     public RegistrationView() {
         // Hauptcontainer mit einer zentrierten Ansicht
         addClassName("scrollable-view");
+
+        // Hintergrund-Animation (Zacken)
+        Span backgroundAnimation = createAnimatedLine();
+        backgroundAnimation.addClassName("background-animation");
 
         // Formularcontainer
         Div formContainer = new Div();
@@ -176,7 +181,22 @@ public class RegistrationView extends VerticalLayout {
         formContainer.add(title, usernameField, usernameError, passwordField, passwordErrors,
                 confirmPasswordField, securityQuestionsTitle, questionSelection, answerField, questionError,registerButton);
 
-        add(formContainer);
+        add(backgroundAnimation,formContainer);
+    }
+
+    private Span createAnimatedLine() {
+        String svgAnimation = """
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" preserveAspectRatio="none"
+             id="registration-zacken" style="width: 100%; height: 100%; position: absolute; opacity: 0.1;">
+            <path d="M-150,300 L0,300 L125,200 L250,300 L375,150 L425,200 L500,0"
+                  style="fill:none;stroke:#8DC63F;stroke-width:25;">
+            </path>
+        </svg>
+    """;
+
+        Span span = new Span();
+        span.getElement().setProperty("innerHTML", svgAnimation);
+        return span;
     }
 
     private String createRegisterJson(String username, String password, String passwordConfirm, String frageId, String answer) {

@@ -218,5 +218,18 @@ html, body {
     flex-grow: 1;
     text-align: center;
     gap: 5px;
+}
 
+#registration-zacken {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    opacity: 0.1;
+    pointer-events: none;
+}
+#registration-zacken path {
+    stroke-width: 25px !important;
 }
