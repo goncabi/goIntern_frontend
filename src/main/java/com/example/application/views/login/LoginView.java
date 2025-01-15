@@ -134,6 +134,7 @@ public class LoginView extends VerticalLayout {
         return loginButton;
     }
 
+    //Methode zum Senden des JSON-Requests an das Backend
     private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
 
@@ -146,6 +147,7 @@ public class LoginView extends VerticalLayout {
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
+    // Methode zur Erstellung des JSON-Strings für den Login-Request
     private String createLoginJson(String role, String username, String password) {
         return String.format("{\"role\": \"%s\", \"username\": \"%s\", \"password\": \"%s\"}", role, username, password);
     }
