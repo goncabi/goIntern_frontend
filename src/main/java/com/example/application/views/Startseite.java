@@ -119,6 +119,7 @@ public class Startseite extends VerticalLayout {
 
 
         Button bearbeitenButton = new Button("Bearbeiten");
+        bearbeitenButton.addClassName("bearbeiten-button2");
 
         // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
         bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
@@ -137,6 +138,7 @@ public class Startseite extends VerticalLayout {
 
         //Löschen Button
         Button loeschenButton = new Button("Löschen");
+        loeschenButton.addClassName("loeschen-button2");
         loeschenButton.setEnabled("Abgelehnt".equalsIgnoreCase(status) || "Zugelassen".equalsIgnoreCase(status));
         if (!loeschenButton.isEnabled()) {
             loeschenButton.getStyle()
@@ -167,11 +169,8 @@ public class Startseite extends VerticalLayout {
 
         //Kommentare des PB bei Ablehnung
         Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
-        kommentarToggle.getStyle()
-                .set("color", "#007bff")
-                .set("font-size", "14px")
-                .set("cursor", "pointer")
-                .set("margin-top", "10px");
+        kommentarToggle.addClassName("kommentar-button2");
+        kommentarToggle.getStyle().set("margin-top", "10px");
 
 
         VerticalLayout kommentarContent = new VerticalLayout();
