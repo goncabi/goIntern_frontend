@@ -29,6 +29,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import com.example.application.utils.DialogUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -143,11 +144,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
 
 
-
-
-
-
-
 // Listener hinzufügen
         searchField.addValueChangeListener(event -> {
             String searchTerm = event.getValue().toLowerCase(); // Suche in Kleinbuchstaben
@@ -240,6 +236,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
         return nachrichten;
     }
+
     //innere Klasse für die Nachrichten
     public record NotificationMessage(String message, String date) {
     }
@@ -261,37 +258,15 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     }
 
     private Dialog createLogoutConfirmationDialog() {
-        Dialog dialog = new Dialog();
-
-        // Nachricht
-        H1 message = new H1("Möchten Sie sich wirklich ausloggen?");
-
-        // Hinweisnotiz
-        Span hinweis = new Span("Sicherheitshinweis: Bitte denken Sie daran, den Tab zu schließen, nachdem Sie sich ausgeloggt haben.");
-        hinweis.getStyle()
-                .set("color", "gray") // Graue Schriftfarbe
-                .set("font-size", "medium") // Kleinere Schriftgröße
-                .set("margin-top", "20px"); // Etwas Abstand nach oben
-
-        // Buttons
-        Button yesButton = new Button("Ja", event -> {
-            dialog.close();
-            UI.getCurrent().navigate("login");
-        });
-
-        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
-
-        // Layout für die Buttons
-        HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
-        buttons.setWidthFull();
-        buttons.setJustifyContentMode(JustifyContentMode.BETWEEN);
-
-        VerticalLayout dialogLayout = new VerticalLayout(message, hinweis, buttons);
-        dialog.add(dialogLayout);
-
-        return dialog;
+        return DialogUtils.createStandardDialog(
+                "Logout bestätigen",
+                "Sicherheitshinweis: Bitte schließen Sie den Tab nach dem Logout.",
+                "Möchten Sie sich wirklich ausloggen?",
+                "Ja",
+                "Abbrechen",
+                () -> getUI().ifPresent(ui -> ui.navigate("login"))
+        );
     }
-
 
     private List<Praktikumsantrag> eingegangeneAntraegePreviewListe() {
         List<Praktikumsantrag> antraege = new ArrayList<>();
@@ -434,6 +409,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     dialog.close();
                 });
 
+
                 Button ablehnen = new Button("Ablehnen", event -> {
                     if (bereitsGenehmigtOderAbgelehnt) {
                         Notification.show("Der Antrag wurde bereits bearbeitet.", 3000, Notification.Position.TOP_CENTER);
@@ -469,7 +445,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     VerticalLayout ablehnungsLayout = new VerticalLayout(ablehnungsTitle, kommentarField, buttonLayout);
                     ablehnungsDialog.add(ablehnungsLayout);
                     ablehnungsDialog.open();
+
                 });
+
 
                 // Leeres flexibles Element, sorgt dafür, dass zwischen den buttons abstände sind
                 Div spacer = new Div();

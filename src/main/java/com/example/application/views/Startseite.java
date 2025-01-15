@@ -18,6 +18,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import com.example.application.utils.DialogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +45,20 @@ public class Startseite extends VerticalLayout {
         String pageTitle = hasAntrag(matrikelnummer) ? "Antragsübersicht" : "Willkommen auf der Startseite";
         H1 title = new H1(pageTitle);
 
+        //logout
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("position", "absolute")
                 .set("top", "10px")
                 .set("right", "10px");
         logoutButton.addClickListener(event -> {
-            Dialog confirmDialog = createLogoutConfirmationDialog();
+            Dialog confirmDialog = DialogUtils.createStandardDialog(
+                    "Logout bestätigen",
+                    null,
+                    "Möchten Sie sich wirklich ausloggen?",
+                    "Ja",
+                    "Abbrechen",
+                    () -> getUI().ifPresent(ui -> ui.navigate("login"))
+            );
             confirmDialog.open();
         });
 
@@ -64,25 +73,6 @@ public class Startseite extends VerticalLayout {
 
         // Elemente hinzufügen
         add(header, content);
-    }
-
-    private Dialog createLogoutConfirmationDialog() {
-        Dialog dialog = new Dialog();
-        Span message = new Span("Möchten Sie sich wirklich ausloggen?");
-        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
-        Button yesButton = new Button("Ja", event -> {
-            dialog.close();
-            // navigiert zur Login-Seite
-            getUI().ifPresent(ui -> ui.navigate("login"));
-        });
-
-
-        HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
-        buttons.setSpacing(true);
-        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
-        dialog.add(dialogLayout);
-
-        return dialog;
     }
 
     private boolean hasAntrag(String matrikelnummer) {
@@ -140,6 +130,7 @@ public class Startseite extends VerticalLayout {
                 getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
             });
         }
+
          //Löschen Button
         Button loeschenButton = new Button("Löschen");
         loeschenButton.setEnabled("Abgelehnt".equalsIgnoreCase(status) || "Zugelassen".equalsIgnoreCase(status));
@@ -150,21 +141,22 @@ public class Startseite extends VerticalLayout {
                     .set("cursor", "not-allowed");
         } else {
             loeschenButton.addClickListener(event -> {
-                Dialog confirmDialog = new Dialog();
-                confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
-
-                Button cancelButton = new Button("Abbrechen", e -> confirmDialog.close());
-                Button jaButton = new Button("Ja", e -> {
-                    loeschenAntrag(matrikelnummer);
-                    confirmDialog.close();
-                    Notification.show("Antrag gelöscht.");
-                    UI.getCurrent().getPage().reload();
-                });
-
-                confirmDialog.add(new HorizontalLayout(cancelButton, jaButton));
+                Dialog confirmDialog = DialogUtils.createStandardDialog(
+                        "Antrag löschen",
+                        null,
+                        "Sind Sie sicher, dass Sie den Antrag löschen möchten?",
+                        "Ja",
+                        "Abbrechen",
+                        () -> {
+                            loeschenAntrag(matrikelnummer);
+                            Notification.show("Antrag gelöscht.");
+                            UI.getCurrent().getPage().reload();
+                        }
+                );
                 confirmDialog.open();
             });
         }
+
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);// Buttons rechts anordnen
@@ -274,42 +266,19 @@ public class Startseite extends VerticalLayout {
 
         Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
             // Dialog
-            Dialog popup = new Dialog();
 
-            // Nachricht im Dialog
-            Span message = new Span("Hiermit bestätige ich, dass ich Module im Umfang von 60 Leistungspunkten absolviert habe.");
-            message.getStyle()
-                    .set("font-size", "16px")
-                    .set("text-align", "center");
 
-            // Ja Button: Navigiert zur Formular-Seite
-            Button jaButton = new Button("Ja", e -> {
-                popup.close();
-                VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
-                getUI().ifPresent(ui -> ui.navigate("praktikumsformular")); // Weiterleitung
-            });
-            jaButton.addThemeName("primary");
-
-            // Nein Schließt nur den Dialog
-            Button neinButton = new Button("Nein", e -> popup.close());
-            neinButton.addThemeName("secondary");
-
-            // Buttons
-            HorizontalLayout buttonLayout = new HorizontalLayout(neinButton, jaButton);
-            buttonLayout.setWidthFull();
-            buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-
-            // Dialog
-            VerticalLayout popupLayout = new VerticalLayout(message, buttonLayout);
-            popupLayout.setPadding(true);
-            popupLayout.setSpacing(true);
-            popupLayout.setAlignItems(Alignment.CENTER);
-
-            popup.add(popupLayout);
-            popup.setWidth("400px");
-            popup.setHeight("200px");
-
-            // Dialog öffnen
+            Dialog popup = DialogUtils.createStandardDialog(
+                    "Bestätigung der Leistungspunkte",
+                    null,
+                    "Hiermit bestätige ich, dass ich Module im Umfang von 60 Leistungspunkten absolviert habe.",
+                    "Ja",
+                    "Abbrechen",
+                    () -> {
+                        VaadinSession.getCurrent().setAttribute("neuerAntrag", true);
+                        getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+                    }
+            );
             popup.open();
         });
 

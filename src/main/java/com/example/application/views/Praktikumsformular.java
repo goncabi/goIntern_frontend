@@ -8,6 +8,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.notification.Notification;
@@ -16,6 +17,7 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.example.application.utils.DialogUtils;
 
 
 import java.io.IOException;
@@ -379,15 +381,15 @@ public class Praktikumsformular extends Div {
         abbrechenButton.addClickListener(e -> {
 
             if (!gespeichert) {
-                ConfirmDialog dialog = new ConfirmDialog();
-                dialog.setHeader("Daten nicht gespeichert");
-                dialog.setText("Möchten Sie die Eingabe wirklich verwerfen?");
-                dialog.setCancelButton("Abbrechen",
-                        cancelEvent -> dialog.close());
-                dialog.setConfirmButton("Ja",
-                        confirmEvent -> UI.getCurrent().getPage().setLocation("studentin/startseite"));// Navigiere nach "Startseite"
+                Dialog confirmDialog = DialogUtils.createStandardDialog(
+                "Daten nicht gespeichert",
+                null,
+                "Möchten Sie die Eingabe wirklich verwerfen?",
+                        "Ja",
+                        "Abbrechen",
+                        () -> UI.getCurrent().getPage().setLocation("studentin/startseite"));
 
-                dialog.open();
+                confirmDialog.open();
             } else {
                 UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Startseite"
             }
