@@ -29,6 +29,7 @@ import java.util.List;
 
 public class Startseite extends VerticalLayout {
 
+    //restTemplate sendet API Anfragen ans Backend. Es kann lesen und schreiben.
     private RestTemplate restTemplate = new RestTemplate();
     private final String backendUrl = "http://localhost:3000/api/";
 
