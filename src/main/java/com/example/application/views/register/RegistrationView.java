@@ -32,6 +32,7 @@ public class RegistrationView extends VerticalLayout {
         Span backgroundAnimation = createAnimatedLine();
         backgroundAnimation.addClassName("background-animation");
 
+
         // Formularcontainer
         Div formContainer = new Div();
         formContainer.addClassName("form-container");
