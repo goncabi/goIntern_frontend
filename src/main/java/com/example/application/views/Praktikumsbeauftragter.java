@@ -10,6 +10,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -103,6 +104,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.setWidth("250px");
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
 
+
         // Renderer für individuelles Styling
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
             Span span = new Span(item);
@@ -136,6 +138,15 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.setClearButtonVisible(true);
         searchField.setWidth("250px");
         searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
+        searchField.setClearButtonVisible(true);
+
+        // Lupen-icon hinzugefügt
+        Icon searchIcon = VaadinIcon.SEARCH.create();
+        searchIcon.getStyle()
+                .set("color", "var(--lumo-secondary-text-color)")
+                .set("margin-right", "5px");
+
+        searchField.setPrefixComponent(searchIcon);
 
         // Listener hinzufügen
         searchField.addValueChangeListener(event -> {
@@ -154,6 +165,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 }
             }
         });
+// Suchleiste zur Anzeige hinzufügen
+        add(searchField);
 
         // Statusfilter und Suchleiste nebeneinander
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
