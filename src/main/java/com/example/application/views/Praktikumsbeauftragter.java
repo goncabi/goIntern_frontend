@@ -96,6 +96,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         add(header);
 
 
+
         // ComboBox für Statusfilter
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPlaceholder("Nach Status filtern");
@@ -195,6 +196,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         // Grid zur Anzeige der Anträge
         grid = new Grid<>(Praktikumsantrag.class);
+        grid.setHeight("600px");
         grid.setColumns("name", "matrikelnummer");
 
         grid.addComponentColumn(antrag -> createStatusBadge(antrag.getStatus()))
