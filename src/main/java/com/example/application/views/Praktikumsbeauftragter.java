@@ -55,6 +55,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         // Überschrift
         H1 title = new H1("Übersicht der Praktikumsanträge");
+        title.getStyle().set("margin-top", "0").set("margin-bottom", "10px");
 
         // Nachrichtenglocke
         Button notificationBell = new Button(VaadinIcon.BELL.create());
@@ -80,20 +81,20 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         logoutButton.getElement().getStyle().set("cursor", "pointer");
         logoutButton.addClickListener(event -> {
             Dialog confirmDialog = createLogoutConfirmationDialog();
-
             confirmDialog.open();
         });
 
-        // Header mit Titel und Logout-Icon
-        HorizontalLayout header = new HorizontalLayout(title, notificationBell, logoutButton);
+        // Header mit Nachrichtenglocke und Logout-Icon
+        HorizontalLayout header = new HorizontalLayout(notificationBell, logoutButton);
         header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
+        header.setJustifyContentMode(JustifyContentMode.END);
         header.setAlignItems(Alignment.CENTER);
 
-        notificationBell.getElement().getStyle().set("margin-left", "auto");
+        // Füge den Header hinzu
         add(header);
 
-
+        // Füge die Überschrift über den Suchleisten hinzu
+        add(title);
 
         // ComboBox für Statusfilter
         ComboBox<String> comboBox = new ComboBox<>();
@@ -101,8 +102,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
         comboBox.setWidth("250px");
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
-
-
 
         // Renderer für individuelles Styling
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
@@ -117,24 +116,20 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.addValueChangeListener(e -> {
             if (e.getValue() != null) {
                 String selectedValue = e.getValue();
-                // Falls "alle anzeigen" gewählt wurde
                 if ("alle Anträge anzeigen".equals(selectedValue)) {
-                    badges.removeAll(); // Alle Badges entfernen
-                    grid.setItems(antraege); // alle anträge wieder laden
+                    badges.removeAll();
+                    grid.setItems(antraege);
                 } else {
-                    //hier verhindern, dass zwei status gleichzeitig gesucht werden können
-                    badges.removeAll(); // Alle existierenden Badges entfernen
-                    Span filterBadge = createFilterBadge(e.getValue()); // Neuen Badge erstellen
+                    badges.removeAll();
+                    Span filterBadge = createFilterBadge(e.getValue());
                     badges.add(filterBadge);
                     filterGridByStatus(e.getValue());
-                    comboBox.clear(); // ComboBox zurücksetzen
+                    comboBox.clear();
                     grid.setItems(antraege);
-
-
                 }
             }
-
         });
+
         // Suchleiste
         TextField searchField = new TextField();
         searchField.setPlaceholder("Suchleiste");
@@ -142,30 +137,25 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.setWidth("250px");
         searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
 
-
-// Listener hinzufügen
+        // Listener hinzufügen
         searchField.addValueChangeListener(event -> {
-            String searchTerm = event.getValue().toLowerCase(); // Suche in Kleinbuchstaben
+            String searchTerm = event.getValue().toLowerCase();
             if (searchTerm.isEmpty()) {
-                // Zeigt alle einträge wenn suchleiste leer ist
                 grid.setItems(antraege);
             } else {
-                // Filtere die Liste anhand der Name oder Matrikelnummer
                 List<Praktikumsantrag> filteredItems = antraege.stream()
                         .filter(antrag -> antrag.getName().toLowerCase().contains(searchTerm) ||
                                 antrag.getMatrikelnummer().toLowerCase().contains(searchTerm))
                         .toList();
-
-                // Aktualisiere das Grid mit den gefilterten Einträgen
                 grid.setItems(filteredItems);
 
                 if (filteredItems.isEmpty()) {
                     Notification.show("Keine Ergebnisse für: " + searchTerm, 3000, Notification.Position.MIDDLE);
                 }
             }
-
         });
-//Statusfilter und Suchleiste nebeneinander
+
+        // Statusfilter und Suchleiste nebeneinander
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
         filterLayout.setAlignItems(Alignment.CENTER);
         filterLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
@@ -176,11 +166,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 .set("display", "flex")
                 .set("flex-direction", "row")
                 .set("align-items", "center")
-                .set("gap", "15px"); // Abstand zwischen den Elementen
+                .set("gap", "15px");
 
-// Filter-Layout vor dem Grid hinzufügen
+        // Füge die Suchleisten unter die Überschrift hinzu
         add(filterLayout);
-
 
         badges = new HorizontalLayout();
         badges.getStyle().set("flex-wrap", "wrap");
@@ -190,7 +179,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         if (antraege.isEmpty()) {
             Notification.show("Keine Anträge verfügbar.", 3000, Notification.Position.MIDDLE);
         }
-
 
         // Grid zur Anzeige der Anträge
         grid = new Grid<>(Praktikumsantrag.class);
@@ -211,7 +199,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         grid.setItems(antraege);
 
-        add(title, badges, grid);
+        // Badges und das Grid
+        add(badges, grid);
     }
 
     //Methode, um Nachrichten aus Backend zu holen
