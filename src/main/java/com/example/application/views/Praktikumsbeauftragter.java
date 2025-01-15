@@ -1,5 +1,6 @@
 package com.example.application.views;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -8,11 +9,8 @@ import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -333,6 +331,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 dialog.setHeight("90%");
 
                 H3 dialogTitle = new H3("Praktikumsantrag " + json.getString("matrikelnummer"));
+                H6 versionTitle = new H6(json.getString("antragsVersion") + ". Einreichung");
+                Span versionErläuterung = new Span();
+                if(Integer.parseInt(json.getString("antragsVersion")) > 1){
+                    versionErläuterung.add("Dieser Antrag wurde bereits eingereicht und abgelehnt. Nach Überarbeitung wird der Antrag hiermit erneut zur Prüfung vorgelegt.");
+                }
 
                 FormLayout formLayout = new FormLayout();
                 formLayout.setWidthFull();
@@ -344,7 +347,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                 formLayout.getElement().getStyle().set("--vaadin-form-item-label-width", "300px");
 
-
+//                formLayout.addFormItem(new Span(json.getString("antragsVersion")), "Version: ");
                 formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:");
                 formLayout.addFormItem(new Span(json.getString("nameStudentin")), "Name:");
                 formLayout.addFormItem(new Span(json.getString("vornameStudentin")), "Vorname:");
@@ -460,7 +463,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 buttonLayout.setWidthFull();
                 buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 
-                VerticalLayout dialogLayout = new VerticalLayout(dialogTitle, formLayout, buttonLayout);
+                VerticalLayout dialogLayout = new VerticalLayout(dialogTitle, versionTitle, versionErläuterung, formLayout, buttonLayout);
                 dialog.add(dialogLayout);
                 dialog.open();
 
