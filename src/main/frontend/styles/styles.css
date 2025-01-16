@@ -2,7 +2,7 @@
 .view-container {
     display: flex !important; /* Flexbox aktivieren */
     justify-content: center !important; /* Horizontal zentriert */
-    align-items: center !important; /* Vertikal zentriert */
+    align-items: flex-start !important; /* Vertikal zentriert */
     height: 100vh !important; /* Volle Höhe des Viewports */
     margin: 0 !important;
     padding: 0 !important;
@@ -234,4 +234,35 @@ html, body {
 
 #registration-zacken path {
     stroke-width: 25px !important;
+}
+
+.form-explanation {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px !important;
+    display: block;
+}
+
+.form-container button {
+    margin-top: 20px; /* Abstand nach oben */
+}
+
+.svgContainer {
+    position: absolute;
+    z-index: 10;
+}
+
+.button-behind {
+    width: 100% !important;
+    padding: 12px;
+    background-color: #2F5A83;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: relative;
+    z-index: 5;
 }

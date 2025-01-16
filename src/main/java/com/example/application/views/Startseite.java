@@ -7,6 +7,7 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.html.Image;
 
@@ -53,13 +54,18 @@ public class Startseite extends VerticalLayout {
         H1 title = new H1("Willkommen zurück!");
         title.addClassName("form-title");
 
+        // Neuer erklärender Satz
+        Span explanation = new Span("Hier kannst du deine Praktikumsanträge erstellen, speichern, bearbeiten und ganz einfach zur Freigabe an deine Professoren senden.");
+        explanation.addClassName("form-explanation");
+
+
         Button loginButton = new Button("Login", event -> openLogin());
         loginButton.addClassName("button");
 
         Button registerButton = new Button("Registrieren", event -> openRegister());
-        registerButton.addClassName("button");
+        registerButton.addClassName("button-behind");
 
-        formContainer.add(title, loginButton, registerButton);
+        formContainer.add(title, explanation, loginButton, registerButton);
         add(formContainer);
     }
 
