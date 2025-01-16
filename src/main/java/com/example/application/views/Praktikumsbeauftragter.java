@@ -10,6 +10,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -82,21 +83,19 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         logoutButton.addClickListener(event -> {
             Dialog confirmDialog = createLogoutConfirmationDialog();
             confirmDialog.open();
+
         });
 
+        Div spacer = new Div();
+        spacer.getStyle().set("flex-grow", "1");
 
         // Header mit Titel, Nachrichtenglocke und Logout-Icon
-        HorizontalLayout header = new HorizontalLayout(notificationBell, logoutButton);
+        HorizontalLayout header = new HorizontalLayout(title, spacer, notificationBell, logoutButton);
         header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.END);
         header.setAlignItems(Alignment.CENTER);
 
-        // Füge den Header hinzu
+        // Header hinzufügen
         add(header);
-
-        // Füge die Überschrift über den Suchleisten hinzu
-        add(title);
-
 
         // ComboBox für Statusfilter
         ComboBox<String> comboBox = new ComboBox<>();
@@ -104,6 +103,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
         comboBox.setWidth("250px");
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
+
 
         // Renderer für individuelles Styling
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
@@ -126,8 +126,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     Span filterBadge = createFilterBadge(e.getValue());
                     badges.add(filterBadge);
                     filterGridByStatus(e.getValue());
-                    comboBox.clear();
-                    grid.setItems(antraege);
+
                 }
             }
         });
@@ -138,6 +137,16 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.setClearButtonVisible(true);
         searchField.setWidth("250px");
         searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
+        searchField.setClearButtonVisible(true);
+
+        // Lupen-icon hinzugefügt
+        Icon searchIcon = VaadinIcon.SEARCH.create();
+        searchIcon.getStyle()
+                .set("color", "var(--lumo-secondary-text-color)")
+                .set("margin-right", "5px");
+
+        searchField.setPrefixComponent(searchIcon);
+
 
         // Listener hinzufügen
         searchField.addValueChangeListener(event -> {
@@ -156,6 +165,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 }
             }
         });
+// Suchleiste zur Anzeige hinzufügen
+        add(searchField);
 
         // Statusfilter und Suchleiste nebeneinander
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
