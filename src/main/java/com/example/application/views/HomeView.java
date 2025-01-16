@@ -1,4 +1,4 @@
-package com.example.application.views;
+/*package com.example.application.views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -95,3 +95,4 @@ public class HomeView extends VerticalLayout {
         return svgContainer;
     }
 }
+*/
