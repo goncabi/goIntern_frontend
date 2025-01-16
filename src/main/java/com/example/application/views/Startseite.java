@@ -2,6 +2,7 @@ package com.example.application.views;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -18,13 +19,19 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import com.example.application.utils.DialogUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Route("studentin/startseite")
+@CssImport("./styles/startseite.css")
 @PageTitle("Startseite")
 
 public class Startseite extends VerticalLayout {
 
+    //restTemplate sendet API Anfragen ans Backend. Es kann lesen und schreiben.
     private RestTemplate restTemplate = new RestTemplate();
     private final String backendUrl = "http://localhost:3000/api/";
 
@@ -41,14 +48,24 @@ public class Startseite extends VerticalLayout {
         String pageTitle = hasAntrag(matrikelnummer) ? "Antragsübersicht" : "Willkommen auf der Startseite";
         H1 title = new H1(pageTitle);
 
+        //logout
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
+        logoutButton.addClassName("logout-button");
         logoutButton.getElement().getStyle().set("position", "absolute")
                 .set("top", "10px")
                 .set("right", "10px");
         logoutButton.addClickListener(event -> {
-            Dialog confirmDialog = createLogoutConfirmationDialog();
+            Dialog confirmDialog = DialogUtils.createStandardDialog(
+                    "Logout bestätigen",
+                    null,
+                    "Möchten Sie sich wirklich ausloggen?",
+                    "Ja",
+                    "Abbrechen",
+                    () -> getUI().ifPresent(ui -> ui.navigate("login"))
+            );
             confirmDialog.open();
         });
+
 
         HorizontalLayout header = new HorizontalLayout(title, logoutButton);
         header.setWidthFull();
@@ -61,25 +78,6 @@ public class Startseite extends VerticalLayout {
 
         // Elemente hinzufügen
         add(header, content);
-    }
-
-    private Dialog createLogoutConfirmationDialog() {
-        Dialog dialog = new Dialog();
-        Span message = new Span("Möchten Sie sich wirklich ausloggen?");
-        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
-        Button yesButton = new Button("Ja", event -> {
-            dialog.close();
-            // navigiert zur Login-Seite
-            getUI().ifPresent(ui -> ui.navigate("login"));
-        });
-
-
-        HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
-        buttons.setSpacing(true);
-        VerticalLayout dialogLayout = new VerticalLayout(message, buttons);
-        dialog.add(dialogLayout);
-
-        return dialog;
     }
 
     private boolean hasAntrag(String matrikelnummer) {
@@ -100,35 +98,36 @@ public class Startseite extends VerticalLayout {
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
     private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
         VerticalLayout container = new VerticalLayout();
-        container.getStyle()
-                .set("border", "1px solid #ccc")
-                .set("border-radius", "8px")
-                .set("padding", "16px")
-                .set("background-color", "#f9f9f9")
-                .set("box-shadow", "0px 4px 6px rgba(0, 0, 0, 0.1)")
-                .set("width", "80%")
-                .set("max-width", "600px");
+        container.addClassName("mein-antrag-container");
+        container.addClassName("card");
 
         H2 heading = new H2("Mein Antrag");
-
 
         //Statuslabel und Anordnung am rechten Feldrand
         String status = getAntragStatus(matrikelnummer);
         Span statusLabel = createStatusBadge(status);
+        statusLabel.addClassName("status-label");
+
 
         HorizontalLayout headerLayout = new HorizontalLayout(heading, statusLabel);
         headerLayout.setAlignItems(Alignment.CENTER);
         headerLayout.setWidthFull();
         headerLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
+        Div spacer = new Div();
+        spacer.setHeight("10px");
+        spacer.getStyle().set("width", "50%");
+
+
         Button bearbeitenButton = new Button("Bearbeiten");
+        bearbeitenButton.addClassName("bearbeiten-button2");
 
         // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
         bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
 
         if (!bearbeitenButton.isEnabled()) {
             bearbeitenButton.getStyle()
-                    .set("background-color", "#d3d3d3") // Grau
+                    .set("background-color", "#d3d3d3")
                     .set("color", "#808080")
                     .set("cursor", "not-allowed");
         } else {
@@ -137,9 +136,16 @@ public class Startseite extends VerticalLayout {
                 getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
             });
         }
-         //Lösch Button
+
+        //Löschen Button
         Button loeschenButton = new Button("Löschen");
-        loeschenButton.setEnabled("Abgelehnt".equalsIgnoreCase(status) || "Zugelassen".equalsIgnoreCase(status));
+        loeschenButton.addClassName("loeschen-button2");
+        loeschenButton.setEnabled(
+                "Abgelehnt".equalsIgnoreCase(status) ||
+                        "Zugelassen".equalsIgnoreCase(status) ||
+                        "gespeichert".equalsIgnoreCase(status)
+        );
+
         if (!loeschenButton.isEnabled()) {
             loeschenButton.getStyle()
                     .set("background-color", "#d3d3d3")
@@ -147,32 +153,30 @@ public class Startseite extends VerticalLayout {
                     .set("cursor", "not-allowed");
         } else {
             loeschenButton.addClickListener(event -> {
-                Dialog confirmDialog = new Dialog();
-                confirmDialog.add(new Span("Sind Sie sicher, dass Sie den Antrag löschen möchten?"));
-
-                Button cancelButton = new Button("Abbrechen", e -> confirmDialog.close());
-                Button jaButton = new Button("Ja", e -> {
-                    loeschenAntrag(matrikelnummer);
-                    confirmDialog.close();
-                    Notification.show("Antrag gelöscht.");
-                    UI.getCurrent().getPage().reload();
-                });
-
-                confirmDialog.add(new HorizontalLayout(cancelButton, jaButton));
+                Dialog confirmDialog = DialogUtils.createStandardDialog(
+                        "Antrag löschen",
+                        null,
+                        "Sind Sie sicher, dass Sie den Antrag löschen möchten?",
+                        "Ja",
+                        "Abbrechen",
+                        () -> {
+                            loeschenAntrag(matrikelnummer);
+                            Notification.show("Antrag gelöscht.");
+                            UI.getCurrent().getPage().reload();
+                        }
+                );
                 confirmDialog.open();
             });
         }
+
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);// Buttons rechts anordnen
 
         //Kommentare des PB bei Ablehnung
         Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
-        kommentarToggle.getStyle()
-                .set("color", "#007bff")
-                .set("font-size", "14px")
-                .set("cursor", "pointer")
-                .set("margin-top", "10px");
+        kommentarToggle.addClassName("kommentar-button2");
+        kommentarToggle.getStyle().set("margin-top", "10px");
 
 
         VerticalLayout kommentarContent = new VerticalLayout();
@@ -187,9 +191,26 @@ public class Startseite extends VerticalLayout {
                 .set("overflow-y", "auto");
 
 
-        String notiz = getAntragNotiz(matrikelnummer);
-        Span kommentarText = new Span(notiz);
-        kommentarContent.add(kommentarText);
+        List<String> notizen = getAntragNotiz(matrikelnummer);
+        for (String notiz : notizen) {
+            VerticalLayout kommentarBox = new VerticalLayout();
+            kommentarBox.getStyle()
+                    .set("border", "1px solid #ddd")
+                    .set("border-radius", "8px")
+                    .set("padding", "10px")
+                    .set("margin-bottom", "10px")
+                    .set("background-color", "#f9f9f9")
+                    .set("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)");
+
+            Span kommentarText = new Span(notiz);
+            kommentarText.getStyle()
+                    .set("font-size", "14px")
+                    .set("color", "#333");
+
+            kommentarBox.add(kommentarText);
+            kommentarContent.add(kommentarBox);
+        }
+
 
         kommentarToggle.addClickListener(event -> {
             boolean isVisible = kommentarContent.isVisible();
@@ -197,11 +218,10 @@ public class Startseite extends VerticalLayout {
             kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
         });
 
-        container.add(headerLayout, buttonLayout, kommentarToggle, kommentarContent);
+        container.add(headerLayout, spacer, buttonLayout, kommentarToggle, kommentarContent);
         return container;
 
     }
-
 
     private Span createStatusBadge(String status) {
         String theme;
@@ -217,7 +237,7 @@ public class Startseite extends VerticalLayout {
                 theme = "badge error pill";
                 break;
             case "Zugelassen":
-                theme = "badge success pill"; 
+                theme = "badge success pill";
                 break;
             default:
                 theme = "badge light pill";
@@ -248,58 +268,48 @@ public class Startseite extends VerticalLayout {
         }
     }
 
-
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
+        layout.setAlignItems(Alignment.CENTER);
 
-        Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
-            // Dialog
-            Dialog popup = new Dialog();
+        //Neues Kärtchen mit Titel
+        VerticalLayout card = new VerticalLayout();
+        card.addClassName("neuer-antrag-card");
+        card.setSizeFull();
+        card.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
-            // Nachricht im Dialog
-            Span message = new Span("Hiermit bestätige ich, dass ich Module im Umfang von 60 Leistungspunkten absolviert habe.");
-            message.getStyle()
-                    .set("font-size", "16px")
-                    .set("text-align", "center");
+        H2 title = new H2("Neuer Antrag");
+        title.getStyle().set("text-align", "center");
 
-            // Ja Button: Navigiert zur Formular-Seite
-            Button jaButton = new Button("Ja", e -> {
-                popup.close();
-                VaadinSession.getCurrent().setAttribute("neuerAntrag", true); // Indikator für neuen Antrag
-                getUI().ifPresent(ui -> ui.navigate("praktikumsformular")); // Weiterleitung
-            });
-            jaButton.addThemeName("primary");
-
-            // Nein Schließt nur den Dialog
-            Button neinButton = new Button("Nein", e -> popup.close());
-            neinButton.addThemeName("secondary");
-
-            // Buttons
-            HorizontalLayout buttonLayout = new HorizontalLayout(neinButton, jaButton);
-            buttonLayout.setWidthFull();
-            buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-
-            // Dialog
-            VerticalLayout popupLayout = new VerticalLayout(message, buttonLayout);
-            popupLayout.setPadding(true);
-            popupLayout.setSpacing(true);
-            popupLayout.setAlignItems(Alignment.CENTER);
-
-            popup.add(popupLayout);
-            popup.setWidth("400px");
-            popup.setHeight("200px");
-
-            // Dialog öffnen
+        Button newRequestButton = new Button("Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
+            Dialog popup = DialogUtils.createStandardDialog(
+                    "Bestätigung der Leistungspunkte",
+                    null,
+                    "Hiermit bestätige ich, dass ich Module im Umfang von 60 Leistungspunkten absolviert habe.",
+                    "Ja",
+                    "Abbrechen",
+                    () -> {
+                        VaadinSession.getCurrent().setAttribute("neuerAntrag", true);
+                        getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+                    }
+            );
             popup.open();
         });
+
+        newRequestButton.addClassName("new-request-button2");
+        newRequestButton.getStyle().set("align-self", "center");
 
 
         Span hintLabel = new Span("Hinweis: Hier kannst du deinen Praktikumsantrag anlegen und absenden.<br>"
                 + "Du kannst du Antrag auch zwischenspeichern, damit du ihn später weiterbearbeiten kannst.<br>"
-                        + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
+                + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
         hintLabel.getElement().setProperty("innerHTML", hintLabel.getText()); // Damit die <br> korrekt interpretiert werden
-        layout.add(newRequestButton, hintLabel);
+        hintLabel.addClassName("hint-label");
+
+        card.add(title, newRequestButton, hintLabel);
+        layout.add(card);
         return layout;
+
     }
 
      // Anbindung zum Backend
@@ -322,9 +332,10 @@ public class Startseite extends VerticalLayout {
         return "nicht gefunden";
     }
 
-    private String getAntragNotiz(String matrikelnummer) {
+    private List<String> getAntragNotiz(String matrikelnummer) {
 
         String url = backendUrl + "nachrichten/" + matrikelnummer;
+        List<String> notizen = new ArrayList<>();
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -332,19 +343,20 @@ public class Startseite extends VerticalLayout {
                 JSONArray jsonarray = new JSONArray(jsonstring);
 
                 //Wollen hier checken ob das Array ein Eintrag hat:
-                if(jsonarray.length() > 0){ //wenn das Array mindestens ein element hat. Also die länge größer 0 ist, dann hat es eine Nachricht vom PB bekommen.
+                //if(jsonarray.length() > 0){ //wenn das Array mindestens ein element hat. Also die länge größer 0 ist, dann hat es eine Nachricht vom PB bekommen.
 
-                    //das was an der 0ten Stelle ist, wollen wir bekommen
-                    JSONObject jsonObject = jsonarray.getJSONObject(0);
+                for (int i = 0; i < jsonarray.length(); i++) {
+                    JSONObject jsonObject = jsonarray.getJSONObject(i);
                     String nachricht = jsonObject.getString("nachricht");
-                    return nachricht;
+                    notizen.add(nachricht);
 
                 }
             }
         } catch (Exception e) {
             Notification.show("Fehler beim Abrufen des Kommentars: " + e.getMessage());
         }
-        return "Keine Kommentare vorhanden.";
+        //return "Keine Kommentare vorhanden.";
+        return notizen.isEmpty() ? List.of("Keine Kommentare vorhanden.") : notizen;
     }
 
     //Anbindung zum Backend AntragAnzeigen

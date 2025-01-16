@@ -1,0 +1,102 @@
+/* Stile für Antragsübersicht */
+
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+    margin: 50px auto;
+}
+
+/* Buttons auf Antragsübersicht*/
+
+.bearbeiten-button2 {
+    background-color: #FFFFFF;
+    color: #2F5A83;
+    border-radius: 15px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+.bearbeiten-button2:hover {
+    background-color: #F9F9F9;
+    color: #8DC63F;
+}
+
+.loeschen-button2 {
+    background-color: #2F5A83;
+    color: #FFFFFF;
+    border-radius: 15px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+.loeschen-button2:hover {
+    background-color: #8DC63F;
+    color: #FFFFFF;
+}
+
+.kommentar-button2 {
+    /*background-color: #8DC63F;
+    color: #FFFFFF;*/
+    background-color: #2F5A83;
+    color: #FFFFFF;
+    border-radius: 15px;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+}
+
+.kommentar-button2:hover {
+    /*background-color: #2F5A83;
+    color: #FFFFFF;*/
+    background-color: #8DC63F;
+    color: #FFFFFF
+}
+
+.status-label[theme~="primary"] {
+    background-color: rgba(141, 198, 63, 0.7);
+    color: #FFFFFF;
+}
+
+
+/* Neuer Antrag Stile*/
+
+.neuer-antrag-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.new-request-button2 {
+    background-color: #2F5A83;
+    color: #FFFFFF;
+    margin-top: 20px;
+    font-size: 24px;
+    border-radius: 15px;
+}
+
+.new-request-button2:hover {
+    background-color: #8DC63F;
+    color: #FFFFFF;
+}
+
+.hint-label {
+    font-size: 12px;
+    color: #888;
+    margin-top: 20px;
+}
+
+/* Logout Icon für beide Seiten*/
+
+.logout-button {
+    background-color: transparent;
+    color: #2F5A83;
+    border: 2px solid #fff;
+}

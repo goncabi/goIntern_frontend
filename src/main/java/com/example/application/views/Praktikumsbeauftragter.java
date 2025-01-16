@@ -1,5 +1,6 @@
 package com.example.application.views;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -8,11 +9,9 @@ import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -29,6 +28,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import com.example.application.utils.DialogUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -56,6 +56,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         // Überschrift
         H1 title = new H1("Übersicht der Praktikumsanträge");
+        title.getStyle().set("margin-top", "0").set("margin-bottom", "10px");
 
         // Nachrichtenglocke
         Button notificationBell = new Button(VaadinIcon.BELL.create());
@@ -81,19 +82,20 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         logoutButton.getElement().getStyle().set("cursor", "pointer");
         logoutButton.addClickListener(event -> {
             Dialog confirmDialog = createLogoutConfirmationDialog();
-
             confirmDialog.open();
+
         });
 
-        // Header mit Titel und Logout-Icon
-        HorizontalLayout header = new HorizontalLayout(title, notificationBell, logoutButton);
+        Div spacer = new Div();
+        spacer.getStyle().set("flex-grow", "1");
+
+        // Header mit Titel, Nachrichtenglocke und Logout-Icon
+        HorizontalLayout header = new HorizontalLayout(title, spacer, notificationBell, logoutButton);
         header.setWidthFull();
-        header.setJustifyContentMode(JustifyContentMode.BETWEEN);
         header.setAlignItems(Alignment.CENTER);
 
-        notificationBell.getElement().getStyle().set("margin-left", "auto");
+        // Header hinzufügen
         add(header);
-
 
         // ComboBox für Statusfilter
         ComboBox<String> comboBox = new ComboBox<>();
@@ -101,7 +103,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
         comboBox.setWidth("250px");
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
-
 
 
         // Renderer für individuelles Styling
@@ -117,60 +118,57 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.addValueChangeListener(e -> {
             if (e.getValue() != null) {
                 String selectedValue = e.getValue();
-                // Falls "alle anzeigen" gewählt wurde
                 if ("alle Anträge anzeigen".equals(selectedValue)) {
-                    badges.removeAll(); // Alle Badges entfernen
-                    grid.setItems(antraege); // alle anträge wieder laden
+                    badges.removeAll();
+                    grid.setItems(antraege);
                 } else {
-                    //hier verhindern, dass zwei status gleichzeitig gesucht werden können
-                    badges.removeAll(); // Alle existierenden Badges entfernen
-                    Span filterBadge = createFilterBadge(e.getValue()); // Neuen Badge erstellen
+                    badges.removeAll();
+                    Span filterBadge = createFilterBadge(e.getValue());
                     badges.add(filterBadge);
                     filterGridByStatus(e.getValue());
-                    comboBox.clear(); // ComboBox zurücksetzen
-                    grid.setItems(antraege);
-
 
                 }
             }
-
         });
+
         // Suchleiste
         TextField searchField = new TextField();
         searchField.setPlaceholder("Suchleiste");
         searchField.setClearButtonVisible(true);
         searchField.setWidth("250px");
         searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
+        searchField.setClearButtonVisible(true);
+
+        // Lupen-icon hinzugefügt
+        Icon searchIcon = VaadinIcon.SEARCH.create();
+        searchIcon.getStyle()
+                .set("color", "var(--lumo-secondary-text-color)")
+                .set("margin-right", "5px");
+
+        searchField.setPrefixComponent(searchIcon);
 
 
-
-
-
-
-
-// Listener hinzufügen
+        // Listener hinzufügen
         searchField.addValueChangeListener(event -> {
-            String searchTerm = event.getValue().toLowerCase(); // Suche in Kleinbuchstaben
+            String searchTerm = event.getValue().toLowerCase();
             if (searchTerm.isEmpty()) {
-                // Zeigt alle einträge wenn suchleiste leer ist
                 grid.setItems(antraege);
             } else {
-                // Filtere die Liste anhand der Name oder Matrikelnummer
                 List<Praktikumsantrag> filteredItems = antraege.stream()
                         .filter(antrag -> antrag.getName().toLowerCase().contains(searchTerm) ||
                                 antrag.getMatrikelnummer().toLowerCase().contains(searchTerm))
                         .toList();
-
-                // Aktualisiere das Grid mit den gefilterten Einträgen
                 grid.setItems(filteredItems);
 
                 if (filteredItems.isEmpty()) {
                     Notification.show("Keine Ergebnisse für: " + searchTerm, 3000, Notification.Position.MIDDLE);
                 }
             }
-
         });
-//Statusfilter und Suchleiste nebeneinander
+// Suchleiste zur Anzeige hinzufügen
+        add(searchField);
+
+        // Statusfilter und Suchleiste nebeneinander
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
         filterLayout.setAlignItems(Alignment.CENTER);
         filterLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
@@ -181,11 +179,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 .set("display", "flex")
                 .set("flex-direction", "row")
                 .set("align-items", "center")
-                .set("gap", "15px"); // Abstand zwischen den Elementen
+                .set("gap", "15px");
 
-// Filter-Layout vor dem Grid hinzufügen
+        // Füge die Suchleisten unter die Überschrift hinzu
         add(filterLayout);
-
 
         badges = new HorizontalLayout();
         badges.getStyle().set("flex-wrap", "wrap");
@@ -196,9 +193,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             Notification.show("Keine Anträge verfügbar.", 3000, Notification.Position.MIDDLE);
         }
 
-
         // Grid zur Anzeige der Anträge
         grid = new Grid<>(Praktikumsantrag.class);
+        grid.setHeight("600px");
         grid.setColumns("name", "matrikelnummer");
 
         grid.addComponentColumn(antrag -> createStatusBadge(antrag.getStatus()))
@@ -215,7 +212,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         grid.setItems(antraege);
 
-        add(title, badges, grid);
+        // Badges und das Grid
+        add(badges, grid);
     }
 
     //Methode, um Nachrichten aus Backend zu holen
@@ -240,6 +238,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
         return nachrichten;
     }
+
     //innere Klasse für die Nachrichten
     public record NotificationMessage(String message, String date) {
     }
@@ -261,37 +260,15 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     }
 
     private Dialog createLogoutConfirmationDialog() {
-        Dialog dialog = new Dialog();
-
-        // Nachricht
-        H1 message = new H1("Möchten Sie sich wirklich ausloggen?");
-
-        // Hinweisnotiz
-        Span hinweis = new Span("Sicherheitshinweis: Bitte denken Sie daran, den Tab zu schließen, nachdem Sie sich ausgeloggt haben.");
-        hinweis.getStyle()
-                .set("color", "gray") // Graue Schriftfarbe
-                .set("font-size", "medium") // Kleinere Schriftgröße
-                .set("margin-top", "20px"); // Etwas Abstand nach oben
-
-        // Buttons
-        Button yesButton = new Button("Ja", event -> {
-            dialog.close();
-            UI.getCurrent().navigate("login");
-        });
-
-        Button cancelButton = new Button("Abbrechen", event -> dialog.close());
-
-        // Layout für die Buttons
-        HorizontalLayout buttons = new HorizontalLayout(cancelButton, yesButton);
-        buttons.setWidthFull();
-        buttons.setJustifyContentMode(JustifyContentMode.BETWEEN);
-
-        VerticalLayout dialogLayout = new VerticalLayout(message, hinweis, buttons);
-        dialog.add(dialogLayout);
-
-        return dialog;
+        return DialogUtils.createStandardDialog(
+                "Logout bestätigen",
+                "Sicherheitshinweis: Bitte schließen Sie den Tab nach dem Logout.",
+                "Möchten Sie sich wirklich ausloggen?",
+                "Ja",
+                "Abbrechen",
+                () -> getUI().ifPresent(ui -> ui.navigate("login"))
+        );
     }
-
 
     private List<Praktikumsantrag> eingegangeneAntraegePreviewListe() {
         List<Praktikumsantrag> antraege = new ArrayList<>();
@@ -356,6 +333,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 dialog.setHeight("90%");
 
                 H3 dialogTitle = new H3("Praktikumsantrag " + json.getString("matrikelnummer"));
+                H6 versionTitle = new H6(json.getString("antragsVersion") + ". Einreichung");
+                Span versionErläuterung = new Span();
+                if(Integer.parseInt(json.getString("antragsVersion")) > 1){
+                    versionErläuterung.add("Dieser Antrag wurde bereits eingereicht und abgelehnt. Nach Überarbeitung wird der Antrag hiermit erneut zur Prüfung vorgelegt.");
+                }
 
                 FormLayout formLayout = new FormLayout();
                 formLayout.setWidthFull();
@@ -367,7 +349,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                 formLayout.getElement().getStyle().set("--vaadin-form-item-label-width", "300px");
 
-
+//                formLayout.addFormItem(new Span(json.getString("antragsVersion")), "Version: ");
                 formLayout.addFormItem(new Span(json.getString("matrikelnummer")), "Matrikelnummer:");
                 formLayout.addFormItem(new Span(json.getString("nameStudentin")), "Name:");
                 formLayout.addFormItem(new Span(json.getString("vornameStudentin")), "Vorname:");
@@ -434,6 +416,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     dialog.close();
                 });
 
+
                 Button ablehnen = new Button("Ablehnen", event -> {
                     if (bereitsGenehmigtOderAbgelehnt) {
                         Notification.show("Der Antrag wurde bereits bearbeitet.", 3000, Notification.Position.TOP_CENTER);
@@ -469,7 +452,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     VerticalLayout ablehnungsLayout = new VerticalLayout(ablehnungsTitle, kommentarField, buttonLayout);
                     ablehnungsDialog.add(ablehnungsLayout);
                     ablehnungsDialog.open();
+
                 });
+
 
                 // Leeres flexibles Element, sorgt dafür, dass zwischen den buttons abstände sind
                 Div spacer = new Div();
@@ -480,7 +465,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 buttonLayout.setWidthFull();
                 buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 
-                VerticalLayout dialogLayout = new VerticalLayout(dialogTitle, formLayout, buttonLayout);
+                VerticalLayout dialogLayout = new VerticalLayout(dialogTitle, versionTitle, versionErläuterung, formLayout, buttonLayout);
                 dialog.add(dialogLayout);
                 dialog.open();
 

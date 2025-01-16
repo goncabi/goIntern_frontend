@@ -181,20 +181,21 @@ public class Antragsuebersicht extends VerticalLayout {
     //Im Backend haben die Controller den Endpunkt getAntrag() und da wird ein Praktikumsantrag zurückgegeben und dann ein JSONString gemacht.
     // In der Methode getAntragStatus möchte ich ja nur den Status sehen
     // deswegen wird von dem JSON String nur das entsprechende Feld zum key statusAntrag dann ausgegeben.
-    private String getAntragStatus(String matrikelnummer) {
-        String url = backendUrl + "/getantrag/" + matrikelnummer;
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                String jsonstring = response.getBody();
-                JSONObject jsonobjekt = new JSONObject(jsonstring); // hier haben wir den jasonstring in das jsonobjekt reingetan
-                return jsonobjekt.getString("statusAntrag"); // an dem jsonObjekt wird die getString Methode mit dem key statusAntrag aufgerufen.
-            }
-        } catch (Exception e) {
-            Notification.show("Fehler: " + e.getMessage());
-        }
-        return "nicht gefunden";
-    }
+     private String getAntragStatus(String matrikelnummer) {
+         String url = backendUrl + "/getantrag/" + matrikelnummer;
+         try {
+             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+             if (response.getStatusCode().is2xxSuccessful()) {
+                 String jsonstring = response.getBody();
+                 JSONObject jsonobjekt = new JSONObject(jsonstring);
+                 return jsonobjekt.optString("statusAntrag", "UNBEKANNT");
+             }
+         } catch (Exception e) {
+             Notification.show("Fehler beim Abrufen des Status: " + e.getMessage());
+         }
+         return "UNBEKANNT";
+     }
+
 
     private String getAntragNotiz(String matrikelnummer) {
         String url = backendUrl + "/getantrag/" + matrikelnummer + "/kommentar";

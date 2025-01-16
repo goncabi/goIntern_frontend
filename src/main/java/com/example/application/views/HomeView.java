@@ -17,12 +17,12 @@ public class HomeView extends VerticalLayout {
     public HomeView() {
         addClassName("view-container"); // zentraler Container-Stil
 
-        // Erstelle den Header-Banner
+        // Header-Banner
         Header banner = new Header();
         banner.addClassName("banner");
 
         // Neues Logo vor der Überschrift
-        Image logoBeforeTitle = new Image("images/GoIntern-Logo.png", "GoIntern Logo");
+        Image logoBeforeTitle = new Image("images/GoIntern-Logo.jpg", "GoIntern Logo");
         logoBeforeTitle.addClassName("logo-before");
 
         // Überschrift
