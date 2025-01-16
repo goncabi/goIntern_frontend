@@ -139,7 +139,12 @@ public class Startseite extends VerticalLayout {
         //Löschen Button
         Button loeschenButton = new Button("Löschen");
         loeschenButton.addClassName("loeschen-button2");
-        loeschenButton.setEnabled("Abgelehnt".equalsIgnoreCase(status) || "Zugelassen".equalsIgnoreCase(status));
+        loeschenButton.setEnabled(
+                "Abgelehnt".equalsIgnoreCase(status) ||
+                        "Zugelassen".equalsIgnoreCase(status) ||
+                        "gespeichert".equalsIgnoreCase(status)
+        );
+
         if (!loeschenButton.isEnabled()) {
             loeschenButton.getStyle()
                     .set("background-color", "#d3d3d3")
