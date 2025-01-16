@@ -108,6 +108,7 @@ public class Startseite extends VerticalLayout {
         Span statusLabel = createStatusBadge(status);
         statusLabel.addClassName("status-label");
 
+
         HorizontalLayout headerLayout = new HorizontalLayout(heading, statusLabel);
         headerLayout.setAlignItems(Alignment.CENTER);
         headerLayout.setWidthFull();
@@ -126,7 +127,7 @@ public class Startseite extends VerticalLayout {
 
         if (!bearbeitenButton.isEnabled()) {
             bearbeitenButton.getStyle()
-                    .set("background-color", "#d3d3d3") // Grau
+                    .set("background-color", "#d3d3d3")
                     .set("color", "#808080")
                     .set("cursor", "not-allowed");
         } else {
