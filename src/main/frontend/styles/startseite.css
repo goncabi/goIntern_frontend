@@ -66,9 +66,17 @@
     text-align: center;
 }
 
-.new-request-button {
+.new-request-button2 {
+    background-color: #2F5A83;
+    color: #FFFFFF;
     margin-top: 20px;
     font-size: 24px;
+    border-radius: 15px;
+}
+
+.new-request-button2:hover {
+    background-color: #8DC63F;
+    color: #FFFFFF;
 }
 
 .hint-label {
@@ -76,7 +84,6 @@
     color: #888;
     margin-top: 20px;
 }
-
 
 /* Logout Icon für beide Seiten*/
 

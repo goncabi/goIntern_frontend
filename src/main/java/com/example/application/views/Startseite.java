@@ -275,7 +275,7 @@ public class Startseite extends VerticalLayout {
         H2 title = new H2("Neuer Antrag");
         title.getStyle().set("text-align", "center");
 
-        Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
+        Button newRequestButton = new Button("Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
             Dialog popup = DialogUtils.createStandardDialog(
                     "Bestätigung der Leistungspunkte",
                     null,
@@ -290,7 +290,7 @@ public class Startseite extends VerticalLayout {
             popup.open();
         });
 
-        newRequestButton.addClassName("new-request-button");
+        newRequestButton.addClassName("new-request-button2");
         newRequestButton.getStyle().set("align-self", "center");
 
 
