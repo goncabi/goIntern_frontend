@@ -1,5 +1,6 @@
 package com.example.application.views;
 
+import com.example.application.utils.CustomDatePicker;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -88,8 +89,7 @@ public class PraktikumsformularStudentin extends Div {
         // Felder initialisieren
         nameStudentin = createTextField("Name der Studentin *");
         vornameStudentin = createTextField("Vorname der Studentin *");
-        gebDatumStudentin = createDatePicker("Geburtsdatum *");
-        gebDatumStudentin.setLocale(Locale.GERMANY);
+        gebDatumStudentin = CustomDatePicker.createGermanDatePicker("Geburtsdatum *");
         strasseHausnummerStudentin = createTextField("Straße und Hausnummer der Studentin *");
         plzStudentin = createNumberField("Postleitzahl der Studentin *");
         ortStudentin = createTextField("Ort der Studentin *");
@@ -99,9 +99,7 @@ public class PraktikumsformularStudentin extends Div {
         praktikumssemester = createTextField("Praktikumssemester (SoSe / WiSe) *");
         studiensemester = createNumberField("Studiensemester (bitte als Zahl eingeben) *");
         studiengang = createTextField("Studiengang *");
-        datumAntrag = createDatePicker("Datum des Antrags *");
-        datumAntrag.setLocale(Locale.GERMANY);
-
+        datumAntrag = CustomDatePicker.createGermanDatePicker("Datum des Antrags *");
 
         // Checkbox-Feld für Auslandspraktikum
         auslandspraktikumsOptionen = new RadioButtonGroup<>();
@@ -140,10 +138,9 @@ public class PraktikumsformularStudentin extends Div {
         emailPraktikumsstelle = createEmailField("E-Mail-Adresse der Praktikumsstelle *");
         abteilung = createTextField("Abteilung *");
         taetigkeit = createTextArea("Tätigkeit der Praktikantin / des Praktikanten *");
-        startdatum = createDatePicker("Startdatum des Praktikums *");
-        startdatum.setLocale(Locale.GERMANY);
-        enddatum = createDatePicker("Enddatum des Praktikums *");
-        enddatum.setLocale(Locale.GERMANY);
+        startdatum = CustomDatePicker.createGermanDatePicker("Startdatum des Praktikums *");
+        enddatum = CustomDatePicker.createGermanDatePicker("Enddatum des Praktikums *");
+
 
 
         // Matrikelnummer aus der Session holen
