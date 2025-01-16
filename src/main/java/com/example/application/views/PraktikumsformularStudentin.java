@@ -5,7 +5,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -45,7 +44,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Route("praktikumsformular") //  der Anwendung
 @CssImport("./styles.css")
-public class Praktikumsformular extends Div {
+public class PraktikumsformularStudentin extends Div {
     // Studentendaten
     private TextField matrikelnummer;
     private TextField nameStudentin;
@@ -82,9 +81,9 @@ public class Praktikumsformular extends Div {
     private final RestTemplate restTemplate = new RestTemplate();
 
 
-    public Praktikumsformular() {
+    public PraktikumsformularStudentin() {
         // Hauptüberschrift
-        add(new H1("Praktikumsformular"));
+        add(new H1("PraktikumsformularStudentin"));
 
         // Felder initialisieren
         nameStudentin = createTextField("Name der Studentin *");
@@ -358,7 +357,7 @@ public class Praktikumsformular extends Div {
                         "http://localhost:3000/api/antrag/speichern",
                         "Antrag erfolgreich gespeichert!");
                 gespeichert = true; // Daten wurden gespeichert
-                UI.getCurrent().navigate("studentin/startseite"); // Navigiere nach "Startseite"
+                UI.getCurrent().navigate("studentin/startseite"); // Navigiere nach "Studentin"
 
             } catch (Exception ex) {
                 Notification.show("Ein Fehler ist aufgetreten: " + ex.getMessage(),
@@ -391,7 +390,7 @@ public class Praktikumsformular extends Div {
 
                 confirmDialog.open();
             } else {
-                UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Startseite"
+                UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Studentin"
             }
         });
 
@@ -408,7 +407,7 @@ public class Praktikumsformular extends Div {
                     sendJsonToBackend(json,
                             "http://localhost:3000/api/antrag/uebermitteln",
                             "Antrag erfolgreich eingereicht!");
-                    UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Startseite"
+                    UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Studentin"
                 } catch (Exception ex) {
                     Notification.show("Ein Fehler ist aufgetreten: " + ex.getMessage(),
                             3000,
