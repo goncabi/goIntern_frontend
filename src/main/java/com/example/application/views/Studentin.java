@@ -123,7 +123,8 @@ public class Studentin extends VerticalLayout {
         bearbeitenButton.addClassName("bearbeiten-button2");
 
         // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
-        bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) || "Abgelehnt".equalsIgnoreCase(status));
+        bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) ||
+                "Abgelehnt".equalsIgnoreCase(status));
 
         if (!bearbeitenButton.isEnabled()) {
             bearbeitenButton.getStyle()
@@ -142,7 +143,6 @@ public class Studentin extends VerticalLayout {
         loeschenButton.addClassName("loeschen-button2");
         loeschenButton.setEnabled(
                 "Abgelehnt".equalsIgnoreCase(status) ||
-                        "Zugelassen".equalsIgnoreCase(status) ||
                         "gespeichert".equalsIgnoreCase(status)
         );
 
