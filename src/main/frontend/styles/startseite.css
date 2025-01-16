@@ -100,3 +100,16 @@
     color: #2F5A83;
     border: 2px solid #fff;
 }
+
+.note-style {
+    background-color: #fff8b3;
+    border: 1px solid #e0c97f;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace; /* Schreibmaschinenschrift */
+    line-height: 1.5; /* Zeilenabstand */
+    margin-bottom: 10px;
+    width: 100%; /* Anpassung an den verfügbaren Platz */
+    max-width: 500px; /* Maximalbreite */
+}
