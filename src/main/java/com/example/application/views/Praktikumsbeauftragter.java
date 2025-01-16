@@ -1,6 +1,5 @@
 package com.example.application.views;
 
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -43,7 +42,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     private List<Praktikumsantrag> antraege;
     private boolean bereitsGenehmigtOderAbgelehnt = false;
     private HorizontalLayout badges;
-    private Praktikumsformular praktikumsformular = new Praktikumsformular();
+    private PraktikumsformularStudentin praktikumsformular = new PraktikumsformularStudentin();
 
 
     public Praktikumsbeauftragter() {
