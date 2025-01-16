@@ -13,6 +13,10 @@ import java.util.Set;
 
 public class ArbeitstageBerechnungsService {
 
+    public String getBundeslandByKuerzel(String kuerzel) {
+        return BUNDESLANDER_MAP.getOrDefault(kuerzel, null);
+    }
+
     //bundesländer lesbarer machen im drop-down menu
     private static final Map<String, String> BUNDESLANDER_MAP = Map.ofEntries(
             Map.entry("bw", "Baden-Württemberg"),
