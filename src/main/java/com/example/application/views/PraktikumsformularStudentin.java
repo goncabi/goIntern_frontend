@@ -1,11 +1,12 @@
 package com.example.application.views;
 
+import com.example.application.service.ArbeitstageBerechnungsService;
+import com.example.application.utils.CustomDatePicker;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -34,18 +35,18 @@ import java.util.stream.Collectors;
 
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 
 @Route("praktikumsformular") //  der Anwendung
 @CssImport("./styles.css")
-public class Praktikumsformular extends Div {
+public class PraktikumsformularStudentin extends Div {
+
+    ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
+
     // Studentendaten
     private TextField matrikelnummer;
     private TextField nameStudentin;
@@ -82,15 +83,14 @@ public class Praktikumsformular extends Div {
     private final RestTemplate restTemplate = new RestTemplate();
 
 
-    public Praktikumsformular() {
+    public PraktikumsformularStudentin() {
         // Hauptüberschrift
-        add(new H1("Praktikumsformular"));
+        add(new H1("PraktikumsformularStudentin"));
 
         // Felder initialisieren
         nameStudentin = createTextField("Name der Studentin *");
         vornameStudentin = createTextField("Vorname der Studentin *");
-        gebDatumStudentin = createDatePicker("Geburtsdatum *");
-        gebDatumStudentin.setLocale(Locale.GERMANY);
+        gebDatumStudentin = CustomDatePicker.createGermanDatePicker("Geburtsdatum *");
         strasseHausnummerStudentin = createTextField("Straße und Hausnummer der Studentin *");
         plzStudentin = createNumberField("Postleitzahl der Studentin *");
         ortStudentin = createTextField("Ort der Studentin *");
@@ -100,9 +100,7 @@ public class Praktikumsformular extends Div {
         praktikumssemester = createTextField("Praktikumssemester (SoSe / WiSe) *");
         studiensemester = createNumberField("Studiensemester (bitte als Zahl eingeben) *");
         studiengang = createTextField("Studiengang *");
-        datumAntrag = createDatePicker("Datum des Antrags *");
-        datumAntrag.setLocale(Locale.GERMANY);
-
+        datumAntrag = CustomDatePicker.createGermanDatePicker("Datum des Antrags *");
 
         // Checkbox-Feld für Auslandspraktikum
         auslandspraktikumsOptionen = new RadioButtonGroup<>();
@@ -127,7 +125,7 @@ public class Praktikumsformular extends Div {
         ortPraktikumsstelle = createTextField("Ort der Praktikumsstelle *");
 
         // Drop-Down mit Optionen für das Bundesland, alphabetisch geordnet
-        List<String> sortedBundeslaender = BUNDESLANDER_MAP.values().stream()
+        List<String> sortedBundeslaender = arbeitstageRechner.getBundeslaenderMap().values().stream()
                 .sorted()
                 .collect(Collectors.toList());
 
@@ -141,10 +139,9 @@ public class Praktikumsformular extends Div {
         emailPraktikumsstelle = createEmailField("E-Mail-Adresse der Praktikumsstelle *");
         abteilung = createTextField("Abteilung *");
         taetigkeit = createTextArea("Tätigkeit der Praktikantin / des Praktikanten *");
-        startdatum = createDatePicker("Startdatum des Praktikums *");
-        startdatum.setLocale(Locale.GERMANY);
-        enddatum = createDatePicker("Enddatum des Praktikums *");
-        enddatum.setLocale(Locale.GERMANY);
+        startdatum = CustomDatePicker.createGermanDatePicker("Startdatum des Praktikums *");
+        enddatum = CustomDatePicker.createGermanDatePicker("Enddatum des Praktikums *");
+
 
 
         // Matrikelnummer aus der Session holen
@@ -224,12 +221,10 @@ public class Praktikumsformular extends Div {
             LocalDate startDatum = startdatum.getValue();
             LocalDate endDatum = enddatum.getValue();
             String selectedName = bundeslandBox.getValue();
+
+            // Wenn Auslandspraktikum, wird kein Bundesland benötigt
             String bundesland = "Ja".equals(auslandspraktikumsOptionen.getValue()) ? null :
-                    BUNDESLANDER_MAP.entrySet().stream()
-                            .filter(entry -> entry.getValue().equals(selectedName))
-                            .map(Map.Entry::getKey)
-                            .findFirst()
-                            .orElse(null);
+                    arbeitstageRechner.mappeBundeslandFuerApiKommunikation(selectedName);
 
             if (startDatum == null || endDatum == null || ("Nein".equals(auslandspraktikumsOptionen.getValue()) && bundesland == null)) {
                 Notification.show("Bitte fülle alle notwendigen Felder aus, damit die Arbeitstage berechnet werden können.", 3000,
@@ -239,8 +234,8 @@ public class Praktikumsformular extends Div {
 
             try {
                 int arbeitstage = "Ja".equals(auslandspraktikumsOptionen.getValue())
-                        ? berechneArbeitstageOhneFeiertage(startDatum, endDatum)
-                        : berechneArbeitstageMitFeiertagen(startDatum, endDatum, bundesland);
+                        ? arbeitstageRechner.berechneArbeitstageOhneFeiertage(startDatum, endDatum)
+                        : arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDatum, endDatum, bundesland);
                 Notification.show("Anzahl der Arbeitstage: " + arbeitstage, 4000, Notification.Position.TOP_CENTER);
             } catch (Exception e) {
                 Notification.show("Fehler bei der Berechnung: " + e.getMessage());
@@ -746,77 +741,6 @@ public class Praktikumsformular extends Div {
         }
     }
 
-    public int berechneArbeitstageOhneFeiertage(LocalDate startDate, LocalDate endDate) {
-        int arbeitstage = 0;
-
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            // Prüfen, ob der Tag ein Arbeitstag ist (Montag bis Freitag)
-            if (date.getDayOfWeek().getValue() >= 1 && date.getDayOfWeek().getValue() <= 5) {
-                arbeitstage++;
-            }
-        }
-
-        return arbeitstage;
-    }
-
-    public int berechneArbeitstageMitFeiertagen(LocalDate startDate, LocalDate endDate, String bundesland) {
-        // Feiertage abrufen
-        Set<LocalDate> feiertage = fetchFeiertage(startDate, endDate, bundesland);
-
-        int arbeitstage = 0;
-
-        // Iteration über den Zeitraum
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            // Prüfen, ob der Tag ein Arbeitstag ist (Montag bis Freitag)
-            if (date.getDayOfWeek().getValue() >= 1 && date.getDayOfWeek().getValue() <= 5 && !feiertage.contains(date)) {
-                arbeitstage++;
-            }
-        }
-
-        return arbeitstage;
-    }
-
-    public Set<LocalDate> fetchFeiertage(LocalDate startDate, LocalDate endDate, String bundesland) {
-        RestTemplate restTemplate = new RestTemplate();
-        String url = String.format("https://get.api-feiertage.de?years=%d,%d&states=%s",
-                startDate.getYear(), endDate.getYear(), bundesland.toLowerCase());
-
-        Set<LocalDate> feiertage = new HashSet<>();
-
-        try {
-            String response = restTemplate.getForObject(url, String.class);
-            if (response != null) {
-                // API-Antwort als JSONObject parsen
-                JSONObject jsonObject = new JSONObject(response);
-
-                // Prüfen, ob schlüssel "feiertage" existiert - also wenn feiertage im array, dann gibt es ihn
-                if (jsonObject.has("feiertage")) {
-                    JSONArray holidaysArray = jsonObject.getJSONArray("feiertage");
-
-                    // Feiertage durchgehen
-                    for (int i = 0; i < holidaysArray.length(); i++) {
-                        JSONObject holiday = holidaysArray.getJSONObject(i);
-
-                        LocalDate feiertag = LocalDate.parse(holiday.getString("date"));
-
-                        if (!feiertag.isBefore(startDate) && !feiertag.isAfter(endDate)) {
-                            feiertage.add(feiertag);
-                        }
-                    }
-                } else {
-                    System.err.println("Die API-Antwort enthält keinen Schlüssel 'feiertage'.");
-                }
-            } else {
-                System.err.println("Die Antwort vom Feiertage-API war null.");
-            }
-        } catch (RestClientException e) {
-            System.err.println("Fehler beim Abrufen der Feiertage: " + e.getMessage());
-        } catch (JSONException e) {
-            System.err.println("Fehler beim Verarbeiten des JSON-Objekts: " + e.getMessage());
-        }
-
-        return feiertage;
-    }
 
     private LocalDate parseDateFromGermanFormat(String dateStr) {
         DateTimeFormatter deutschesDatumFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -827,24 +751,5 @@ public class Praktikumsformular extends Div {
         }
     }
 
-    //bundesländer lesbarer machen im drop-down menu
-    private static final Map<String, String> BUNDESLANDER_MAP = Map.ofEntries(
-            Map.entry("BW", "Baden-Württemberg"),
-            Map.entry("BY", "Bayern"),
-            Map.entry("BE", "Berlin"),
-            Map.entry("BB", "Brandenburg"),
-            Map.entry("HB", "Bremen"),
-            Map.entry("HH", "Hamburg"),
-            Map.entry("HE", "Hessen"),
-            Map.entry("MV", "Mecklenburg-Vorpommern"),
-            Map.entry("NI", "Niedersachsen"),
-            Map.entry("NW", "Nordrhein-Westfalen"),
-            Map.entry("RP", "Rheinland-Pfalz"),
-            Map.entry("SL", "Saarland"),
-            Map.entry("SN", "Sachsen"),
-            Map.entry("ST", "Sachsen-Anhalt"),
-            Map.entry("SH", "Schleswig-Holstein"),
-            Map.entry("TH", "Thüringen")
-    );
 
 }
