@@ -1,5 +1,5 @@
 package com.example.application.views;
-
+import com.example.application.service.ArbeitstageBerechnungsService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -42,7 +42,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     private List<Praktikumsantrag> antraege;
     private boolean bereitsGenehmigtOderAbgelehnt = false;
     private HorizontalLayout badges;
-    private PraktikumsformularStudentin praktikumsformular = new PraktikumsformularStudentin();
+    private ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
 
 
     public Praktikumsbeauftragter() {
@@ -362,7 +362,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(json.getString("praktikumssemester")), "Praktikumssemester (SoSe / WiSe):");
                 formLayout.addFormItem(new Span(json.getString("studiensemester")), "Studiensemester:");
                 formLayout.addFormItem(new Span(json.getString("studiengang")), "Studiengang:");
-                formLayout.addFormItem(new Span(json.getBoolean("auslandspraktikum") ? "Ja" : "Nein"), "Auslandpraktikum:");
+                formLayout.addFormItem(new Span(json.getBoolean("auslandspraktikum") ? "Ja" : "Nein"), "Auslandspraktikum:");
                 formLayout.addFormItem(new Span(formatDate(json.getString("datumAntrag"))), "Datum des Antrags:");
                 formLayout.addFormItem(new Span(json.getString("namePraktikumsstelle")), "Name der Praktikumsstelle:");
                 formLayout.addFormItem(new Span(json.getString("strassePraktikumsstelle")), "Straße und Hausnummer der Praktikumsstelle:");
@@ -396,9 +396,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                 int arbeitstage;
                 if (auslandspraktikum) {
-                    arbeitstage = praktikumsformular.berechneArbeitstageOhneFeiertage(startDate, endDate);
+                    arbeitstage = arbeitstageRechner.berechneArbeitstageOhneFeiertage(startDate, endDate);
                 } else {
-                    arbeitstage = praktikumsformular.berechneArbeitstageMitFeiertagen(startDate, endDate, bundesland);
+                    arbeitstage = arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDate, endDate, bundesland);
                 }
                 formLayout.addFormItem(new Span(String.valueOf(arbeitstage)), "Arbeitstage:");
 
