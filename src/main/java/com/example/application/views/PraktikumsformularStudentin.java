@@ -42,7 +42,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Route("praktikumsformular") //  der Anwendung
 @CssImport("./styles.css")
-public class Praktikumsformular extends Div {
+public class PraktikumsformularStudentin extends Div {
 
     ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
 
@@ -82,9 +82,9 @@ public class Praktikumsformular extends Div {
     private final RestTemplate restTemplate = new RestTemplate();
 
 
-    public Praktikumsformular() {
+    public PraktikumsformularStudentin() {
         // Hauptüberschrift
-        add(new H1("Praktikumsformular"));
+        add(new H1("PraktikumsformularStudentin"));
 
         // Felder initialisieren
         nameStudentin = createTextField("Name der Studentin *");
@@ -225,6 +225,7 @@ public class Praktikumsformular extends Div {
             LocalDate endDatum = enddatum.getValue();
             String selectedName = bundeslandBox.getValue();
 
+            // Wenn Auslandspraktikum, wird kein Bundesland benötigt
             String bundesland = "Ja".equals(auslandspraktikumsOptionen.getValue()) ? null :
                     arbeitstageRechner.mappeBundeslandFuerApiKommunikation(selectedName);
 
@@ -752,7 +753,6 @@ public class Praktikumsformular extends Div {
             throw new IllegalArgumentException("Datum konnte nicht im deutschen Format angezeigt werden: " + dateStr);
         }
     }
-
 
 
 }
