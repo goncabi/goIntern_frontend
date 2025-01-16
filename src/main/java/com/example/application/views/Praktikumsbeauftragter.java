@@ -1,4 +1,5 @@
 package com.example.application.views;
+import com.example.application.service.ArbeitstageBerechnungsService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -41,7 +42,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     private List<Praktikumsantrag> antraege;
     private boolean bereitsGenehmigtOderAbgelehnt = false;
     private HorizontalLayout badges;
-    private final Praktikumsformular praktikumsformular = new Praktikumsformular();
+    private ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
 
 
     public Praktikumsbeauftragter() {
@@ -395,9 +396,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                 int arbeitstage;
                 if (auslandspraktikum) {
-                    arbeitstage = praktikumsformular.berechneArbeitstageOhneFeiertage(startDate, endDate);
+                    arbeitstage = arbeitstageRechner.berechneArbeitstageOhneFeiertage(startDate, endDate);
                 } else {
-                    arbeitstage = praktikumsformular.berechneArbeitstageMitFeiertagen(startDate, endDate, bundesland);
+                    arbeitstage = arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDate, endDate, bundesland);
                 }
                 formLayout.addFormItem(new Span(String.valueOf(arbeitstage)), "Arbeitstage:");
 
