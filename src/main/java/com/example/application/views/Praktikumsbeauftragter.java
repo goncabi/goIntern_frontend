@@ -405,22 +405,37 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                 Button abbrechen = new Button("Abbrechen", event -> dialog.close());
 
-                Button genehmigen = new Button("Genehmigen", event -> {
-                    if (bereitsGenehmigtOderAbgelehnt) {
-                        Notification.show("Der Antrag wurde bereits bearbeitet.", 3000, Notification.Position.TOP_CENTER);
-                        return;
-                    }
-                    bereitsGenehmigtOderAbgelehnt = true;
-                    genehmigenAntrag(matrikelnummer);
-                    dialog.close();
-                });
+                Button genehmigen = new Button("Genehmigen");
+                Button ablehnen = new Button("Ablehnen");
+                String status = json.getString("statusAntrag");
+                if(!status.equalsIgnoreCase("antrag eingereicht")) {
+                        genehmigen.setEnabled(false);
+                        ablehnen.setEnabled(false);
 
+                        genehmigen.getStyle()
+                                .set("background-color", "#d3d3d3")
+                                .set("color", "#808080")
+                                .set("cursor", "not-allowed");
+                        ablehnen.getStyle()
+                                .set("background-color", "#d3d3d3")
+                                .set("color", "#808080")
+                                .set("cursor", "not-allowed");
+                    }   else {
+                    genehmigen.addClickListener(event -> {
+                        if (bereitsGenehmigtOderAbgelehnt) {
+                            Notification.show("Der Antrag wurde bereits bearbeitet.", 3000, Notification.Position.TOP_CENTER);
+                            return;
+                        }
+                        bereitsGenehmigtOderAbgelehnt = true;
+                        genehmigenAntrag(matrikelnummer);
+                        dialog.close();
+                    });
 
-                Button ablehnen = new Button("Ablehnen", event -> {
-                    if (bereitsGenehmigtOderAbgelehnt) {
-                        Notification.show("Der Antrag wurde bereits bearbeitet.", 3000, Notification.Position.TOP_CENTER);
-                        return;
-                    }
+                ablehnen.addClickListener(event -> {
+                            if (bereitsGenehmigtOderAbgelehnt) {
+                                Notification.show("Der Antrag wurde bereits bearbeitet.", 3000, Notification.Position.TOP_CENTER);
+                                return;
+                            }
 
                     Dialog ablehnungsDialog = new Dialog();
                     ablehnungsDialog.setWidth("600px");
@@ -452,7 +467,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     ablehnungsDialog.add(ablehnungsLayout);
                     ablehnungsDialog.open();
 
-                });
+                });}
 
 
                 // Leeres flexibles Element, sorgt dafür, dass zwischen den buttons abstände sind
