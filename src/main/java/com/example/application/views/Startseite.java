@@ -262,14 +262,20 @@ public class Startseite extends VerticalLayout {
         }
     }
 
-
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
+        layout.setAlignItems(Alignment.CENTER);
+
+        //Neues Kärtchen mit Titel
+        VerticalLayout card = new VerticalLayout();
+        card.addClassName("neuer-antrag-card");
+        card.setSizeFull();
+        card.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        H2 title = new H2("Neuer Antrag");
+        title.getStyle().set("text-align", "center");
 
         Button newRequestButton = new Button("Neuen Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
-            // Dialog
-
-
             Dialog popup = DialogUtils.createStandardDialog(
                     "Bestätigung der Leistungspunkte",
                     null,
@@ -284,13 +290,20 @@ public class Startseite extends VerticalLayout {
             popup.open();
         });
 
+        newRequestButton.addClassName("new-request-button");
+        newRequestButton.getStyle().set("align-self", "center");
+
 
         Span hintLabel = new Span("Hinweis: Hier kannst du deinen Praktikumsantrag anlegen und absenden.<br>"
                 + "Du kannst du Antrag auch zwischenspeichern, damit du ihn später weiterbearbeiten kannst.<br>"
-                        + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
+                + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
         hintLabel.getElement().setProperty("innerHTML", hintLabel.getText()); // Damit die <br> korrekt interpretiert werden
-        layout.add(newRequestButton, hintLabel);
+        hintLabel.addClassName("hint-label");
+
+        card.add(title, newRequestButton, hintLabel);
+        layout.add(card);
         return layout;
+
     }
 
      // Anbindung zum Backend
