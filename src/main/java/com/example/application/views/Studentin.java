@@ -146,6 +146,7 @@ public class Studentin extends VerticalLayout {
         loeschenButton.setEnabled(
                 "Abgelehnt".equalsIgnoreCase(status) ||
                         "gespeichert".equalsIgnoreCase(status)
+                        || "zugelassen".equalsIgnoreCase(status)
         );
 
         if (!loeschenButton.isEnabled()) {
@@ -206,31 +207,15 @@ public class Studentin extends VerticalLayout {
 
         VerticalLayout kommentarContent = new VerticalLayout();
         kommentarContent.setVisible(false);
-        kommentarContent.getStyle()
-                .set("border", "1px solid #ddd")
-                .set("border-radius", "4px")
-                .set("padding", "8px")
-                .set("background-color", "#f5f5f5")
-                .set("width", "100%")
-                .set("max-height", "200px")
-                .set("overflow-y", "auto");
+
 
 
         List<String> notizen = getAntragNotiz(matrikelnummer);
         for (String notiz : notizen) {
             VerticalLayout kommentarBox = new VerticalLayout();
-            kommentarBox.getStyle()
-                    .set("border", "1px solid #ddd")
-                    .set("border-radius", "8px")
-                    .set("padding", "10px")
-                    .set("margin-bottom", "10px")
-                    .set("background-color", "#f9f9f9")
-                    .set("box-shadow", "0px 2px 4px rgba(0, 0, 0, 0.1)");
+            kommentarBox.addClassName("note-style");
 
             Span kommentarText = new Span(notiz);
-            kommentarText.getStyle()
-                    .set("font-size", "14px")
-                    .set("color", "#333");
 
             kommentarBox.add(kommentarText);
             kommentarContent.add(kommentarBox);
