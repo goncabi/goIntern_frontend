@@ -144,6 +144,7 @@ public class Studentin extends VerticalLayout {
         loeschenButton.setEnabled(
                 "Abgelehnt".equalsIgnoreCase(status) ||
                         "gespeichert".equalsIgnoreCase(status)
+                        || "zugelassen".equalsIgnoreCase(status)
         );
 
         if (!loeschenButton.isEnabled()) {
