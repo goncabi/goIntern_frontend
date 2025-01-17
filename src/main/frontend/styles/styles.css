@@ -135,7 +135,7 @@ html, body {
 
 /* Zusatz für Hover-Effekt beim Button */
 .button:hover {
-    background-color: #8DC63F; /* Etwas dunkleres Rot beim Hover */
+    background-color: #8DC63F;
 }
 
 /* Richtig beantwortet */
@@ -265,4 +265,8 @@ html, body {
     transition: background-color 0.3s ease;
     position: relative;
     z-index: 5;
+}
+
+.button-behind:hover {
+    background-color: #8DC63F;
 }
