@@ -213,11 +213,12 @@ html, body {
 
 .logo-title-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     flex-grow: 1;
     text-align: center;
-    gap: 5px;
+    gap: 2px;
 
 }
 
@@ -234,13 +235,6 @@ html, body {
 
 #registration-zacken path {
     stroke-width: 25px !important;
-}
-
-.form-explanation {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 20px !important;
-    display: block;
 }
 
 .form-container button {
@@ -269,4 +263,20 @@ html, body {
 
 .button-behind:hover {
     background-color: #8DC63F;
+}
+
+.banner-slogan {
+    font-size: 18px;
+    color: #555;
+    margin: 2px 0 0 190px !important;
+    text-align: center;
+    width: 100%;
+    font-style: italic;
+}
+
+.logo-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px; /* Abstand zwischen Logo und Überschrift */
 }
