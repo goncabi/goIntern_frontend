@@ -30,10 +30,18 @@ public class Startseite extends VerticalLayout {
         H1 bannerTitle = new H1("GoIntern");
         bannerTitle.addClassName("banner-title");
 
+        Div logoAndTitleRow = new Div();
+        logoAndTitleRow.addClassName("logo-title-row"); // Neue CSS-Klasse für Zeilenlayout
+        logoAndTitleRow.add(logoBeforeTitle, bannerTitle);
+
+        // Slogan direkt unter der Überschrift
+        Span slogan = new Span("Dein Weg zum schnellen Praktikum");
+        slogan.addClassName("banner-slogan");
+
         // Container für Logo und Überschrift
         Div logoAndTitleContainer = new Div();
         logoAndTitleContainer.addClassName("logo-title-container");
-        logoAndTitleContainer.add(logoBeforeTitle, bannerTitle);
+        logoAndTitleContainer.add(logoAndTitleRow, slogan);
 
         // Bereits vorhandenes grünes Logo rechts
         Image greenLogo = new Image("images/FB4_FIW.jpg", "Grünes Logo");
@@ -54,18 +62,13 @@ public class Startseite extends VerticalLayout {
         H1 title = new H1("Willkommen zurück!");
         title.addClassName("form-title");
 
-        // Neuer erklärender Satz
-        Span explanation = new Span("Hier kannst du deine Praktikumsanträge erstellen, speichern, bearbeiten und ganz einfach zur Freigabe an deine Professoren senden.");
-        explanation.addClassName("form-explanation");
-
-
         Button loginButton = new Button("Login", event -> openLogin());
         loginButton.addClassName("button");
 
         Button registerButton = new Button("Registrieren", event -> openRegister());
         registerButton.addClassName("button-behind");
 
-        formContainer.add(title, explanation, loginButton, registerButton);
+        formContainer.add(title, loginButton, registerButton);
         add(formContainer);
     }
 
