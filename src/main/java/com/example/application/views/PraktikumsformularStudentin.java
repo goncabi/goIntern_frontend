@@ -208,7 +208,7 @@ public class PraktikumsformularStudentin extends Div {
         berechnenButton.addClassName("berechnen-button");
 
         // Hinweistext
-        Span hinweisArbeitstage = new Span("Hinweis: Für ein Praktikum sind mindestens 75 Arbeitstage (600 Stunden) sind erforderlich. Beachte, dass bei einem Auslands-Praktikum Feiertage nicht mit berechnet werden können. Diese müsstest du eigenständig recherchieren und von der Anzahl der Arbeitstage abziehen.");
+        Span hinweisArbeitstage = new Span("Hinweis: Für ein Praktikum sind mindestens 75 Arbeitstage (600 Stunden) sind erforderlich. Beachte, dass bei einem Praktikum im Ausland Feiertage nicht mit berechnet werden können. Diese müsstest du eigenständig recherchieren und von der Anzahl der Arbeitstage abziehen.");
         hinweisArbeitstage.getStyle()
                 .set("color", "gray")
                 .set("font-size", "0.9em")

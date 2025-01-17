@@ -172,10 +172,10 @@ public class Studentin extends VerticalLayout {
             });
         }
 
-        Button abbrechenButton = new Button("Praktikum abbrechen");
-        abbrechenButton.addClassName("abbrechen-button2");
-        abbrechenButton.setVisible("im Praktikum".equalsIgnoreCase(status));
-        abbrechenButton.addClickListener(event -> {
+        Button praktikumAbbrechenButton = new Button("Praktikum abbrechen");
+        praktikumAbbrechenButton.addClassName("abbrechen-button2");
+        praktikumAbbrechenButton.setVisible("Derzeit im Praktikum".equalsIgnoreCase(status));
+        praktikumAbbrechenButton.addClickListener(event -> {
             ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
             JSONObject antrag = getPraktikumsAntrag(matrikelnummer);
             if (antrag != null) {
