@@ -1,5 +1,6 @@
 package com.example.application.views;
 
+import com.example.application.service.ArbeitstageBerechnungsService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -21,6 +22,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import com.example.application.utils.DialogUtils;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,6 +146,7 @@ public class Studentin extends VerticalLayout {
         loeschenButton.setEnabled(
                 "Abgelehnt".equalsIgnoreCase(status) ||
                         "gespeichert".equalsIgnoreCase(status)
+                        || "zugelassen".equalsIgnoreCase(status)
         );
 
         if (!loeschenButton.isEnabled()) {
@@ -168,6 +171,29 @@ public class Studentin extends VerticalLayout {
                 confirmDialog.open();
             });
         }
+
+        Button praktikumAbbrechenButton = new Button("Praktikum abbrechen");
+        praktikumAbbrechenButton.addClassName("abbrechen-button2");
+        praktikumAbbrechenButton.setVisible("Derzeit im Praktikum".equalsIgnoreCase(status));
+        praktikumAbbrechenButton.addClickListener(event -> {
+            ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
+            JSONObject antrag = getPraktikumsAntrag(matrikelnummer);
+            if (antrag != null) {
+                try {
+                    LocalDate startDatum = LocalDate.parse(antrag.getString("startDatum"));
+                    LocalDate heutigesDatum = LocalDate.now();
+                    //hier muss ich mir nochmal gedanken machen, wie das alles funktionieren soll, erledige ich später
+                    // int absolvierteTage = arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDatum, heutigesDatum, arbeitstageRechner.getBundeslandByKuerzel());
+                   // Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Tage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
+                } catch (Exception e) {
+                    Notification.show("Fehler bei der Berechnung der absolvierten Tage: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+                }
+            } else {
+                Notification.show("Praktikumsantrag konnte nicht abgerufen werden.", 5000, Notification.Position.MIDDLE);
+            }
+        });
+
+
 
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
         buttonLayout.setWidthFull();
