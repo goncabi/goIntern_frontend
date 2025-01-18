@@ -113,3 +113,13 @@
     width: 100%; /* Anpassung an den verfügbaren Platz */
     max-width: 500px; /* Maximalbreite */
 }
+
+.startseite-view {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white !important; /* Setzt den gesamten Hintergrund auf Weiß */
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}

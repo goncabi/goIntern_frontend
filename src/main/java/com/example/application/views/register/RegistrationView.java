@@ -1,5 +1,6 @@
 package com.example.application.views.register;
 
+import com.example.application.views.banner.MainBanner;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
@@ -20,13 +21,14 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-@Route("register")
+@Route(value = "register", layout = MainBanner.class)
 @CssImport("./styles/styles.css")
 public class RegistrationView extends VerticalLayout {
 
     public RegistrationView() {
         // Hauptcontainer mit einer zentrierten Ansicht
-        addClassName("scrollable-view");
+        //addClassName("scrollable-view");
+        addClassName("register-view");
 
         // Hintergrund-Animation (Zacken)
         Span backgroundAnimation = createAnimatedLine();
@@ -182,7 +184,9 @@ public class RegistrationView extends VerticalLayout {
         formContainer.add(title, usernameField, usernameError, passwordField, passwordErrors,
                 confirmPasswordField, securityQuestionsTitle, questionSelection, answerField, questionError,registerButton);
 
-        add(backgroundAnimation,formContainer);
+
+        add(backgroundAnimation);
+        add(formContainer);
     }
 
     private Span createAnimatedLine() {
@@ -197,6 +201,7 @@ public class RegistrationView extends VerticalLayout {
 
         Span span = new Span();
         span.getElement().setProperty("innerHTML", svgAnimation);
+        span.addClassName("background-animation");
         return span;
     }
 

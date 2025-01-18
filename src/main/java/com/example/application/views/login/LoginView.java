@@ -1,5 +1,6 @@
 package com.example.application.views.login;
 
+import com.example.application.views.banner.MainBanner;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -20,7 +21,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-@Route("login")
+@Route(value = "login", layout = MainBanner.class)
 @CssImport("./styles/styles.css")
 public class LoginView extends VerticalLayout {
 

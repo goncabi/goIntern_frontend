@@ -1,10 +1,12 @@
 package com.example.application.views;
 import com.example.application.service.ArbeitstageBerechnungsService;
+import com.example.application.views.banner.MainBanner;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -39,7 +41,8 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Route("admin/startseite")
+@Route(value= "admin/startseite", layout = MainBanner.class)
+@CssImport("./styles/styles.css")
 public class Praktikumsbeauftragter extends VerticalLayout {
 
     private Grid<Praktikumsantrag> grid;
@@ -50,12 +53,14 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
     public Praktikumsbeauftragter() {
+
         String username = (String) VaadinSession.getCurrent().getAttribute("username");
         if (username == null) {
             Notification.show("Kein Username in der Sitzung gefunden. Bitte loggen Sie sich erneut ein.", 5000, Notification.Position.MIDDLE);
             getUI().ifPresent(ui -> ui.navigate("login"));
             return;
         }
+        addClassName("admin-startseite-view");
 
         // Überschrift
         H1 title = new H1("Übersicht über Praktikumsanträge");
