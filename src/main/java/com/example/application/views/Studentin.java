@@ -1,6 +1,7 @@
 package com.example.application.views;
 
 import com.example.application.service.ArbeitstageBerechnungsService;
+import com.example.application.views.banner.MainBanner;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -27,17 +28,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Route("studentin/startseite")
+@Route(value = "studentin/startseite", layout = MainBanner.class)
 @CssImport("./styles/startseite.css")
 @PageTitle("Studentin")
 
 public class Studentin extends VerticalLayout {
+
 
     //restTemplate sendet API Anfragen ans Backend. Es kann lesen und schreiben.
     private RestTemplate restTemplate = new RestTemplate();
     private final String backendUrl = "http://localhost:3000/api/";
 
     public Studentin() {
+        addClassName("startseite-view");
         String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
 
         if (matrikelnummer == null) {

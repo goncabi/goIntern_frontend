@@ -28,6 +28,7 @@ html, body {
     width: 400px !important;
     text-align: center !important;
     margin: 0 auto !important;
+    z-index: 2;
 }
 
 /* Titel im Formular */
@@ -279,4 +280,53 @@ html, body {
     align-items: center;
     justify-content: center;
     gap: 3px; /* Abstand zwischen Logo und Überschrift */
+}
+
+.register-view {
+    position: relative;
+    background-color: white !important; /* Entfernt die Hintergrundfarbe */
+    padding-top: 180px;
+    overflow: hidden;
+    padding-bottom: 0;
+    min-height: 100vh;
+
+}
+
+.register-view .form-container {
+    margin-top: 700px; /* Verschiebe den Container nach unten */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Schattierung */
+    background-color: white !important;
+    text-align: center;
+    margin-left:auto;
+    margin-right:auto;
+
+}
+
+.background-animation {
+    z-index: 1; /* Hintergrundebene */
+    position: absolute; /* Positionierung */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5; /* Transparenz für Abschwächung */
+    pointer-events: none; /* Keine Interaktion */
+}
+.register-view .view-container {
+    z-index: 2;
+    background-color: white !important;
+    height: auto !important;
+    margin: 0;
+    padding: 0;
+    overflow: visible !important; /* Verhindert abgeschnittene Inhalte */
+}
+
+.admin-startseite-view {
+    background-color: white; /* Weißer Hintergrund */
+    min-height: 100vh; /* Deckt die gesamte Höhe des Bildschirms ab */
+    padding-top: 180px;
+    display: flex;
+    flex-direction: column;
 }
