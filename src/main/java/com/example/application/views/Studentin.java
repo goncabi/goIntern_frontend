@@ -196,6 +196,23 @@ public class Studentin extends VerticalLayout {
             }
         });
 
+        // + Poster hinzufügen"-Button
+        Button addPosterButton = new Button("+ Poster hinzufügen");
+        addPosterButton.addClassName("poster-button");
+        addPosterButton.addClickListener(event -> {
+            Dialog confirmDialog = DialogUtils.createStandardDialog(
+                    "Poster hochladen",
+                    null,
+                    "Hier können Sie ein Poster für Ihren Antrag hinzufügen.",
+                    "OK",
+                    "Abbrechen",
+                    () -> Notification.show("Poster hinzufügen Funktion in Entwicklung.")
+            );
+            confirmDialog.open();
+        });
+
+        // Button zum Layout hinzufügen
+        container.add(addPosterButton);
 
 
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
