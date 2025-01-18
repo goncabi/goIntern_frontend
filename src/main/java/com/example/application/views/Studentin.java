@@ -196,19 +196,12 @@ public class Studentin extends VerticalLayout {
             }
         });
 
-        // + Poster hinzufügen"-Button
+        //poster hinzufügen button
         Button addPosterButton = new Button("+ Poster hinzufügen");
         addPosterButton.addClassName("poster-button");
         addPosterButton.addClickListener(event -> {
-            Dialog confirmDialog = DialogUtils.createStandardDialog(
-                    "Poster hochladen",
-                    null,
-                    "Hier können Sie ein Poster für Ihren Antrag hinzufügen.",
-                    "OK",
-                    "Abbrechen",
-                    () -> Notification.show("Poster hinzufügen Funktion in Entwicklung.")
-            );
-            confirmDialog.open();
+            // Navigieren zur Poster-Ansicht
+            getUI().ifPresent(ui -> ui.navigate("poster")); // "poster" ist der Route-Pfad für die neue Ansicht
         });
 
         // Button zum Layout hinzufügen
