@@ -12,6 +12,10 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.json.JSONObject;
 import org.json.JSONArray;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -19,10 +23,11 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import com.example.application.utils.DialogUtils;
-
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.component.notification.Notification;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,16 +201,64 @@ public class Studentin extends VerticalLayout {
             }
         });
 
-        //poster hinzufügen button
-        Button addPosterButton = new Button("+ Poster hinzufügen");
-        addPosterButton.addClassName("poster-button");
-        addPosterButton.addClickListener(event -> {
-            // Navigieren zur Poster-Ansicht
-            getUI().ifPresent(ui -> ui.navigate("poster")); // "poster" ist der Route-Pfad für die neue Ansicht
+        // upload
+        MemoryBuffer buffer = new MemoryBuffer();
+        Upload upload = new Upload(buffer);
+        upload.setAcceptedFileTypes("application/pdf"); // nur pdf dateien
+        upload.setMaxFiles(1); // nur eine Datei auf einmal hochladen
+
+        // balken mit uploadprogress
+        ProgressBar progressBar = new ProgressBar();
+        progressBar.setWidth("100%");
+        progressBar.setVisible(false);
+
+        //wenn upload gestartet wird
+        upload.addStartedListener(event -> {
+            progressBar.setVisible(true);
+            progressBar.setValue(0.0); //uploadbalken auf 0 setzen
         });
 
-        // Button zum Layout hinzufügen
-        container.add(addPosterButton);
+        //balken aktualisieren
+        upload.addProgressListener(event -> {
+            long readBytes = event.getBytesReceived();       // Bereits hochgeladene Bytes
+            long contentLength = event.getContentLength();   // Gesamtgröße der Datei
+
+            if (contentLength > 0) { // Vermeidung von Division durch 0
+                double progress = (double) readBytes / contentLength; // Fortschrittswert berechnen
+                progressBar.setValue(progress); // Fortschrittsbalken aktualisieren
+            }
+        });
+
+
+        //wenn upload erfolgreich
+        upload.addSucceededListener(event -> {
+            try {
+                // in byte-Array umwandeln
+                byte[] fileBytes = buffer.getInputStream().readAllBytes();
+                String fileName = event.getFileName();
+
+                // upload in backend speichern
+                uploadFile(fileBytes, fileName);
+
+                Notification.show("Poster erfolgreich hochgeladen!");
+            } catch (Exception e) {
+                Notification.show("Fehler beim Hochladen des Posters: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+            } finally {
+                progressBar.setVisible(false); //balken wieder ausblenden
+            }
+        });
+
+//        // Layout für upload und balken
+//        VerticalLayout uploadLayout = new VerticalLayout();
+//        uploadLayout.add(upload, progressBar);
+//
+//        // Hinzufügen zum bestehenden Layout
+//        add(uploadLayout);
+//        });
+
+//        // Button zum Layout hinzufügen
+//        container.add(addPosterButton);
+
 
 
         HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
@@ -245,6 +298,32 @@ public class Studentin extends VerticalLayout {
         return container;
 
     }
+
+    // Methode zum Hochladen des posters
+    private void uploadFile(byte[] fileBytes, String fileName) {
+        String matrikelnummer = "123456"; // Matrikelnummer dynamisch ersetzen
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        ByteArrayResource byteArrayResource = new ByteArrayResource(fileBytes) {
+            @Override
+            public String getFilename() {
+                return fileName;
+            }
+        };
+        body.add("file", byteArrayResource);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        String url = String.format("http://localhost:3000/upload/%s", matrikelnummer);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("Fehler beim Hochladen: " + response.getBody());
+        }
+    }
+
 
     private Span createStatusBadge(String status) {
         String theme;
