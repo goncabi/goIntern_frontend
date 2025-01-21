@@ -40,6 +40,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Route(value= "admin/startseite", layout = MainBanner.class)
@@ -585,12 +586,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     private void posterAnzeigenImPopUp(String matrikelnummer) {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String url = String.format("http://localhost:%s/poster/pdf/%s", System.getProperty("PORT", "3000"), matrikelnummer);
+            String url = String.format("http://localhost:%s/api/poster/pdf/%s", System.getProperty("PORT", "3000"), matrikelnummer);
 
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            ResponseEntity<byte[]> response = restTemplate.getForEntity(url, byte[].class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                JSONObject json = new JSONObject(response.getBody());
+                byte[] pdfBytes = response.getBody();
 
                 Dialog dialog = new Dialog();
                 dialog.setWidth("800px");
@@ -600,7 +601,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                 // iframe ist tool zur anzeige von pdfs
                 IFrame iframe = new IFrame();
-                iframe.setSrc("data:application/pdf;base64," + json.getString("posterDaten"));
+                String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+                iframe.setSrc("data:application/pdf;base64," + base64Pdf);
                 iframe.setWidth("100%");
                 iframe.setHeight("70%");
 
@@ -617,6 +619,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 contentLayout.setSpacing(true);
                 contentLayout.setPadding(true);
                 dialog.add(contentLayout);
+                dialog.open();
 
             } else {
                 Notification.show("Kein Poster unter der Matrikelnummer " + matrikelnummer + " gefunden.");
