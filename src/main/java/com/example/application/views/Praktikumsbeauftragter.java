@@ -45,6 +45,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Route(value= "admin/startseite", layout = MainBanner.class)
@@ -589,13 +590,13 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
     private void posterAnzeigenImPopUp(String matrikelnummer) {
         try {
-            String url = "http://localhost:3000/poster/pdf/" + matrikelnummer;
+            RestTemplate restTemplate = new RestTemplate();
+            String url = String.format("http://localhost:%s/api/poster/pdf/%s", System.getProperty("PORT", "3000"), matrikelnummer);
 
-            Dialog dialog = new Dialog();
-            dialog.setWidth("800px");
-            dialog.setHeight("90%");
+            ResponseEntity<byte[]> response = restTemplate.getForEntity(url, byte[].class);
 
-            H3 dialogTitle = new H3("Poster der Studentin " + matrikelnummer);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                byte[] pdfBytes = response.getBody();
 
             // iframe ist tool zur Anzeige von pdfs
             IFrame iframe = new IFrame(url);
@@ -606,19 +607,33 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             Button close = new Button("Schließen", event -> dialog.close());
             close.getStyle().set("margin-left", "auto");
 
-            // Layout
-            HorizontalLayout buttonLayout = new HorizontalLayout(close);
-            buttonLayout.setWidthFull();
-            buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.START); //button links ausgerichtet
+                // iframe ist tool zur anzeige von pdfs
+                IFrame iframe = new IFrame();
+                String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+                iframe.setSrc("data:application/pdf;base64," + base64Pdf);
+                iframe.setWidth("100%");
+                iframe.setHeight("70%");
 
             VerticalLayout contentLayout = new VerticalLayout(dialogTitle, iframe, buttonLayout);
             contentLayout.setSpacing(true);
             contentLayout.setPadding(true);
             dialog.add(contentLayout);
 
-            dialog.open();
-        }
-        catch (Exception e) {
+                // Layout
+                HorizontalLayout buttonLayout = new HorizontalLayout(close);
+                buttonLayout.setWidthFull();
+                buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.START); //button links ausgerichtet
+
+                VerticalLayout contentLayout = new VerticalLayout(dialogTitle, iframe, buttonLayout);
+                contentLayout.setSpacing(true);
+                contentLayout.setPadding(true);
+                dialog.add(contentLayout);
+                dialog.open();
+
+            } else {
+                Notification.show("Kein Poster unter der Matrikelnummer " + matrikelnummer + " gefunden.");
+            }
+        } catch (Exception e) {
             Notification.show("Fehler beim Abrufen der Poster-Daten: " + e.getMessage());
         }
     }

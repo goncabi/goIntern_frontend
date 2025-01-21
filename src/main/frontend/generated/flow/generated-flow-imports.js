@@ -4,7 +4,6 @@ import { css, unsafeCSS, registerStyles } from '@vaadin/vaadin-themable-mixin';
 import $cssFromFile_0 from 'Frontend/styles/styles.css?inline';
 import $cssFromFile_1 from 'Frontend/styles.css?inline';
 import $cssFromFile_2 from 'Frontend/styles/startseite.css?inline';
-import $cssFromFile_3 from 'Frontend/styles/posterview.css?inline';
 import '@vaadin/polymer-legacy-adapter/style-modules.js';
 import '@vaadin/app-layout/theme/lumo/vaadin-app-layout.js';
 import '@vaadin/vertical-layout/theme/lumo/vaadin-vertical-layout.js';
@@ -111,8 +110,6 @@ injectGlobalCss($cssFromFile_0.toString(), 'CSSImport end', document);
 injectGlobalCss($cssFromFile_1.toString(), 'CSSImport end', document);
 
 injectGlobalCss($cssFromFile_2.toString(), 'CSSImport end', document);
-
-injectGlobalCss($cssFromFile_3.toString(), 'CSSImport end', document);
 const loadOnDemand = (key) => { return Promise.resolve(0); }
 window.Vaadin = window.Vaadin || {};
 window.Vaadin.Flow = window.Vaadin.Flow || {};

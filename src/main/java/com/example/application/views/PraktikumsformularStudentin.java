@@ -19,8 +19,6 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.example.application.utils.DialogUtils;
-
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -96,8 +94,8 @@ public class PraktikumsformularStudentin extends Div {
         ortStudentin = createTextField("Ort der Studentin *");
         telefonnummerStudentin = createTextField("Telefonnummer der Studentin *");
         emailStudentin = createEmailField("E-Mail-Adresse der Studentin *");
-        vorschlagPraktikumsbetreuerIn = createTextField("Vorgeschlagener Praktikumsbetreuer (an der HTW) *");
-        praktikumssemester = createTextField("Praktikumssemester (SoSe / WiSe) *");
+        vorschlagPraktikumsbetreuerIn = createTextField("Vorgeschlagene*r Praktikumsbetreuer*in (an der HTW) *");
+        praktikumssemester = createTextField("Praktikumssemester (SoSe / WiSe und Jahreszahl) *");
         studiensemester = createNumberField("Studiensemester (bitte als Zahl eingeben) *");
         studiengang = createTextField("Studiengang *");
         datumAntrag = CustomDatePicker.createGermanDatePicker("Datum des Antrags *");
@@ -216,11 +214,6 @@ public class PraktikumsformularStudentin extends Div {
                 .set("margin-left", "20px");
 
 
-        // Klick-Listener für den Button
-        berechnenButton.addClickListener(event -> {
-            LocalDate startDatum = startdatum.getValue();
-            LocalDate endDatum = enddatum.getValue();
-            String selectedName = bundeslandBox.getValue();
 
             // Wenn Auslandspraktikum, wird kein Bundesland benötigt
             String bundesland = "Ja".equals(auslandspraktikumsOptionen.getValue()) ? null :
