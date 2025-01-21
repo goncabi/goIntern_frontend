@@ -224,7 +224,7 @@ public class PraktikumsformularStudentin extends Div {
 
             // Wenn Auslandspraktikum, wird kein Bundesland benötigt
             String bundesland = "Ja".equals(auslandspraktikumsOptionen.getValue()) ? null :
-                    arbeitstageRechner.mappeBundeslandFuerApiKommunikation(selectedName);
+                    selectedName;
 
             if (startDatum == null || endDatum == null || ("Nein".equals(auslandspraktikumsOptionen.getValue()) && bundesland == null)) {
                 Notification.show("Bitte fülle alle notwendigen Felder aus, damit die Arbeitstage berechnet werden können.", 3000,
