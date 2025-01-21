@@ -215,7 +215,25 @@ public class PraktikumsformularStudentin extends Div {
 
 
 
-        
+            // Wenn Auslandspraktikum, wird kein Bundesland benötigt
+            String bundesland = "Ja".equals(auslandspraktikumsOptionen.getValue()) ? null :
+                    selectedName;
+
+            if (startDatum == null || endDatum == null || ("Nein".equals(auslandspraktikumsOptionen.getValue()) && bundesland == null)) {
+                Notification.show("Bitte fülle alle notwendigen Felder aus, damit die Arbeitstage berechnet werden können.", 3000,
+                        Notification.Position.TOP_CENTER);
+                return;
+            }
+
+            try {
+                int arbeitstage = "Ja".equals(auslandspraktikumsOptionen.getValue())
+                        ? arbeitstageRechner.berechneArbeitstageOhneFeiertage(startDatum, endDatum)
+                        : arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDatum, endDatum, bundesland);
+                Notification.show("Anzahl der Arbeitstage: " + arbeitstage, 4000, Notification.Position.TOP_CENTER);
+            } catch (Exception e) {
+                Notification.show("Fehler bei der Berechnung: " + e.getMessage());
+            }
+        });
 
 
         // Container für Berechnen-Button

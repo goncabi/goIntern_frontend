@@ -27,6 +27,7 @@ import jakarta.persistence.Embedded;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.boot.autoconfigure.jms.artemis.ArtemisProperties;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,6 +37,10 @@ import org.springframework.web.client.RestTemplate;
 import com.example.application.utils.DialogUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -221,11 +226,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }).setHeader("");
 
         //Spalte für Poster anzeigen
-        grid.addComponentColumn(praktikumsPoster -> {
-            if ("absolviert".equalsIgnoreCase(praktikumsPoster.getStatus())) {
+        grid.addComponentColumn(praktikumsantrag -> {
+            if ("absolviert".equalsIgnoreCase(praktikumsantrag.getStatus())) {
                 Button anzeigenButton = new Button("Poster anzeigen", VaadinIcon.EYE.create());
                 anzeigenButton.addClickListener(event -> {
-                    posterAnzeigenImPopUp(praktikumsPoster.getMatrikelnummer());
+                    posterAnzeigenImPopUp(praktikumsantrag.getMatrikelnummer());
                 });
                 return anzeigenButton;
             }
@@ -593,11 +598,14 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 byte[] pdfBytes = response.getBody();
 
-                Dialog dialog = new Dialog();
-                dialog.setWidth("800px");
-                dialog.setHeight("90%");
+            // iframe ist tool zur Anzeige von pdfs
+            IFrame iframe = new IFrame(url);
+            iframe.setWidth("100%");
+            iframe.setHeight("500px");
 
-                H3 dialogTitle = new H3("Poster der Studentin " + matrikelnummer);
+            // Buttons
+            Button close = new Button("Schließen", event -> dialog.close());
+            close.getStyle().set("margin-left", "auto");
 
                 // iframe ist tool zur anzeige von pdfs
                 IFrame iframe = new IFrame();
@@ -606,9 +614,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 iframe.setWidth("100%");
                 iframe.setHeight("70%");
 
-                // Buttons
-                Button close = new Button("Schließen", event -> dialog.close());
-                close.getStyle().set("margin-left", "auto");
+            VerticalLayout contentLayout = new VerticalLayout(dialogTitle, iframe, buttonLayout);
+            contentLayout.setSpacing(true);
+            contentLayout.setPadding(true);
+            dialog.add(contentLayout);
 
                 // Layout
                 HorizontalLayout buttonLayout = new HorizontalLayout(close);
