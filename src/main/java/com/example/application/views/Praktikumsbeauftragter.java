@@ -598,46 +598,39 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 byte[] pdfBytes = response.getBody();
 
-            // iframe ist tool zur Anzeige von pdfs
-            IFrame iframe = new IFrame(url);
-            iframe.setWidth("100%");
-            iframe.setHeight("500px");
+                Dialog dialog = new Dialog();
+                dialog.setWidth("100%");
+                dialog.setHeight("100%");
 
-            // Buttons
-            Button close = new Button("Schließen", event -> dialog.close());
-            close.getStyle().set("margin-left", "auto");
-
-                // iframe ist tool zur anzeige von pdfs
-                IFrame iframe = new IFrame();
                 String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
-                iframe.setSrc("data:application/pdf;base64," + base64Pdf);
+
+                IFrame iframe = new IFrame("data:application/pdf;base64," + base64Pdf);
                 iframe.setWidth("100%");
                 iframe.setHeight("70%");
 
-            VerticalLayout contentLayout = new VerticalLayout(dialogTitle, iframe, buttonLayout);
-            contentLayout.setSpacing(true);
-            contentLayout.setPadding(true);
-            dialog.add(contentLayout);
+
+                // Schließen-Button
+                Button closeButton = new Button("Schließen", event -> dialog.close());
+                closeButton.getStyle().set("margin-left", "auto");
 
                 // Layout
-                HorizontalLayout buttonLayout = new HorizontalLayout(close);
-                buttonLayout.setWidthFull();
-                buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.START); //button links ausgerichtet
-
-                VerticalLayout contentLayout = new VerticalLayout(dialogTitle, iframe, buttonLayout);
+                VerticalLayout contentLayout = new VerticalLayout(iframe, closeButton);
                 contentLayout.setSpacing(true);
                 contentLayout.setPadding(true);
+
                 dialog.add(contentLayout);
+
+                dialog.removeAll(); // Vorherigen Inhalt entfernen
+
                 dialog.open();
 
             } else {
-                Notification.show("Kein Poster unter der Matrikelnummer " + matrikelnummer + " gefunden.");
+                Notification.show("Kein Poster unter der Matrikelnummer " + matrikelnummer + " gefunden.", 5000, Notification.Position.MIDDLE);
             }
         } catch (Exception e) {
-            Notification.show("Fehler beim Abrufen der Poster-Daten: " + e.getMessage());
+            Notification.show("Fehler beim Abrufen der Poster-Daten: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
         }
     }
-
 
     private void filterGridByStatus(String status) {
         List<Praktikumsantrag> filteredItems;
