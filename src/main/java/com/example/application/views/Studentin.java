@@ -234,65 +234,6 @@ public class Studentin extends VerticalLayout {
         });
 
 
-        // upload
-        MemoryBuffer buffer = new MemoryBuffer();
-        Upload upload = new Upload(buffer);
-        upload.setAcceptedFileTypes("application/pdf"); // nur pdf dateien
-        upload.setMaxFiles(1); // nur eine Datei auf einmal hochladen
-
-        // balken mit uploadprogress
-        ProgressBar progressBar = new ProgressBar();
-        progressBar.setWidth("100%");
-        progressBar.setVisible(false);
-
-        // manuelle berechnung uploadfortschritt
-        AtomicLong bytesRead = new AtomicLong(0);
-        AtomicLong contentLength = new AtomicLong(0);
-
-        //wenn upload gestartet wird
-        upload.addStartedListener(event -> {
-            progressBar.setVisible(true);
-            progressBar.setValue(0.0); //uploadbalken auf 0 setzen
-            bytesRead.set(0);
-            contentLength.set(event.getContentLength()); //fuer gesamtgroesse der datei
-        });
-
-        //balken aktualisieren
-        buffer.getInputStream().transferTo(new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {
-                bytesRead.incrementAndGet(); // Ein Byte wurde gelesen
-                updateProgressBar(progressBar, bytesRead.get(), contentLength.get());
-            }
-
-            @Override
-            public void write(byte[] b, int off, int len) throws IOException {
-                bytesRead.addAndGet(len); // Anzahl der Bytes hinzufügen
-                updateProgressBar(progressBar, bytesRead.get(), contentLength.get());
-            }
-        });
-
-        // wenn upload fertig
-        upload.addSucceededListener(event -> {
-            try {
-                // In Byte-Array umwandeln
-                byte[] fileBytes = buffer.getInputStream().readAllBytes();
-                String fileName = event.getFileName();
-
-                // Datei auf dem Server speichern
-                uploadFile(fileBytes, fileName, matrikelnummer);
-
-                // Kurze Notification
-                Notification.show("Poster wurde erfolgreich hochgeladen", 5000, Notification.Position.MIDDLE);
-
-            } catch (Exception e) {
-                Notification.show("Fehler beim Hochladen des Posters: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
-            } finally {
-                progressBar.setVisible(false); // Fortschrittsbalken ausblenden
-            }
-        });
-
-
         //Kommentare des PB bei Ablehnung
         Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
         kommentarToggle.addClassName("kommentar-button2");
@@ -309,6 +250,68 @@ public class Studentin extends VerticalLayout {
         } else if ("Absolviert".equalsIgnoreCase(status)) {
             // "Poster hochladen" button
             Button posterHochladenButton = new Button("Poster hochladen");
+
+            // upload
+            MemoryBuffer buffer = new MemoryBuffer();
+            Upload upload = new Upload(buffer);
+            upload.setAcceptedFileTypes("application/pdf"); // nur pdf dateien
+            upload.setMaxFiles(1); // nur eine Datei auf einmal hochladen
+
+            // balken mit uploadprogress
+            ProgressBar progressBar = new ProgressBar();
+            progressBar.setWidth("100%");
+            progressBar.setVisible(false);
+
+            // manuelle berechnung uploadfortschritt
+            AtomicLong bytesRead = new AtomicLong(0);
+            AtomicLong contentLength = new AtomicLong(0);
+
+            //wenn upload gestartet wird
+            upload.addStartedListener(event -> {
+                progressBar.setVisible(true);
+                progressBar.setValue(0.0); //uploadbalken auf 0 setzen
+                bytesRead.set(0);
+                contentLength.set(event.getContentLength()); //fuer gesamtgroesse der datei
+            });
+
+            //balken aktualisieren
+            buffer.getInputStream().transferTo(new OutputStream() {
+                @Override
+                public void write(int b) throws IOException {
+                    bytesRead.incrementAndGet(); // Ein Byte wurde gelesen
+                    updateProgressBar(progressBar, bytesRead.get(), contentLength.get());
+                }
+
+                @Override
+                public void write(byte[] b, int off, int len) throws IOException {
+                    bytesRead.addAndGet(len); // Anzahl der Bytes hinzufügen
+                    updateProgressBar(progressBar, bytesRead.get(), contentLength.get());
+                }
+            });
+
+            // wenn upload fertig
+            upload.addSucceededListener(event -> {
+                try {
+                    // In Byte-Array umwandeln
+                    byte[] fileBytes = buffer.getInputStream().readAllBytes();
+                    String fileName = event.getFileName();
+
+                    // Datei auf dem Server speichern
+                    uploadFile(fileBytes, fileName, matrikelnummer);
+
+                    // Kurze Notification
+                    Notification.show("Poster wurde erfolgreich hochgeladen", 5000, Notification.Position.MIDDLE);
+
+
+                } catch (Exception e) {
+                    Notification.show("Fehler beim Hochladen des Posters: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+                } finally {
+                    progressBar.setVisible(false); // Fortschrittsbalken ausblenden
+                    posterHochladenButton.setVisible(false);
+                    upload.setVisible(false);
+                }
+            });
+
             posterHochladenButton.addClickListener(e -> {
                 // Upload-Layout hinzufügen
                 VerticalLayout uploadLayout = new VerticalLayout(upload, progressBar);
