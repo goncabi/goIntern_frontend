@@ -213,7 +213,11 @@ public class PraktikumsformularStudentin extends Div {
                 .set("margin-bottom", "20px")
                 .set("margin-left", "20px");
 
-
+        // Klick-Listener für den Button
+        berechnenButton.addClickListener(event -> {
+            LocalDate startDatum = startdatum.getValue();
+            LocalDate endDatum = enddatum.getValue();
+            String selectedName = bundeslandBox.getValue();
 
             // Wenn Auslandspraktikum, wird kein Bundesland benötigt
             String bundesland = "Ja".equals(auslandspraktikumsOptionen.getValue()) ? null :
@@ -234,7 +238,6 @@ public class PraktikumsformularStudentin extends Div {
                 Notification.show("Fehler bei der Berechnung: " + e.getMessage());
             }
         });
-
 
         // Container für Berechnen-Button
         Div berechnenButtonContainer = new Div();
