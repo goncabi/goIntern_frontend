@@ -31,6 +31,9 @@ import com.vaadin.flow.component.notification.Notification;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -193,7 +196,12 @@ public class Studentin extends VerticalLayout {
             JSONObject antrag = getPraktikumsAntrag(matrikelnummer);
             if (antrag != null) {
                 try {
-                    LocalDate startDatum = LocalDate.parse(antrag.getString("startDatum"));
+//                    LocalDate startDatum = LocalDate.parse(antrag.getString("startdatum"));
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                    LocalDate startDatum = LocalDate.parse(antrag.getString("startdatum"), formatter);
+                    String isoDatum = startDatum.toString(); // Gibt "yyyy-MM-dd" zurück
+                    startDatum = LocalDate.parse(isoDatum);
+
                     LocalDate heutigesDatum = LocalDate.now();
 
                     // Überprüfen, ob das Praktikum im Ausland stattfindet
@@ -205,23 +213,30 @@ public class Studentin extends VerticalLayout {
                         absolvierteTage = arbeitstageRechner.berechneArbeitstageOhneFeiertage(startDatum, heutigesDatum);
                     } else {
                         // Berechnung mit Feiertagen für das angegebene Bundesland
-                        String bundesland = antrag.optString("bundesland", "").trim();
+                        String bundesland = antrag.getString("bundeslandPraktikumsstelle");
                         if (bundesland.isEmpty() || "keine Angabe notwendig".equalsIgnoreCase(bundesland)) {
                             throw new IllegalArgumentException("Kein gültiges Bundesland angegeben für ein inländisches Praktikum.");
                         }
                         absolvierteTage = arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDatum, heutigesDatum, bundesland);
                     }
 
-                    // Status auf "Abgebrochen" setzen und Kommentar speichern
+                    // Kommentar und Datum speichern
                     String abbruchDatum = heutigesDatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
                     String notiz = "Das Praktikum wurde am " + abbruchDatum +
                             " abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage;
 
-                    speichereNotiz(matrikelnummer, notiz);
-                    setAntragStatus(matrikelnummer, "Abgebrochen");
-
-                    // Kurze Notification
-                    Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
+                    // Nachricht an Backend senden
+                    String json = createJsonNachricht(matrikelnummer, notiz, abbruchDatum);
+                    HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/arbeitstageNachricht");
+                    if (response.statusCode() == 200 || response.statusCode() == 201) {
+                        // Kurze Notification
+                        Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
+                        //Status auf "Abgebrochen" setzen
+                        setAntragStatus(matrikelnummer, "Abgebrochen");
+                    }
+                    else{
+                        Notification.show("Systemfehler! Bitte erneut versuchen.", 5000, Notification.Position.MIDDLE);
+                    }
 
                     // Seite aktualisieren
                     UI.getCurrent().getPage().reload();
@@ -344,6 +359,23 @@ public class Studentin extends VerticalLayout {
         container.add(headerLayout, spacer, buttonLayout, kommentarToggle, kommentarContent);
         return container;
 
+    }
+
+    // Methode, um Json ans Backend zu schicken
+    private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException{
+        HttpClient client = HttpClient.newHttpClient();
+
+        java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .POST(java.net.http.HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+    // Verpackt die Nachricht mit den absolvierten Tagen bei Abbruch in ein Json
+    private String createJsonNachricht(String empfaenger, String notiz, String abbruchDatum) {
+        return String.format("{\"nachricht\": \"%s\", \"datum\": \"%s\", \"empfaenger\": \"%s\"}", notiz, abbruchDatum, empfaenger);
     }
 
     // Methode zum Hochladen des posters
@@ -509,7 +541,8 @@ public class Studentin extends VerticalLayout {
 
     //Anbindung zum Backend AntragAnzeigen
     private JSONObject getPraktikumsAntrag(String matrikelnummer) {
-        String url = backendUrl + "antrag/getantrag/{matrikelnummer}" + matrikelnummer; // URL des Backend-Endpunkts
+        String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
+        // URL des Backend-Endpunkts
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -538,26 +571,6 @@ public class Studentin extends VerticalLayout {
         } catch (Exception e) {
             Notification.show("Fehler beim Aktualisieren des Status: " + e.getMessage());
         }
-    }
-
-    // damit studentin notiz erhält mit der anzahl der bereits absolvierten arbeitstage falls abbruch
-    private void speichereNotiz(String matrikelnummer, String notiz) {
-        String url = backendUrl + "antrag/notiz/speichern";
-        try {
-            JSONObject request = new JSONObject();
-            request.put("matrikelnummer", matrikelnummer);
-            request.put("notiz", notiz);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> entity = new HttpEntity<>(request.toString(), headers);
-
-            restTemplate.exchange(url, HttpMethod.POST, entity, Void.class);
-        } catch (Exception e) {
-            Notification.show("Fehler beim Speichern der Notiz: " + e.getMessage());
-        }
-
-        //müsste eigentlich put/post sein und methode für eine notiz/benachrichtigung post/put gibt es gerade noch nicht
     }
 
     // Methode balkenaktualisierung
