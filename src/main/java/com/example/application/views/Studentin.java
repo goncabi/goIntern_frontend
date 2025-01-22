@@ -62,10 +62,6 @@ public class Studentin extends VerticalLayout {
             return;
         }
 
-        //header
-        String pageTitle = hasAntrag(matrikelnummer) ? "Antragsübersicht" : "Willkommen auf der Startseite";
-        H1 title = new H1(pageTitle);
-
         //logout
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.addClassName("logout-button");
@@ -85,7 +81,7 @@ public class Studentin extends VerticalLayout {
         });
 
 
-        HorizontalLayout header = new HorizontalLayout(title, logoutButton);
+        HorizontalLayout header = new HorizontalLayout(logoutButton);
         header.setWidthFull();
         header.setDefaultVerticalComponentAlignment(Alignment.CENTER);
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
