@@ -1,5 +1,4 @@
 /* Stile für Antragsübersicht */
-
 .card {
     background-color: #ffffff;
     border-radius: 8px;
@@ -11,7 +10,6 @@
 }
 
 /* Buttons auf Antragsübersicht*/
-
 .bearbeiten-button2 {
     background-color: #FFFFFF;
     color: #2F5A83;
@@ -58,7 +56,6 @@
 
 
 /* Neuer Antrag Stile*/
-
 .neuer-antrag-card {
     background-color: #ffffff;
     border-radius: 8px;
@@ -94,12 +91,30 @@
 }
 
 /* Logout Icon für beide Seiten*/
-
 .logout-button {
-    background-color: transparent;
+    background-color: #FFFFFF;
     color: #2F5A83;
-    border: 2px solid #fff;
+    font-size: 18px;
+    padding: 12px 24px;
+    border-radius: 8px;
+   /* box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);*/
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-right: 16px;
+    justify-content: center;
+    gap: 8px;
 }
+
+.logout-button:hover {
+    background-color: #2F5A83;
+    color: #FFFFFF;
+    border: 2px solid #2F5A83;
+    /*box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);*/
+    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3);
+}
+
 
 .note-style {
     background-color: #fff8b3;
