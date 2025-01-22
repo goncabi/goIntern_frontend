@@ -12,6 +12,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -26,6 +27,7 @@ import jakarta.persistence.Embedded;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.boot.autoconfigure.jms.artemis.ArtemisProperties;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -35,10 +37,15 @@ import org.springframework.web.client.RestTemplate;
 import com.example.application.utils.DialogUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Route(value= "admin/startseite", layout = MainBanner.class)
@@ -219,11 +226,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }).setHeader("");
 
         //Spalte für Poster anzeigen
-        grid.addComponentColumn(praktikumsPoster -> {
-            if ("absolviert".equalsIgnoreCase(praktikumsPoster.getStatus())) {
+        grid.addComponentColumn(praktikumsantrag -> {
+            if ("absolviert".equalsIgnoreCase(praktikumsantrag.getStatus())) {
                 Button anzeigenButton = new Button("Poster anzeigen", VaadinIcon.EYE.create());
                 anzeigenButton.addClickListener(event -> {
-                    posterAnzeigenImPopUp(praktikumsPoster.getMatrikelnummer());
+                    posterAnzeigenImPopUp(praktikumsantrag.getMatrikelnummer());
                 });
                 return anzeigenButton;
             }
@@ -583,134 +590,39 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
     private void posterAnzeigenImPopUp(String matrikelnummer) {
         try {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = String.format("http://localhost:3000/api/poster/get/%s", matrikelnummer);
+            String url = "http://localhost:3000/api/poster/pdf/" + matrikelnummer;
 
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            Dialog dialog = new Dialog();
+            dialog.setWidth("100%");
+            dialog.setHeight("100%");
 
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                JSONObject json = new JSONObject(response.getBody());
+            H3 dialogTitle = new H3("Poster der Studentin " + matrikelnummer);
 
-                Dialog dialog = new Dialog();
-                dialog.setWidth("800px");
-                dialog.setHeight("90%");
+            // iframe ist tool zur Anzeige von pdfs
+            IFrame iframe = new IFrame(url);
+            iframe.setWidth("100%");
+            iframe.setHeight("500px");
 
-                H3 dialogTitle = new H3("Poster der Studentin " + matrikelnummer);
+            // Buttons
+            Button close = new Button("Schließen", event -> dialog.close());
+            close.getStyle().set("margin-left", "auto");
 
-                // iframe ist tool zur anzeige von pdfs
-                IFrame iframe = new IFrame();
-                iframe.setSrc("data:application/pdf;base64," + json.getString("posterDaten"));
-                iframe.setWidth("100%");
-                iframe.setHeight("70%");
+            // Layout
+            HorizontalLayout buttonLayout = new HorizontalLayout(close);
+            buttonLayout.setWidthFull();
+            buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.START); //button links ausgerichtet
 
-                // Buttons
-                Button abbrechen = new Button("Abbrechen", event -> dialog.close());
+            VerticalLayout contentLayout = new VerticalLayout(dialogTitle, iframe, buttonLayout);
+            contentLayout.setSpacing(true);
+            contentLayout.setPadding(true);
+            dialog.add(contentLayout);
 
-                Button genehmigen = new Button("Genehmigen");
-                genehmigen.addClickListener(event -> {
-                    genehmigenPoster(matrikelnummer);
-                    dialog.close();
-                });
-
-                Button ablehnen = new Button("Bemängeln");
-                ablehnen.addClickListener(event -> {
-                    Dialog ablehnungsDialog = new Dialog();
-                    ablehnungsDialog.setWidth("600px");
-                    ablehnungsDialog.setHeight("400px");
-
-                    H3 ablehnungsTitle = new H3("Poster bemängeln");
-                    TextArea kommentarField = new TextArea("Bemängelung");
-                    kommentarField.setPlaceholder("Geben Sie hier Ihre Kritik ein:");
-                    kommentarField.setWidthFull();
-
-                    Button ablehnungAbsendenButton = new Button("Bemängelung absenden", e -> {
-                        String kommentar = kommentarField.getValue();
-                        if (kommentar == null || kommentar.trim().isEmpty()) {
-                            Notification.show("Bitte geben Sie eine Kritik ein.", 3000, Notification.Position.TOP_CENTER);
-                            return;
-                        }
-                        ablehnenPosterMitKommentar(matrikelnummer, kommentar);
-                        ablehnungsDialog.close();
-                        dialog.close();
-                    });
-
-                    Button abbrechenButton = new Button("Abbrechen", e -> ablehnungsDialog.close());
-
-                    HorizontalLayout buttonLayout = new HorizontalLayout(abbrechenButton, ablehnungAbsendenButton);
-                    buttonLayout.setWidthFull();
-                    buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
-
-                    VerticalLayout ablehnungsLayout = new VerticalLayout(ablehnungsTitle, kommentarField, buttonLayout);
-                    ablehnungsDialog.add(ablehnungsLayout);
-                    ablehnungsDialog.open();
-                });
-
-                HorizontalLayout buttonLayout = new HorizontalLayout(abbrechen, ablehnen, genehmigen);
-                buttonLayout.setWidthFull();
-                buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
-
-                VerticalLayout dialogLayout = new VerticalLayout(dialogTitle, iframe, buttonLayout);
-                dialog.add(dialogLayout);
-                dialog.open();
-
-            } else {
-                Notification.show("Kein Poster unter der Matrikelnummer " + matrikelnummer + " gefunden.");
-            }
-        } catch (Exception e) {
-            Notification.show("Fehler beim Abrufen der Poster-Daten: " + e.getMessage());
+            dialog.open();
+        }
+        catch (Exception e) {
+            Notification.show("Fehler beim Abrufen der Poster-Daten: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
         }
     }
-
-
-    private void genehmigenPoster(String matrikelnummer) {
-        try {
-            JSONObject jsonPoster = new JSONObject();
-            jsonPoster.put("matrikelnummer", matrikelnummer);
-            jsonPoster.put("status", "GENEHMIGT");
-
-            String backendUrl = "http://localhost:3000/api/poster/genehmigen";
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> request = new HttpEntity<>(jsonPoster.toString(), headers);
-
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.exchange(backendUrl, HttpMethod.POST, request, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                Notification.show("Poster wurde genehmigt.", 3000, Notification.Position.TOP_CENTER);
-            } else {
-                Notification.show("Fehler beim Genehmigen des Posters.", 3000, Notification.Position.TOP_CENTER);
-            }
-        } catch (Exception e) {
-            Notification.show("Fehler beim Genehmigen des Posters: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
-        }
-    }
-
-    private void ablehnenPosterMitKommentar(String matrikelnummer, String kommentar) {
-        try {
-            JSONObject jsonPoster = new JSONObject();
-            jsonPoster.put("matrikelnummer", matrikelnummer);
-            jsonPoster.put("status", "ABGELEHNT");
-            jsonPoster.put("kommentar", kommentar);
-
-            String backendUrl = String.format("http://localhost:3000/api/poster/ablehnen/%s", matrikelnummer);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> request = new HttpEntity<>(jsonPoster.toString(), headers);
-
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.exchange(backendUrl, HttpMethod.POST, request, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                Notification.show("Poster wurde abgelehnt.", 3000, Notification.Position.TOP_CENTER);
-            } else {
-                Notification.show("Fehler beim Ablehnen des Posters.", 3000, Notification.Position.TOP_CENTER);
-            }
-        } catch (Exception e) {
-            Notification.show("Fehler beim Ablehnen des Posters: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
-        }
-    }
-
 
     private void filterGridByStatus(String status) {
         List<Praktikumsantrag> filteredItems;

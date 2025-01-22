@@ -12,6 +12,10 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.json.JSONObject;
 import org.json.JSONArray;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -19,13 +23,22 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import com.example.application.utils.DialogUtils;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.component.notification.Notification;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 @Route(value = "studentin/startseite", layout = MainBanner.class)
@@ -39,7 +52,7 @@ public class Studentin extends VerticalLayout {
     private RestTemplate restTemplate = new RestTemplate();
     private final String backendUrl = "http://localhost:3000/api/";
 
-    public Studentin() {
+    public Studentin() throws IOException {
         addClassName("startseite-view");
         String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
 
@@ -101,7 +114,7 @@ public class Studentin extends VerticalLayout {
     }
 
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
-    private VerticalLayout createMeinAntragContainer(String matrikelnummer) {
+    private VerticalLayout createMeinAntragContainer(String matrikelnummer) throws IOException {
         VerticalLayout container = new VerticalLayout();
         container.addClassName("mein-antrag-container");
         container.addClassName("card");
@@ -177,17 +190,63 @@ public class Studentin extends VerticalLayout {
 
         Button praktikumAbbrechenButton = new Button("Praktikum abbrechen");
         praktikumAbbrechenButton.addClassName("abbrechen-button2");
-        praktikumAbbrechenButton.setVisible("Derzeit im Praktikum".equalsIgnoreCase(status));
+        praktikumAbbrechenButton.setVisible("Derzeit im Praktikum".equalsIgnoreCase(status)); // nur sichtbar, falls im Praktikum
         praktikumAbbrechenButton.addClickListener(event -> {
             ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
             JSONObject antrag = getPraktikumsAntrag(matrikelnummer);
             if (antrag != null) {
                 try {
-                    LocalDate startDatum = LocalDate.parse(antrag.getString("startDatum"));
+//                    LocalDate startDatum = LocalDate.parse(antrag.getString("startdatum"));
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                    LocalDate startDatum = LocalDate.parse(antrag.getString("startdatum"), formatter);
+                    String isoDatum = startDatum.toString(); // Gibt "yyyy-MM-dd" zurück
+                    startDatum = LocalDate.parse(isoDatum);
+
                     LocalDate heutigesDatum = LocalDate.now();
-                    //hier muss ich mir nochmal gedanken machen, wie das alles funktionieren soll, erledige ich später
-                    // int absolvierteTage = arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDatum, heutigesDatum, arbeitstageRechner.getBundeslandByKuerzel());
-                   // Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Tage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
+
+                    // Überprüfen, ob das Praktikum im Ausland stattfindet
+                    boolean imAusland = "Ja".equalsIgnoreCase(antrag.optString("imAusland", "Nein"));
+
+                    int absolvierteTage;
+                    if (imAusland) {
+                        // Berechnung ohne Feiertage, da Ausland
+                        absolvierteTage = arbeitstageRechner.berechneArbeitstageOhneFeiertage(startDatum, heutigesDatum);
+                    } else {
+                        // Berechnung mit Feiertagen für das angegebene Bundesland
+                        String bundesland = antrag.getString("bundeslandPraktikumsstelle");
+                        if (bundesland.isEmpty() || "keine Angabe notwendig".equalsIgnoreCase(bundesland)) {
+                            throw new IllegalArgumentException("Kein gültiges Bundesland angegeben für ein inländisches Praktikum.");
+                        }
+                        absolvierteTage = arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDatum, heutigesDatum, bundesland);
+                    }
+
+                    // Kommentar und Datum speichern
+                    String abbruchDatum = heutigesDatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+                    String notiz = "Das Praktikum wurde am " + abbruchDatum +
+                            " abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage;
+
+                    // Nachricht an Backend senden
+                    String json = createJsonNachricht(matrikelnummer, notiz, abbruchDatum);
+                    HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/arbeitstageNachricht");
+                    if (response.statusCode() == 200 || response.statusCode() == 201) {
+                        // Kurze Notification
+                        Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
+                        //Status auf "Abgebrochen" setzen
+                        try {
+                            setAntragStatusAbgebrochen(matrikelnummer);
+                            praktikumAbbrechenButton.setVisible(false);
+                            UI.getCurrent().getPage().reload();
+                        }
+                        catch (Exception e) {
+                            System.out.println("fehler beim abgebrochen status" + e.getMessage());
+                        }
+
+
+                    }
+                    else{
+                        Notification.show("Systemfehler! Bitte erneut versuchen.", 5000, Notification.Position.MIDDLE);
+                    }
+
                 } catch (Exception e) {
                     Notification.show("Fehler bei der Berechnung der absolvierten Tage: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
                 }
@@ -196,21 +255,6 @@ public class Studentin extends VerticalLayout {
             }
         });
 
-        //poster hinzufügen button
-        Button addPosterButton = new Button("+ Poster hinzufügen");
-        addPosterButton.addClassName("poster-button");
-        addPosterButton.addClickListener(event -> {
-            // Navigieren zur Poster-Ansicht
-            getUI().ifPresent(ui -> ui.navigate("poster")); // "poster" ist der Route-Pfad für die neue Ansicht
-        });
-
-        // Button zum Layout hinzufügen
-        container.add(addPosterButton);
-
-
-        HorizontalLayout buttonLayout = new HorizontalLayout(bearbeitenButton, loeschenButton);
-        buttonLayout.setWidthFull();
-        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);// Buttons rechts anordnen
 
         //Kommentare des PB bei Ablehnung
         Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
@@ -221,6 +265,87 @@ public class Studentin extends VerticalLayout {
         VerticalLayout kommentarContent = new VerticalLayout();
         kommentarContent.setVisible(false);
 
+        // Layout für bearbeiten/löschen und für abbrechen falls derzeit im praktikum
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        if ("Derzeit im Praktikum".equalsIgnoreCase(status)) {
+            buttonLayout.add(praktikumAbbrechenButton);
+        } else if ("Absolviert".equalsIgnoreCase(status)) {
+            // "Poster hochladen" button
+            Button posterHochladenButton = new Button("Poster hochladen");
+
+            // upload
+            MemoryBuffer buffer = new MemoryBuffer();
+            Upload upload = new Upload(buffer);
+            upload.setAcceptedFileTypes("application/pdf"); // nur pdf dateien
+            upload.setMaxFiles(1); // nur eine Datei auf einmal hochladen
+
+            // balken mit uploadprogress
+            ProgressBar progressBar = new ProgressBar();
+            progressBar.setWidth("100%");
+            progressBar.setVisible(false);
+
+            // manuelle berechnung uploadfortschritt
+            AtomicLong bytesRead = new AtomicLong(0);
+            AtomicLong contentLength = new AtomicLong(0);
+
+            //wenn upload gestartet wird
+            upload.addStartedListener(event -> {
+                progressBar.setVisible(true);
+                progressBar.setValue(0.0); //uploadbalken auf 0 setzen
+                bytesRead.set(0);
+                contentLength.set(event.getContentLength()); //fuer gesamtgroesse der datei
+            });
+
+            //balken aktualisieren
+            buffer.getInputStream().transferTo(new OutputStream() {
+                @Override
+                public void write(int b) throws IOException {
+                    bytesRead.incrementAndGet(); // Ein Byte wurde gelesen
+                    updateProgressBar(progressBar, bytesRead.get(), contentLength.get());
+                }
+
+                @Override
+                public void write(byte[] b, int off, int len) throws IOException {
+                    bytesRead.addAndGet(len); // Anzahl der Bytes hinzufügen
+                    updateProgressBar(progressBar, bytesRead.get(), contentLength.get());
+                }
+            });
+
+            // wenn upload fertig
+            upload.addSucceededListener(event -> {
+                try {
+                    // In Byte-Array umwandeln
+                    byte[] fileBytes = buffer.getInputStream().readAllBytes();
+                    String fileName = event.getFileName();
+
+                    // Datei auf dem Server speichern
+                    uploadFile(fileBytes, fileName, matrikelnummer);
+
+                    // Kurze Notification
+                    Notification.show("Poster wurde erfolgreich hochgeladen", 5000, Notification.Position.MIDDLE);
+
+
+                } catch (Exception e) {
+                    Notification.show("Fehler beim Hochladen des Posters: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
+                } finally {
+                    progressBar.setVisible(false); // Fortschrittsbalken ausblenden
+                    posterHochladenButton.setVisible(false);
+                    upload.setVisible(false);
+                }
+            });
+
+            posterHochladenButton.addClickListener(e -> {
+                // Upload-Layout hinzufügen
+                VerticalLayout uploadLayout = new VerticalLayout(upload, progressBar);
+                container.add(uploadLayout);
+            });
+            buttonLayout.add(posterHochladenButton);
+        } else {
+            buttonLayout.add(bearbeitenButton, loeschenButton);
+        }
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        container.add(headerLayout, spacer, buttonLayout, kommentarToggle, kommentarContent);
 
 
         List<String> notizen = getAntragNotiz(matrikelnummer);
@@ -245,6 +370,48 @@ public class Studentin extends VerticalLayout {
         return container;
 
     }
+
+    // Methode, um Json ans Backend zu schicken
+    private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException{
+        HttpClient client = HttpClient.newHttpClient();
+
+        java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .POST(java.net.http.HttpRequest.BodyPublishers.ofString(json))
+                .build();
+
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+    // Verpackt die Nachricht mit den absolvierten Tagen bei Abbruch in ein Json
+    private String createJsonNachricht(String empfaenger, String notiz, String abbruchDatum) {
+        return String.format("{\"nachricht\": \"%s\", \"datum\": \"%s\", \"empfaenger\": \"%s\"}", notiz, abbruchDatum, empfaenger);
+    }
+
+    // Methode zum Hochladen des posters
+    private void uploadFile(byte[] fileBytes, String fileName, String matrikelnummer) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        ByteArrayResource byteArrayResource = new ByteArrayResource(fileBytes) {
+            @Override
+            public String getFilename() {
+                return fileName;
+            }
+        };
+        body.add("file", byteArrayResource);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        String url = String.format("http://localhost:3000/api/poster/upload/%s", matrikelnummer);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("Fehler beim Hochladen: " + response.getBody());
+        }
+    }
+
 
     private Span createStatusBadge(String status) {
         String theme;
@@ -384,7 +551,8 @@ public class Studentin extends VerticalLayout {
 
     //Anbindung zum Backend AntragAnzeigen
     private JSONObject getPraktikumsAntrag(String matrikelnummer) {
-        String url = backendUrl + "antrag/getantrag/{matrikelnummer}" + matrikelnummer; // URL des Backend-Endpunkts
+        String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
+        // URL des Backend-Endpunkts
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
@@ -395,6 +563,30 @@ public class Studentin extends VerticalLayout {
             Notification.show("Fehler beim Aufruf des Praktikumsantrags " + e.getMessage());
         }
         return null;
+    }
+
+    // status aktualisieren im backend (fuer abgebrochen)
+    private void setAntragStatusAbgebrochen(String matrikelnummer) {
+        String url = backendUrl + "antrag/updateStatusAbgebrochen/" + matrikelnummer;
+        try {
+            JSONObject request = new JSONObject();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> entity = new HttpEntity<>(request.toString(), headers);
+
+            restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
+        } catch (Exception e) {
+            Notification.show("Fehler beim Aktualisieren des Status: " + e.getMessage());
+        }
+    }
+
+    // Methode balkenaktualisierung
+    private void updateProgressBar(ProgressBar progressBar, long bytesRead, long contentLength) {
+        if (contentLength > 0) { // Division durch 0 vermeiden
+            double progress = (double) bytesRead / contentLength; // Fortschritt berechnen
+            progressBar.setValue(progress); // Fortschrittsbalken aktualisieren
+        }
     }
 
 }

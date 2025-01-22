@@ -19,8 +19,6 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.example.application.utils.DialogUtils;
-
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -96,8 +94,8 @@ public class PraktikumsformularStudentin extends Div {
         ortStudentin = createTextField("Ort der Studentin *");
         telefonnummerStudentin = createTextField("Telefonnummer der Studentin *");
         emailStudentin = createEmailField("E-Mail-Adresse der Studentin *");
-        vorschlagPraktikumsbetreuerIn = createTextField("Vorgeschlagener Praktikumsbetreuer (an der HTW) *");
-        praktikumssemester = createTextField("Praktikumssemester (SoSe / WiSe) *");
+        vorschlagPraktikumsbetreuerIn = createTextField("Vorgeschlagene*r Praktikumsbetreuer*in (an der HTW) *");
+        praktikumssemester = createTextField("Praktikumssemester (SoSe / WiSe und Jahreszahl) *");
         studiensemester = createNumberField("Studiensemester (bitte als Zahl eingeben) *");
         studiengang = createTextField("Studiengang *");
         datumAntrag = CustomDatePicker.createGermanDatePicker("Datum des Antrags *");
@@ -215,7 +213,6 @@ public class PraktikumsformularStudentin extends Div {
                 .set("margin-bottom", "20px")
                 .set("margin-left", "20px");
 
-
         // Klick-Listener für den Button
         berechnenButton.addClickListener(event -> {
             LocalDate startDatum = startdatum.getValue();
@@ -224,7 +221,7 @@ public class PraktikumsformularStudentin extends Div {
 
             // Wenn Auslandspraktikum, wird kein Bundesland benötigt
             String bundesland = "Ja".equals(auslandspraktikumsOptionen.getValue()) ? null :
-                    arbeitstageRechner.mappeBundeslandFuerApiKommunikation(selectedName);
+                    selectedName;
 
             if (startDatum == null || endDatum == null || ("Nein".equals(auslandspraktikumsOptionen.getValue()) && bundesland == null)) {
                 Notification.show("Bitte fülle alle notwendigen Felder aus, damit die Arbeitstage berechnet werden können.", 3000,
@@ -241,7 +238,6 @@ public class PraktikumsformularStudentin extends Div {
                 Notification.show("Fehler bei der Berechnung: " + e.getMessage());
             }
         });
-
 
         // Container für Berechnen-Button
         Div berechnenButtonContainer = new Div();
