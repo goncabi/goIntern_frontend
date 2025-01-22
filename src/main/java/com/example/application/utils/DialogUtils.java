@@ -36,8 +36,6 @@ public class DialogUtils {
         // Buttons und Anordnung der Button (Abbrechne immer links)
         Button cancelButton = new Button(cancelButtonText, e -> dialog.close());
         cancelButton.getStyle()
-                /*.set("background-color", "#FFFFFF")
-                .set("color", "#E74C3C")*/
                 .set("background-color", "#E74C3C")
                 .set("color", "#FFFFFF")
                 .set("box-shadow",  "0px 2px 4px rgba(0, 0, 0, 0.1)")
@@ -46,6 +44,16 @@ public class DialogUtils {
                 .set("cursor", "pointer")
                 .set("transition", "all 0.3s ease");
 
+        cancelButton.getElement().executeJs(
+                "this.addEventListener('mouseover', function() {" +
+                        "  this.style.backgroundColor = '#C0392B';" +
+                        "  this.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.2)';" +
+                        "});" +
+                        "this.addEventListener('mouseout', function() {" +
+                        "  this.style.backgroundColor = '#E74C3C';" +
+                        "  this.style.boxShadow = '0px 2px 4px rgba(0, 0, 0, 0.1)';" +
+                        "});"
+        );
 
         Button confirmButton = new Button(confirmButtonText, e -> {
             confirmAction.run();
@@ -60,18 +68,6 @@ public class DialogUtils {
                 .set("cursor", "pointer")
                 .set("transition", "all 0.3s ease");
 
-        confirmButton.getElement().executeJs(
-                "this.addEventListener('mouseover', function() {" +
-                        "  this.style.backgroundColor = '#2F5A83';" + // Dunkleres Blau bei Hover
-                        "  this.style.color = '#FFFFFF';" + // Textfarbe wird weiß
-                        "  this.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.2)';" + // Intensiverer Schatten
-                        "});" +
-                        "this.addEventListener('mouseout', function() {" +
-                        "  this.style.backgroundColor = '#FFFFFF';" + // Zurück zu Weiß
-                        "  this.style.color = '#2F5A83';" + // Zurück zu Blau
-                        "  this.style.boxShadow = '0px 2px 4px rgba(0, 0, 0, 0.1)';" + // Zurück zum Standardschatten
-                        "});"
-        );
 
         HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton, confirmButton);
         buttonLayout.setWidthFull();
