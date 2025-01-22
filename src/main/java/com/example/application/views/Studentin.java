@@ -232,14 +232,21 @@ public class Studentin extends VerticalLayout {
                         // Kurze Notification
                         Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
                         //Status auf "Abgebrochen" setzen
-                        setAntragStatus(matrikelnummer, "Abgebrochen");
+                        try {
+                            setAntragStatusAbgebrochen(matrikelnummer);
+                            praktikumAbbrechenButton.setVisible(false);
+                            UI.getCurrent().getPage().reload();
+                        }
+                        catch (Exception e) {
+                            System.out.println("fehler beim abgebrochen status" + e.getMessage());
+                        }
+
+
                     }
                     else{
                         Notification.show("Systemfehler! Bitte erneut versuchen.", 5000, Notification.Position.MIDDLE);
                     }
 
-                    // Seite aktualisieren
-                    UI.getCurrent().getPage().reload();
                 } catch (Exception e) {
                     Notification.show("Fehler bei der Berechnung der absolvierten Tage: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
                 }
@@ -559,18 +566,16 @@ public class Studentin extends VerticalLayout {
     }
 
     // status aktualisieren im backend (fuer abgebrochen)
-    private void setAntragStatus(String matrikelnummer, String neuerStatus) {
-        String url = backendUrl + "antrag/status/update";
+    private void setAntragStatusAbgebrochen(String matrikelnummer) {
+        String url = backendUrl + "antrag/updateStatusAbgebrochen/" + matrikelnummer;
         try {
             JSONObject request = new JSONObject();
-            request.put("matrikelnummer", matrikelnummer);
-            request.put("status", neuerStatus);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> entity = new HttpEntity<>(request.toString(), headers);
 
-            restTemplate.exchange(url, HttpMethod.POST, entity, Void.class);
+            restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
         } catch (Exception e) {
             Notification.show("Fehler beim Aktualisieren des Status: " + e.getMessage());
         }
