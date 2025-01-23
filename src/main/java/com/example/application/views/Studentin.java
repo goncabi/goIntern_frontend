@@ -261,11 +261,15 @@ public class Studentin extends VerticalLayout {
             Button posterHochladenButton = new Button("Poster hochladen");
             posterHochladenButton.addClassName("poster-hochladen-button");
 
+
             // upload
             MemoryBuffer buffer = new MemoryBuffer();
             Upload upload = new Upload(buffer);
             upload.setAcceptedFileTypes("application/pdf"); // nur pdf dateien
             upload.setMaxFiles(1); // nur eine Datei auf einmal hochladen
+
+            // "Drop file here"-Text entfernen
+            upload.setDropAllowed(false);
             upload.setUploadButton(new Button("Datei auswählen"));
 
             // balken mit uploadprogress
