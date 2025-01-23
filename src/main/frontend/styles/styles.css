@@ -336,13 +336,9 @@ html, body {
 
 vaadin-vertical-layout[theme~="spacing"] {
     gap: 0 !important;
-<<<<<<< HEAD
-}
-=======
 }
 
 .admin-startseite-view h1 {
     margin-top: -30px !important;
 }
 
->>>>>>> 38bb5a6 (Studentin-Ansicht und PB-Ansicht angepasst.)
