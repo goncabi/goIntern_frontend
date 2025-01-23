@@ -27,7 +27,6 @@ import com.example.application.utils.DialogUtils;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.component.progressbar.ProgressBar;
-import com.vaadin.flow.component.notification.Notification;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -137,36 +136,24 @@ public class Studentin extends VerticalLayout {
         bearbeitenButton.addClassName("bearbeiten-button2");
 
         // Status "Gespeichert" und "Abgelehnt" überprüfen, nur dann geht Bearbeitung
-        bearbeitenButton.setEnabled("Gespeichert".equalsIgnoreCase(status) ||
+        bearbeitenButton.setVisible("Gespeichert".equalsIgnoreCase(status) ||
                 "Abgelehnt".equalsIgnoreCase(status));
 
-        if (!bearbeitenButton.isEnabled()) {
-            bearbeitenButton.getStyle()
-                    .set("background-color", "#d3d3d3")
-                    .set("color", "#808080")
-                    .set("cursor", "not-allowed");
-        } else {
             bearbeitenButton.addClickListener(event -> {
                 VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
                 getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
             });
-        }
+
 
         //Löschen Button
         Button loeschenButton = new Button("Löschen");
         loeschenButton.addClassName("loeschen-button2");
-        loeschenButton.setEnabled(
+        loeschenButton.setVisible(
                 "Abgelehnt".equalsIgnoreCase(status) ||
                         "gespeichert".equalsIgnoreCase(status)
                         || "zugelassen".equalsIgnoreCase(status)
         );
 
-        if (!loeschenButton.isEnabled()) {
-            loeschenButton.getStyle()
-                    .set("background-color", "#d3d3d3")
-                    .set("color", "#808080")
-                    .set("cursor", "not-allowed");
-        } else {
             loeschenButton.addClickListener(event -> {
                 Dialog confirmDialog = DialogUtils.createStandardDialog(
                         "Antrag löschen",
@@ -182,7 +169,7 @@ public class Studentin extends VerticalLayout {
                 );
                 confirmDialog.open();
             });
-        }
+
 
         Button praktikumAbbrechenButton = new Button("Praktikum abbrechen");
         praktikumAbbrechenButton.addClassName("abbrechen-button2");
