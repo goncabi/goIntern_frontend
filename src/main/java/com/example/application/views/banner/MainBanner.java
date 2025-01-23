@@ -39,12 +39,10 @@ import com.vaadin.flow.router.RouterLayout;
             logoAndTitleContainer.addClassName("logo-title-container");
             logoAndTitleContainer.add(logoAndTitleRow, slogan);
 
-            // Bereits vorhandenes grünes Logo rechts
-            Image greenLogo = new Image("images/FB4_FIW.jpg", "Grünes Logo");
-            greenLogo.addClassName("banner-logo");
+
 
             // Füge den Container (Logo + Überschrift) und das rechte Logo in den Banner ein
-            banner.add(logoAndTitleContainer, greenLogo);
+            banner.add(logoAndTitleContainer);
             add(banner);
 
         }

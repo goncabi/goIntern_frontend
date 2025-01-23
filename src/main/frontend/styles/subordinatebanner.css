@@ -1,0 +1,43 @@
+/* Banner Styling */
+.banner-2 {
+    display: flex;
+    align-items: center;  /* Vertikal zentrieren */
+    justify-content: center;  /* Horizontal zentrieren */
+    gap: 5px;  /* Abstand zwischen Elementen */
+    padding: 10px 0;
+    width: 100%;
+    box-sizing: border-box;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Begrenzung der Logo-Größe */
+.logo-before-2 {
+    max-width: 80px;  /* Maximale Breite des Logos */
+    height: auto;  /* Automatische Höhe, um Verzerrung zu vermeiden */
+    display: block;
+}
+
+/* Titel Styling */
+.banner-title-2 {
+    font-size: 40px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+/* Slogan Styling */
+.banner-slogan-2 {
+    font-size: 18px;
+    font-style: italic;
+    color: #555;
+}
+
+/* Container für Titel und Slogan */
+.logo-title-container-2 {
+    display: flex;
+    flex-direction: row; /* Titel und Slogan in einer Zeile */
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}

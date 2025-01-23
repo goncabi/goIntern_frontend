@@ -2,8 +2,9 @@
 .view-container {
     display: flex !important; /* Flexbox aktivieren */
     justify-content: center !important; /* Horizontal zentriert */
-    align-items: flex-start !important; /* Vertikal zentriert */
-    height: 100vh !important; /* Volle Höhe des Viewports */
+    align-items: center !important; /* Vertikal zentriert */
+    height: auto !important; /* Volle Höhe des Viewports */
+    min-height: 100vh !important;
     margin: 0 !important;
     padding: 0 !important;
     background: linear-gradient(135deg, #2F5A83, #244567) !important;
@@ -204,34 +205,33 @@ html, body {
 .banner-logo {
     width: 80px;
     height: auto;
-    margin-left: 20px;
+    align-items: center;
 }
 
 .logo-before {
-    width: 100px;
+    width: 80px;
     height: auto;
 }
 
 .logo-title-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Titel und Slogan in einer Zeile */
     align-items: center;
     justify-content: center;
-    flex-grow: 1;
-    text-align: center;
-    gap: 2px;
+    gap: 5px;
 
 }
 
 #registration-zacken {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 110vw;
+    height: 110vh;
     z-index: -1; /* Hintergrundebene */
-    opacity: 0.1; /* Transparenz */
+    opacity: 0.5; /* Transparenz */
     pointer-events: none;
+    background-size: contain;
 }
 
 #registration-zacken path {
@@ -269,10 +269,10 @@ html, body {
 .banner-slogan {
     font-size: 18px;
     color: #555;
-    margin: 2px 0 0 190px !important;
     text-align: center;
     width: 100%;
     font-style: italic;
+    margin: 22px 0 0 0;
 }
 
 .logo-title-row {
@@ -285,15 +285,13 @@ html, body {
 .register-view {
     position: relative;
     background-color: white !important; /* Entfernt die Hintergrundfarbe */
-    padding-top: 180px;
-    overflow: hidden;
+    padding-top: 30px;
     padding-bottom: 0;
     min-height: 100vh;
 
 }
 
 .register-view .form-container {
-    margin-top: 700px; /* Verschiebe den Container nach unten */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Schattierung */
@@ -316,11 +314,11 @@ html, body {
 }
 .register-view .view-container {
     z-index: 2;
-    background-color: white !important;
+    background: none !important;
     height: auto !important;
     margin: 0;
     padding: 0;
-    overflow: visible !important; /* Verhindert abgeschnittene Inhalte */
+
 }
 
 .admin-startseite-view {
@@ -330,3 +328,13 @@ html, body {
     display: flex;
     flex-direction: column;
 }
+
+.register-view .banner {
+    background: none !important;
+    box-shadow: none !important;
+}
+
+vaadin-vertical-layout[theme~="spacing"] {
+    gap: 0 !important;
+}
+
