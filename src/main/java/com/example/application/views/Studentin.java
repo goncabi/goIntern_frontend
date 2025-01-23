@@ -253,14 +253,20 @@ public class Studentin extends VerticalLayout {
         if ("Derzeit im Praktikum".equalsIgnoreCase(status)) {
             buttonLayout.add(praktikumAbbrechenButton);
         } else if ("Absolviert".equalsIgnoreCase(status)) {
+
+
+
+            VerticalLayout uploadContainer = new VerticalLayout();
             // "Poster hochladen" button
             Button posterHochladenButton = new Button("Poster hochladen");
+            posterHochladenButton.addClassName("poster-hochladen-button");
 
             // upload
             MemoryBuffer buffer = new MemoryBuffer();
             Upload upload = new Upload(buffer);
             upload.setAcceptedFileTypes("application/pdf"); // nur pdf dateien
             upload.setMaxFiles(1); // nur eine Datei auf einmal hochladen
+            upload.setUploadButton(new Button("Datei auswählen"));
 
             // balken mit uploadprogress
             ProgressBar progressBar = new ProgressBar();
