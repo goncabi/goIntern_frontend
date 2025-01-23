@@ -324,7 +324,7 @@ html, body {
 .admin-startseite-view {
     background-color: white; /* Weißer Hintergrund */
     min-height: 100vh; /* Deckt die gesamte Höhe des Bildschirms ab */
-    padding-top: 180px;
+    padding-top: 40px;
     display: flex;
     flex-direction: column;
 }
@@ -336,4 +336,13 @@ html, body {
 
 vaadin-vertical-layout[theme~="spacing"] {
     gap: 0 !important;
+<<<<<<< HEAD
 }
+=======
+}
+
+.admin-startseite-view h1 {
+    margin-top: -30px !important;
+}
+
+>>>>>>> 38bb5a6 (Studentin-Ansicht und PB-Ansicht angepasst.)
