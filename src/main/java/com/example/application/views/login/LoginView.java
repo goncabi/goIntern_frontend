@@ -81,7 +81,8 @@ public class LoginView extends VerticalLayout {
             }
             else{
                 try{
-                    String json = createLoginJson(roleSelection.getValue(), usernameField.getValue(), passwordField.getValue());
+                    String roleForBackend = roleSelection.getValue().replace("*", "").replace("/in", "in");
+                    String json = createLoginJson(roleForBackend, usernameField.getValue(), passwordField.getValue());
                     HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/login");
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
                         String responseBody = response.body();
