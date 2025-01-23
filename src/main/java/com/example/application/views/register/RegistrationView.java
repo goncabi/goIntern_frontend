@@ -1,6 +1,7 @@
 package com.example.application.views.register;
 
 import com.example.application.views.banner.MainBanner;
+import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
@@ -15,13 +16,15 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.server.VaadinSession;
 
+
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-@Route(value = "register", layout = MainBanner.class)
+@Route(value = "register", layout = SubordinateBanner.class)
 @CssImport("./styles/styles.css")
 public class RegistrationView extends VerticalLayout {
 
@@ -29,6 +32,7 @@ public class RegistrationView extends VerticalLayout {
         // Hauptcontainer mit einer zentrierten Ansicht
         //addClassName("scrollable-view");
         addClassName("register-view");
+
 
         // Hintergrund-Animation (Zacken)
         Span backgroundAnimation = createAnimatedLine();

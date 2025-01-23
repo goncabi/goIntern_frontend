@@ -1,6 +1,7 @@
 package com.example.application.views;
 
 import com.example.application.views.banner.MainBanner;
+import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
