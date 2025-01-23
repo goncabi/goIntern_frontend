@@ -43,13 +43,13 @@ public class LoginView extends VerticalLayout {
 
         // Rolle auswählen (ComboBox)
         ComboBox<String> roleSelection = new ComboBox<>();
-        roleSelection.setItems("Praktikumsbeauftragte/r", "Student/in");
-        roleSelection.setPlaceholder("Wähle eine Rolle");
+        roleSelection.setItems("Praktikumsbeauftragte*r", "Student*in");
+        roleSelection.setPlaceholder("Wähle aus, wer du bist:");
         roleSelection.addClassName("dropdown");
 
         // Nutzername-Feld
         TextField usernameField = new TextField();
-        usernameField.setPlaceholder("Nutzername");
+        usernameField.setPlaceholder("Nutzer*innenname");
         usernameField.addClassName("text-field");
 
         // Passwort-Feld
@@ -77,12 +77,13 @@ public class LoginView extends VerticalLayout {
         loginButton.addClickListener(event -> {
             boolean isValid;
             if (roleSelection.isEmpty()) {
-                Notification.show("Bitte Rolle auswählen!", 3000, Notification.Position.MIDDLE);
+                Notification.show("Bitte wähle eine Rolle aus!", 3000, Notification.Position.MIDDLE);
                 isValid = false;
             }
             else{
                 try{
-                    String json = createLoginJson(roleSelection.getValue(), usernameField.getValue(), passwordField.getValue());
+                    String roleForBackend = roleSelection.getValue().replace("*", "").replace("/in", "in");
+                    String json = createLoginJson(roleForBackend, usernameField.getValue(), passwordField.getValue());
                     HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/login");
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
                         String responseBody = response.body();
@@ -90,7 +91,7 @@ public class LoginView extends VerticalLayout {
 
                         String matrikelnummer = jsonResponse.optString("matrikelnummer", null);
                         // Rolle prüfen
-                        if ("Praktikumsbeauftragte/r".equals(roleSelection.getValue())) {
+                        if ("Praktikumsbeauftragte*r".equals(roleSelection.getValue())) {
 
                             if (usernameField.getValue() != null) {
 
@@ -110,7 +111,7 @@ public class LoginView extends VerticalLayout {
                         }
                         isValid = true;
                     } else if (response.statusCode() == 400 || response.statusCode() == 401) {
-                        Notification.show("Nutzername oder Passwort falsch.", 3000, Notification.Position.TOP_CENTER);
+                        Notification.show("Nutzer*innenname oder Passwort falsch.", 3000, Notification.Position.TOP_CENTER);
                         isValid = false;
                     }
                     else{
@@ -126,9 +127,9 @@ public class LoginView extends VerticalLayout {
 
             // Weiterleitung nach erfolgreicher Validierung
             if (isValid) {
-                if ("Praktikumsbeauftragte/r".equals(roleSelection.getValue())) {
+                if ("Praktikumsbeauftragte*r".equals(roleSelection.getValue())) {
                     getUI().ifPresent(ui -> ui.navigate("admin/startseite"));
-                } else if ("Student/in".equals(roleSelection.getValue())) {
+                } else if ("Student*in".equals(roleSelection.getValue())) {
                     getUI().ifPresent(ui -> ui.navigate("/studentin/startseite"));
                 }
             }

@@ -36,16 +36,24 @@ public class DialogUtils {
         // Buttons und Anordnung der Button (Abbrechne immer links)
         Button cancelButton = new Button(cancelButtonText, e -> dialog.close());
         cancelButton.getStyle()
-                .set("background-color", "#FFFFFF")
-                .set("color", "#E74C3C")
+                .set("background-color", "#E74C3C")
+                .set("color", "#FFFFFF")
                 .set("box-shadow",  "0px 2px 4px rgba(0, 0, 0, 0.1)")
                 .set("border", "none")
                 .set("border-radius", "15px")
                 .set("cursor", "pointer")
                 .set("transition", "all 0.3s ease");
 
-        cancelButton.getElement().getStyle().set("hover", "background-color: #F9F9F9; color: #C0392B");
-
+        cancelButton.getElement().executeJs(
+                "this.addEventListener('mouseover', function() {" +
+                        "  this.style.backgroundColor = '#C0392B';" +
+                        "  this.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.2)';" +
+                        "});" +
+                        "this.addEventListener('mouseout', function() {" +
+                        "  this.style.backgroundColor = '#E74C3C';" +
+                        "  this.style.boxShadow = '0px 2px 4px rgba(0, 0, 0, 0.1)';" +
+                        "});"
+        );
 
         Button confirmButton = new Button(confirmButtonText, e -> {
             confirmAction.run();
@@ -60,12 +68,11 @@ public class DialogUtils {
                 .set("cursor", "pointer")
                 .set("transition", "all 0.3s ease");
 
-        confirmButton.getElement().getStyle().set("hover", "background-color: #F9F9F9; color: #8DC63F");
-
 
         HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton, confirmButton);
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        buttonLayout.getStyle().set("gap", "30px");
 
         // Dialog-Layout
         VerticalLayout popupLayout = new VerticalLayout(header, message);

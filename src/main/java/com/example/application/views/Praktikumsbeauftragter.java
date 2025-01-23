@@ -117,6 +117,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.setPlaceholder("Nach Status filtern");
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
         comboBox.setWidth("250px");
+        comboBox.addClassName("dropdown");
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
 
 
@@ -219,6 +220,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         // Spalte für "Antrag anzeigen"
         grid.addComponentColumn(antrag -> {
             Button anzeigenButton = new Button("Antrag anzeigen", VaadinIcon.EYE.create());
+            anzeigenButton.addClassName("antragAnzeigen-button3");
             anzeigenButton.addClickListener(event -> {
                 vollstaendigenAntragAnzeigenImPopUp(antrag.getMatrikelnummer());
             });
@@ -229,6 +231,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         grid.addComponentColumn(praktikumsantrag -> {
             if ("absolviert".equalsIgnoreCase(praktikumsantrag.getStatus())) {
                 Button anzeigenButton = new Button("Poster anzeigen", VaadinIcon.EYE.create());
+                anzeigenButton.addClassName("posterAnzeigen-button3");
                 anzeigenButton.addClickListener(event -> {
                     posterAnzeigenImPopUp(praktikumsantrag.getMatrikelnummer());
                 });
@@ -434,13 +437,18 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
                 Button abbrechen = new Button("Abbrechen", event -> dialog.close());
+                abbrechen.addClassName("abbrechen-button3");
 
                 Button genehmigen = new Button("Genehmigen");
+                genehmigen.addClassName("genehmigen-button3");
+
                 Button ablehnen = new Button("Ablehnen");
+                ablehnen.addClassName("ablehnen-button3");
+
                 String status = json.getString("statusAntrag");
                 if(!status.equalsIgnoreCase("antrag eingereicht")) {
-                        genehmigen.setEnabled(false);
-                        ablehnen.setEnabled(false);
+                        genehmigen.setVisible(false);
+                        ablehnen.setVisible(false);
 
                         genehmigen.getStyle()
                                 .set("background-color", "#d3d3d3")
@@ -482,12 +490,15 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                             Notification.show("Bitte geben Sie eine Begründung ein.", 3000, Notification.Position.TOP_CENTER);
                             return;
                         }
+
                         ablehnenAntragMitKommentar(matrikelnummer, kommentar);
                         ablehnungsDialog.close();
                         dialog.close();
                     });
+                    ablehnungAbsendenButton.addClassName("ablehnungAbsenden-button3");
 
                     Button abbrechenButton = new Button("Abbrechen", e -> ablehnungsDialog.close());
+                    abbrechenButton.addClassName("ablehnungs-abbrechen-button3");
 
                     HorizontalLayout buttonLayout = new HorizontalLayout(abbrechenButton, ablehnungAbsendenButton);
                     buttonLayout.setWidthFull();
@@ -498,6 +509,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                     ablehnungsDialog.open();
 
                 });}
+
 
 
                 // Leeres flexibles Element, sorgt dafür, dass zwischen den buttons abstände sind
@@ -605,6 +617,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
             // Buttons
             Button close = new Button("Schließen", event -> dialog.close());
+            close.addClassName("close-button3");
             close.getStyle().set("margin-left", "auto");
 
             // Layout
