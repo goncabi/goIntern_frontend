@@ -447,8 +447,8 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
                 String status = json.getString("statusAntrag");
                 if(!status.equalsIgnoreCase("antrag eingereicht")) {
-                        genehmigen.setEnabled(false);
-                        ablehnen.setEnabled(false);
+                        genehmigen.setVisible(false);
+                        ablehnen.setVisible(false);
 
                         genehmigen.getStyle()
                                 .set("background-color", "#d3d3d3")
