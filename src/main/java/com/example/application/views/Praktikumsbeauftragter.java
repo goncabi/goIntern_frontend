@@ -220,6 +220,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         // Spalte für "Antrag anzeigen"
         grid.addComponentColumn(antrag -> {
             Button anzeigenButton = new Button("Antrag anzeigen", VaadinIcon.EYE.create());
+            anzeigenButton.addClassName("antragAnzeigen-button3");
             anzeigenButton.addClickListener(event -> {
                 vollstaendigenAntragAnzeigenImPopUp(antrag.getMatrikelnummer());
             });
@@ -230,6 +231,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         grid.addComponentColumn(praktikumsantrag -> {
             if ("absolviert".equalsIgnoreCase(praktikumsantrag.getStatus())) {
                 Button anzeigenButton = new Button("Poster anzeigen", VaadinIcon.EYE.create());
+                anzeigenButton.addClassName("posterAnzeigen-button3");
                 anzeigenButton.addClickListener(event -> {
                     posterAnzeigenImPopUp(praktikumsantrag.getMatrikelnummer());
                 });
@@ -616,7 +618,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             // Buttons
             Button close = new Button("Schließen", event -> dialog.close());
             close.addClassName("close-button3");
-
             close.getStyle().set("margin-left", "auto");
 
             // Layout
