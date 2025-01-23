@@ -1,6 +1,7 @@
 package com.example.application.views;
 import com.example.application.service.ArbeitstageBerechnungsService;
 import com.example.application.views.banner.MainBanner;
+import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -48,7 +49,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-@Route(value= "admin/startseite", layout = MainBanner.class)
+@Route(value= "admin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/styles.css")
 public class Praktikumsbeauftragter extends VerticalLayout {
 

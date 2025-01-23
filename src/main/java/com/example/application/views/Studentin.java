@@ -2,6 +2,7 @@ package com.example.application.views;
 
 import com.example.application.service.ArbeitstageBerechnungsService;
 import com.example.application.views.banner.MainBanner;
+import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 
-@Route(value = "studentin/startseite", layout = MainBanner.class)
+@Route(value = "studentin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/startseite.css")
 @PageTitle("Studentin")
 
