@@ -1,45 +1,98 @@
-# My App
+# GoIntern
 
-This project can be used as a starting point to create your own Vaadin application with Spring Boot.
-It contains all the necessary configuration and some placeholder files to get you started.
 
-## Running the application
 
-The project is a standard Maven project. To run it from the command line,
-type `mvnw` (Windows), or `./mvnw` (Mac & Linux), then open
-http://localhost:8080 in your browser.
+## 📃 Projektbeschreibung
+Dieses Projekt ist eine Webanwendung, die mit Vaadin, React, Spring Boot und Maven entwickelt wurde. Es enthält sowohl Frontend- als auch Backend-Komponenten zur Verwaltung von Praktikumsinformationen.
 
-You can also import the project to your IDE of choice as you would with any
-Maven project. Read more on [how to import Vaadin projects to different IDEs](https://vaadin.com/docs/latest/guide/step-by-step/importing) (Eclipse, IntelliJ IDEA, NetBeans, and VS Code).
 
-## Deploying to Production
+# 📋 Inhaltsverzeichnis
+1. [Installation](#🛠️-installation)
+2. [Verwendung und Hauptfunktionen](#🚀-verwendung-und-hauptfunktionen)
+3. [Projektstruktur](#🔬-projektstruktur)
+4. [Konfiguration](#📚-konfigurationn)
+5. [Lizenz](#📝-lizenz)
+6. [Kontakt](#📞-kontakt)
 
-To create a production build, call `mvnw clean package -Pproduction` (Windows),
-or `./mvnw clean package -Pproduction` (Mac & Linux).
-This will build a JAR file with all the dependencies and front-end resources,
-ready to be deployed. The file can be found in the `target` folder after the build completes.
 
-Once the JAR file is built, you can run it using
-`java -jar target/my-app-1.0-SNAPSHOT.jar`
+# 🛠️ Installation
+## Voraussetzungen:
 
-## Project structure
+* Java JDK 23
 
-- `MainLayout.java` in `src/main/java` contains the navigation setup (i.e., the
-  side/top bar and the main menu). This setup uses
-  [App Layout](https://vaadin.com/docs/components/app-layout).
-- `views` package in `src/main/java` contains the server-side Java views of your application.
-- `views` folder in `src/main/frontend` contains the client-side JavaScript views of your application.
-- `themes` folder in `src/main/frontend` contains the custom CSS styles.
+* Node.js & npm
 
-## Useful links
+* Maven
 
-- Read the documentation at [vaadin.com/docs](https://vaadin.com/docs).
-- Follow the tutorial at [vaadin.com/docs/latest/tutorial/overview](https://vaadin.com/docs/latest/tutorial/overview).
-- Create new projects at [start.vaadin.com](https://start.vaadin.com/).
-- Search UI components and their usage examples at [vaadin.com/docs/latest/components](https://vaadin.com/docs/latest/components).
-- View use case applications that demonstrate Vaadin capabilities at [vaadin.com/examples-and-demos](https://vaadin.com/examples-and-demos).
-- Build any UI without custom CSS by discovering Vaadin's set of [CSS utility classes](https://vaadin.com/docs/styling/lumo/utility-classes). 
-- Find a collection of solutions to common use cases at [cookbook.vaadin.com](https://cookbook.vaadin.com/).
-- Find add-ons at [vaadin.com/directory](https://vaadin.com/directory).
-- Ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/vaadin) or join our [Forum](https://vaadin.com/forum).
-- Report issues, create pull requests in [GitHub](https://github.com/vaadin).
+# 🚀 Verwendung und Hauptfunktionen
+## Schritte zur Installation
+
+## Repository klonen
+
+1. git clone https://gitlab.rz.htw-berlin.de/Mira.Khreis/team1.frontend1
+
+2. In das Projektverzeichnis wechseln:
+
+* cd team1.frontend1
+
+## Abhängigkeiten installieren
+
+1. mvn clean install
+2. npm install
+
+## Anwendung starten
+
+mvn spring-boot:run
+
+Die Anwendung ist unter http://localhost:8080 erreichbar.
+
+Das Projekt kann auch in eine IDE deiner Wahl importiert werden, wie es bei jedem Maven-Projekt üblich ist. Weitere Informationen dazu findest du in der [Vaadin-Dokumentation] (https://vaadin.com/docs/latest/guide/step-by-step/importing) (Eclipse, IntelliJ IDEA, NetBeans, and VS Code)., die Anleitungen für Eclipse, IntelliJ IDEA, NetBeans und VS Code enthält.
+
+
+## ✨ Hauptfunktionen
+Nach der Registration, kannst du dich mit deinen erstellten Zugangsdaten anmelden. Hier kannst du durch verschiedene Abschnitte wie Login, Poster und weitere navigieren. Das System ermöglicht die Verwaltung und das Anzeigen von Praktikumsinformationen. Es gibt eine getrennte Ansicht für Studenten und Praktikumsbeauftragte. Der Student kann ihr Praktikumsformular mit ihren persönlichen und Praktikumsdaten ausfüllen, speichern und abschicken. Der Praktikumsbeauftragte sieht die Anträge in einer Tabelle und kann diese mit einer Begründung ablehnen oder zulassen. Zusätzlich kann die Studentin nach dem Praktikum ein Poster hochladen, welches der Praktikumsbeauftragte sich anschauen kann. Zu den Hauptfunktionen gehören die Benutzerregistrierung und Authentifizierung, die Verwaltung von Aufgaben und Praktikumsdaten, ein responsives Design für verschiedene Endgeräte sowie eine zuverlässige Datenbankanbindung über Spring Boot.
+
+
+
+# 🔬 Projektstruktur
+
+```
+team1.frontend1/
+|-- .idea/                     # IntelliJ IDEA Konfigurationsdateien
+|-- .mvn/                      # Maven Wrapper
+|-- src/
+|   |-- main/
+|   |   |-- bundles/           # Frontend Bundle Dateien
+|   |   |-- README.md          # Projektdokumentation
+|   |   |-- frontend/
+|   |   |   |-- generated/     # Automatisch generierter Code
+|   |   |   |-- styles/          # CSS-Dateien
+|   |   |   |-- themes/          # UI-Themen
+|   |   |-- java/
+|   |   |   |-- com.example.application/
+|   |   |   |   |-- service/     # Backend-Services
+|   |   |   |   |-- views/       # UI-Komponenten
+|-- resources/
+|-- pom.xml                     # Maven Build Datei
+|-- package.json                # npm Abhängigkeiten
+```
+
+
+# 📚 Konfiguration
+
+* Konfigurationsdatei hier einfügen
+
+
+## 📝 Lizenz
+Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen findest du in der LICENSE-Datei.
+
+## 📞 Kontakt
+Falls du Fragen hast, kontaktiere uns unter:
+
+Mira.Khreis@Student.HTW-Berlin.de<br>
+Angela.Barzaeva@Student.HTW-Berlin.de<br>
+Beyza.Acikgoez@Student.HTW-Berlin.de<br>
+Merlind.Pohl@Student.HTW-Berlin.de<br>
+Noa.Sauter@Student.HTW-Berlin.de<br>
+Gabriela.GoncalvezMontero@Student.HTW-Berlin.de<br>
+Maryam.Mirza@Student.HTW-Berlin.de
