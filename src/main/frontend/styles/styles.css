@@ -294,12 +294,16 @@ html, body {
 .register-view .form-container {
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Schattierung */
+    /* Schattierung */
     background-color: white !important;
     text-align: center;
     margin-left:auto;
     margin-right:auto;
 
+}
+
+.register-view .form-container {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .background-animation {
@@ -346,20 +350,20 @@ vaadin-vertical-layout[theme~="spacing"] {
 .abbrechen-button3 {
     background-color: #FFFFFF;
     color: #E74C3C;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .abbrechen-button3:hover {
     background-color: #FFFFFF;
     color: #C0392B;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 
 .genehmigen-button3{
     background-color: #2F5A83;
     color: #FFFFFF;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .genehmigen-button3:hover {
     background-color: #8DC63F;
@@ -370,7 +374,7 @@ vaadin-vertical-layout[theme~="spacing"] {
 .ablehnen-button3 {
     background-color: #FFFFFF;
     color: #2F5A83;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .ablehnen-button3:hover {
     background-color: #F9F9F9;
@@ -379,7 +383,7 @@ vaadin-vertical-layout[theme~="spacing"] {
 .ablehnungAbsenden-button3 {
     background-color: #2F5A83;
     color: #FFFFFF;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .ablehnungAbsenden-button3:hover {
@@ -390,13 +394,13 @@ vaadin-vertical-layout[theme~="spacing"] {
 .ablehnungs-abbrechen-button3 {
     background-color: #FFFFFF;
     color: #E74C3C;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .ablehnungs-abbrechen-button3:hover {
     background-color: #FFFFFF;
     color: #C0392B;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 /*Buttons abrunden*/
@@ -412,7 +416,7 @@ vaadin-vertical-layout[theme~="spacing"] {
     background-color: #2F5A83;
     color: #FFFFFF;
     border-radius: 15px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .close-button3:hover {
@@ -425,7 +429,7 @@ vaadin-vertical-layout[theme~="spacing"] {
     background-color: #F7F7F7;
     color: #2F5A83;
     border-radius: 15px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 }
 
@@ -433,7 +437,7 @@ vaadin-vertical-layout[theme~="spacing"] {
     /* background-color: #2F5A83;
      color: white;*/
     border-radius: 15px;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -441,7 +445,7 @@ vaadin-vertical-layout[theme~="spacing"] {
     background-color: #F7F7F7;
     color: #8DC63F;
     border-radius: 15px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 }
 
@@ -449,6 +453,6 @@ vaadin-vertical-layout[theme~="spacing"] {
     /* background-color: #2F5A83;
      color: white;*/
     border-radius: 15px;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
