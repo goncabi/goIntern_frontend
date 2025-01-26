@@ -93,16 +93,23 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
         addClassName("admin-startseite-view");
 
-        // Überschrift
+        /**
+         * Überschrift der Seite
+         */
         H1 title = new H1("Übersicht über Praktikumsanträge");
         title.getStyle().set("margin-top", "0").set("margin-bottom", "10px");
 
-        // Nachrichtenglocke
+        /**
+         * Erstellung einer Nachrichtenglocke zur Anzeige von Benachrichtigungen.
+         */
         Button notificationBell = new Button(VaadinIcon.BELL.create());
         notificationBell.getElement().getStyle().set("cursor", "pointer");
         ContextMenu notificationMenu = new ContextMenu(notificationBell);
         notificationMenu.setOpenOnClick(true);
 
+        /**
+         * holt Benachrichtigungen aus dem Backend und aktualisiert die Glocke.
+         */
         List<NotificationMessage> nachrichten = getNachrichten(username);
         if (nachrichten.isEmpty()) {
             notificationMenu.addItem("Keine neuen Benachrichtigungen.");
