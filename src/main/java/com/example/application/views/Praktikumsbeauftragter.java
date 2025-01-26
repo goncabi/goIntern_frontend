@@ -108,7 +108,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         notificationMenu.setOpenOnClick(true);
 
         /**
-         * holt Benachrichtigungen aus dem Backend und aktualisiert die Glocke.
+         * Benachrichtigungen werden aus dem Backend geholt und aktualisiert die Glocke.
          */
         List<NotificationMessage> nachrichten = getNachrichten(username);
         if (nachrichten.isEmpty()) {
