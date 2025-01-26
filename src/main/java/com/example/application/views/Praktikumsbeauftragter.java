@@ -49,19 +49,42 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+/**
+ * Die Klasse Praktikumsbeauftragter repräsentiert die Admin-Startseite der Anwendung, auf der Praktikumsanträge angezeigt, gefiltert und verwaltet werden.
+ * Zusätzlich können Anträge genehmigt oder abgelehnt werden.
+ */
+
 @Route(value= "admin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/styles.css")
 public class Praktikumsbeauftragter extends VerticalLayout {
-
+    /**
+     * Grid zur Anzeige der Praktikumsanträge.
+     */
     private Grid<Praktikumsantrag> grid;
+    /**
+     * Liste der Praktikumsanträge, die im Grid angezeigt werden.
+     */
     private List<Praktikumsantrag> antraege;
+    /**
+     * Gibt an, ob ein Antrag bereits genehmigt oder abgelehnt wurde.
+     */
     private boolean bereitsGenehmigtOderAbgelehnt = false;
+    /**
+     * HorizontalLayout zur Anzeige von Filter-Badges.
+     */
     private HorizontalLayout badges;
+    /**
+     * Service zur Berechnung der Arbeitstage.
+     */
     private ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
 
-
+    /**
+     * Konstrukor der Klasse Praktikumsbeauftragter.
+     */
     public Praktikumsbeauftragter() {
-
+        /**
+         * Initialisierung und überprüfung der Benutzer-Session
+         */
         String username = (String) VaadinSession.getCurrent().getAttribute("username");
         if (username == null) {
             Notification.show("Kein Username in der Sitzung gefunden. Bitte loggen Sie sich erneut ein.", 5000, Notification.Position.MIDDLE);
