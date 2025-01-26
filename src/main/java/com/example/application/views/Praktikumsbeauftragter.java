@@ -123,7 +123,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
         }
 
-        // Logout-Icon hinzufügen
+        /**
+         * Logout-Button zur Abmeldung des Benutzers.
+         */
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("cursor", "pointer");
         logoutButton.addClickListener(event -> {
