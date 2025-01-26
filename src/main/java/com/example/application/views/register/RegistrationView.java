@@ -85,6 +85,7 @@ public class RegistrationView extends VerticalLayout {
         questionSelection.setItems(question1, question2, question3);
         questionSelection.setPlaceholder("Wähle eine Sicherheitsfrage");
         questionSelection.addClassName("dropdown");
+        questionSelection.setAllowCustomValue(false);
 
         // Sicherheitsfrage-Feld
         TextField answerField = new TextField();
