@@ -247,6 +247,7 @@ public class Studentin extends VerticalLayout {
 
 
         VerticalLayout kommentarContent = new VerticalLayout();
+        kommentarContent.addClassName("scrollable-comments");
         kommentarContent.setVisible(false);
 
         // Layout für bearbeiten/löschen und für abbrechen falls derzeit im praktikum
@@ -344,10 +345,14 @@ public class Studentin extends VerticalLayout {
 
         List<String> notizen = getAntragNotiz(matrikelnummer);
         for (String notiz : notizen) {
+
+            String formattedNotiz = notiz.replaceFirst(":", ":<br>");
+
             VerticalLayout kommentarBox = new VerticalLayout();
             kommentarBox.addClassName("note-style");
 
             Span kommentarText = new Span(notiz);
+            kommentarText.getElement().setProperty("innerHTML", formattedNotiz);
 
             kommentarBox.add(kommentarText);
             kommentarContent.add(kommentarBox);
