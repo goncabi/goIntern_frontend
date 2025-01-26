@@ -49,6 +49,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+/**
+ * Die Klasse Praktikumsbeauftragter repräsentiert die Admin-Startseite der Anwendung, auf der Praktikumsanträge angezeigt, gefiltert und verwaltet werden.
+ * Zusätzlich können Anträge genehmigt oder abgelehnt werden.
+ */
+
 @Route(value= "admin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/styles.css")
 public class Praktikumsbeauftragter extends VerticalLayout {
