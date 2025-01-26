@@ -124,11 +124,19 @@
     border-radius: 10px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     padding: 10px;
-    font-family: 'Courier New', Courier, monospace; /* Schreibmaschinenschrift */
+    font-weight: bold;
     line-height: 1.5; /* Zeilenabstand */
     margin-bottom: 10px;
     width: 100%; /* Anpassung an den verfügbaren Platz */
     max-width: 500px; /* Maximalbreite */
+}
+
+.scrollable-comments {
+    max-height: 300px;  /* Höhe des Kommentarbereichs */
+    overflow-y: auto;   /* Scrollbalken für vertikales Scrollen */
+    border: 1px solid #ddd; /* Rahmen für bessere Darstellung */
+    padding: 10px;
+    background-color: #f9f9f9; /* Hintergrundfarbe */
 }
 
 .startseite-view {
