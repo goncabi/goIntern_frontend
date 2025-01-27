@@ -498,11 +498,49 @@ public class Studentin extends VerticalLayout {
                 + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
         hintLabel.getElement().setProperty("innerHTML", hintLabel.getText()); // Damit die <br> korrekt interpretiert werden
         hintLabel.addClassName("hint-label");
-
         card.add(title, newRequestButton, hintLabel);
+
+        // Kommentare holen und anzeigen falls vorhanden
+        String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
+        List<String> notizen = new ArrayList<>();
+
+        if (matrikelnummer != null) {
+            notizen = getAntragNotiz(matrikelnummer);
+        }
+
+        // Kommentare anzeigen, nur, wenn sie es gibt.
+        if (!notizen.isEmpty() && notizen.size() > 0) {
+            Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
+            kommentarToggle.addClassName("kommentar-button2");
+            kommentarToggle.getStyle().set("margin-top", "10px");
+
+            VerticalLayout kommentarContent = new VerticalLayout();
+            kommentarContent.addClassName("scrollable-comments");
+            kommentarContent.setVisible(false);
+
+            for (String notiz : notizen) {
+                String formattedNotiz = notiz.replaceFirst(":", ":<br>");
+                VerticalLayout kommentarBox = new VerticalLayout();
+                kommentarBox.addClassName("note-style");
+
+                Span kommentarText = new Span();
+                kommentarText.getElement().setProperty("innerHTML", formattedNotiz);
+
+                kommentarBox.add(kommentarText);
+                kommentarContent.add(kommentarBox);
+            }
+
+            kommentarToggle.addClickListener(event -> {
+                boolean isVisible = kommentarContent.isVisible();
+                kommentarContent.setVisible(!isVisible);
+                kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
+            });
+
+            card.add(kommentarToggle, kommentarContent);
+        }
+
         layout.add(card);
         return layout;
-
     }
 
      // Anbindung zum Backend
@@ -566,22 +604,6 @@ public class Studentin extends VerticalLayout {
             Notification.show("Fehler beim Aufruf des Praktikumsantrags " + e.getMessage());
         }
         return null;
-    }
-
-    // status aktualisieren im backend (fuer abgebrochen)
-    private void setAntragStatusAbgebrochen(String matrikelnummer) {
-        String url = backendUrl + "antrag/updateStatusAbgebrochen/" + matrikelnummer;
-        try {
-            JSONObject request = new JSONObject();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> entity = new HttpEntity<>(request.toString(), headers);
-
-            restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
-        } catch (Exception e) {
-            Notification.show("Fehler beim Aktualisieren des Status: " + e.getMessage());
-        }
     }
 
     // Methode balkenaktualisierung
