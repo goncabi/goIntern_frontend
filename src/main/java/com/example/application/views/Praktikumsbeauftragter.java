@@ -129,6 +129,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("cursor", "pointer");
         logoutButton.addClickListener(event -> {
+
+            /**
+             * öffnet ein Dialog zur Bestätigung des Logouts
+             */
             Dialog confirmDialog = createLogoutConfirmationDialog();
             confirmDialog.open();
 
@@ -137,15 +141,21 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         Div spacer = new Div();
         spacer.getStyle().set("flex-grow", "1");
 
-        // Header mit Titel, Nachrichtenglocke und Logout-Icon
+        /**
+         * Header mit Titel, Nachrichtenglocke und Logout-Icon
+         */
         HorizontalLayout header = new HorizontalLayout(title, spacer, notificationBell, logoutButton);
         header.setWidthFull();
         header.setAlignItems(Alignment.CENTER);
 
-        // Header hinzufügen
+        /**
+         * fügt den Header zur Ansicht hinzu.
+         */
         add(header);
 
-        // ComboBox für Statusfilter
+        /**
+         * Dropdown zur Filterung der Praktikumsanträge nach Status.
+         */
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPlaceholder("Nach Status filtern");
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
@@ -154,7 +164,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
 
 
-        // Renderer für individuelles Styling
+        /**
+         * Renderer zur individuellen Gestaltung der Dropdown-Optionen.
+         */
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
             Span span = new Span(item);
             if ("alle Anträge anzeigen".equals(item)) {
@@ -164,6 +176,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
             return span;
         }));
+
+        /**
+         * Listener zur Filterung des Grids basierend auf dem ausgewählten Status.
+         */
         comboBox.addValueChangeListener(e -> {
             if (e.getValue() != null) {
                 String selectedValue = e.getValue();
@@ -180,7 +196,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
         });
 
-        // Suchleiste
+        /**
+         * Suchleiste zur Eingabe von Suchbegriffen für die Filterung der Anträge.
+         */
         TextField searchField = new TextField();
         searchField.setPlaceholder("Suchleiste");
         searchField.setClearButtonVisible(true);
@@ -188,7 +206,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
         searchField.setClearButtonVisible(true);
 
-        // Lupen-icon hinzugefügt
+        /**
+         * Lupen-Icons hinzugefügt zur Suchleiste
+         */
         Icon searchIcon = VaadinIcon.SEARCH.create();
         searchIcon.getStyle()
                 .set("color", "var(--lumo-secondary-text-color)")
@@ -197,7 +217,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.setPrefixComponent(searchIcon);
 
 
-        // Listener hinzufügen
+        /**
+         * Listener zur Filterung der Praktikumsanträge basierend auf dem Suchbegriff.
+         */
         searchField.addValueChangeListener(event -> {
             String searchTerm = event.getValue().toLowerCase();
             if (searchTerm.isEmpty()) {
@@ -214,10 +236,14 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 }
             }
         });
-// Suchleiste zur Anzeige hinzufügen
+        /**
+         * fügt die Suchleiste zur Benutzeroberfläche hinzu.
+         */
         add(searchField);
 
-        // Statusfilter und Suchleiste nebeneinander
+        /**
+         * Statusfilter und Suchleiste nebeneinander in einem Layout.
+         */
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
         filterLayout.setAlignItems(Alignment.CENTER);
         filterLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
@@ -236,24 +262,46 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         badges = new HorizontalLayout();
         badges.getStyle().set("flex-wrap", "wrap");
 
-        // Datenmodell für Praktikumsanträge
+        /**
+         * Lädt die Daten der Praktikumsanträge und zeigt sie im Grid an.
+         */
         antraege = eingegangeneAntraegePreviewListe();
         if (antraege.isEmpty()) {
             Notification.show("Keine Anträge verfügbar.", 3000, Notification.Position.MIDDLE);
         }
 
-        // Grid zur Anzeige der Anträge
+        /**
+         * Grid zur Anzeige der Anträge.
+         * Das Grid zeigt die Inormationen der Praktikumsanträge wie Name und Matrikelnummer an.
+         * Es enthält zudem eine Spalte, die den Status des Antrags als Badges darstellt und eine Spalte mit einem
+         * Button, der es ermöglicht die vollständigen Details des Antrags anzuzeigen.
+         */
         grid = new Grid<>(Praktikumsantrag.class);
         grid.setHeight("600px");
+        /**
+         * legt die anzuzeigenden Spalten fest: Name und Matrikelnummer des Antragstellers.
+         */
         grid.setColumns("name", "matrikelnummer");
 
+        /**
+         * fügt eine Spalte hinzu, die den Status den Antrags mit einem farbigen Badge darstellt.
+         */
         grid.addComponentColumn(antrag -> createStatusBadge(antrag.getStatus()))
                 .setHeader("Status");
 
-        // Spalte für "Antrag anzeigen"
+        /**
+         * Fügt eine Spalte mit einem Button hinzu, der die vollständigen Details eines Antrags in einem Pop-Up anzeigt.
+         */
         grid.addComponentColumn(antrag -> {
+            /**
+             * Erstellt einen Button "Antrag anzeigen" mit einem Augensymbol.
+             */
             Button anzeigenButton = new Button("Antrag anzeigen", VaadinIcon.EYE.create());
             anzeigenButton.addClassName("antragAnzeigen-button3");
+
+            /**
+             * Fügt einen Click-Listener hinzu, der ein Pop-up mit den Antragsdetails öffnet.
+             */
             anzeigenButton.addClickListener(event -> {
                 vollstaendigenAntragAnzeigenImPopUp(antrag.getMatrikelnummer());
             });
