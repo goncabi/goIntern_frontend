@@ -1,6 +1,7 @@
 package com.example.application.views;
 
 import com.example.application.views.banner.MainBanner;
+import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
@@ -9,11 +10,28 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
+/**
+ * Die Startseite-Klasse repräsentiert die Einstiegsseite der Anwendung.
+ * Sie nutzt das Vaadin Framework für die Erstellung der BenutzerInnen-Oberfläche.
+ * Die Klasse ist mit der Navigation zum Login und Registrieren verknüpft und
+ * kann leicht um zusätzliche Funktionen oder visuelle Elemente ergänzt werden.
+ *
+ * <p>Die Klasse ist als Startseite (leerer Pfad) konfiguriert und verwendet
+ * MainBanner als übergeordnetes Layout. Sie erbt von VerticalLayout, was eine
+ * vertikale Anordnung der Elemente bewirkt.</p>
+ *
+ * @author Maryam Mirza
+ */
 
 @Route(value = "", layout = MainBanner.class)
 @CssImport("./styles/styles.css")
 public class Startseite extends VerticalLayout {
 
+    /**
+     * Der Konstruktor Startseite() erstellt die Hauptelemente der Startseite:
+     * Eine animierte Linie (SVG-Animation)
+     * und ein Formular-Container mit Titel und Buttons
+     */
     public Startseite() {
         addClassName("view-container"); // zentraler Container-Stil
 
@@ -38,6 +56,10 @@ public class Startseite extends VerticalLayout {
         add(formContainer);
     }
 
+    /**
+     * openLogin(): Navigiert zur Login-Seite
+     * openRegister(): Navigiert zur Registrierungsseite
+     */
     private void openLogin() {
         getUI().ifPresent(ui -> ui.navigate("login"));
     }
@@ -46,6 +68,12 @@ public class Startseite extends VerticalLayout {
         getUI().ifPresent(ui -> ui.navigate("register"));
     }
 
+
+    /**
+     * Erstellt eine animierte SVG-Linie.
+     *
+     * @return Ein Span-Element, das die animierte SVG-Linie enthält.
+     */
     private Span createAnimatedLine() {
         String svgAnimation = """
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" style="width: 100%; height: auto; position: absolute;">

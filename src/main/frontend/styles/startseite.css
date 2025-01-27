@@ -101,6 +101,8 @@
     box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     display: flex;
+    top: 20px !important;  /* Abstand vom oberen Rand */
+    right: 20px !important; /* Abstand vom rechten Rand */
     align-items: center;
     margin-right: 16px;
     justify-content: center;
@@ -122,11 +124,19 @@
     border-radius: 10px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     padding: 10px;
-    font-family: 'Courier New', Courier, monospace; /* Schreibmaschinenschrift */
+    font-weight: bold;
     line-height: 1.5; /* Zeilenabstand */
     margin-bottom: 10px;
     width: 100%; /* Anpassung an den verfügbaren Platz */
     max-width: 500px; /* Maximalbreite */
+}
+
+.scrollable-comments {
+    max-height: 300px;  /* Höhe des Kommentarbereichs */
+    overflow-y: auto;   /* Scrollbalken für vertikales Scrollen */
+    border: 1px solid #ddd; /* Rahmen für bessere Darstellung */
+    padding: 10px;
+    background-color: #f9f9f9; /* Hintergrundfarbe */
 }
 
 .startseite-view {
@@ -134,21 +144,26 @@
     justify-content: center;
     align-items: center;
     background-color: white !important; /* Setzt den gesamten Hintergrund auf Weiß */
-    min-height: 100vh;
     padding: 0;
     margin: 0;
 }
 
-.poster-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    margin-left: auto;
-    background-color: #8DC63F;
+
+
+
+.poster-hochladen-button {
+    background-color: #2F5A83;
     color: white;
-    border: none;
-    border-radius: 15px;
-    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.poster-hochladen-button:hover {
+    background-color: #8DC63F;
+    color: #FFFFFF
 }

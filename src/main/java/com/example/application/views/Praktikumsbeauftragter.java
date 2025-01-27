@@ -1,6 +1,7 @@
 package com.example.application.views;
 import com.example.application.service.ArbeitstageBerechnungsService;
 import com.example.application.views.banner.MainBanner;
+import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -48,19 +49,42 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-@Route(value= "admin/startseite", layout = MainBanner.class)
+/**
+ * Die Klasse Praktikumsbeauftragter repräsentiert die Admin-Startseite der Anwendung, auf der Praktikumsanträge angezeigt, gefiltert und verwaltet werden.
+ * Zusätzlich können Anträge genehmigt oder abgelehnt werden.
+ */
+
+@Route(value= "admin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/styles.css")
 public class Praktikumsbeauftragter extends VerticalLayout {
-
+    /**
+     * Grid zur Anzeige der Praktikumsanträge.
+     */
     private Grid<Praktikumsantrag> grid;
+    /**
+     * Liste der Praktikumsanträge, die im Grid angezeigt werden.
+     */
     private List<Praktikumsantrag> antraege;
+    /**
+     * Gibt an, ob ein Antrag bereits genehmigt oder abgelehnt wurde.
+     */
     private boolean bereitsGenehmigtOderAbgelehnt = false;
+    /**
+     * HorizontalLayout zur Anzeige von Filter-Badges.
+     */
     private HorizontalLayout badges;
+    /**
+     * Service zur Berechnung der Arbeitstage.
+     */
     private ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
 
-
+    /**
+     * Konstrukor der Klasse Praktikumsbeauftragter.
+     */
     public Praktikumsbeauftragter() {
-
+        /**
+         * Initialisierung und überprüfung der Benutzer-Session
+         */
         String username = (String) VaadinSession.getCurrent().getAttribute("username");
         if (username == null) {
             Notification.show("Kein Username in der Sitzung gefunden. Bitte loggen Sie sich erneut ein.", 5000, Notification.Position.MIDDLE);
@@ -69,16 +93,23 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
         addClassName("admin-startseite-view");
 
-        // Überschrift
+        /**
+         * Überschrift der Seite
+         */
         H1 title = new H1("Übersicht über Praktikumsanträge");
         title.getStyle().set("margin-top", "0").set("margin-bottom", "10px");
 
-        // Nachrichtenglocke
+        /**
+         * Erstellung einer Nachrichtenglocke zur Anzeige von Benachrichtigungen.
+         */
         Button notificationBell = new Button(VaadinIcon.BELL.create());
         notificationBell.getElement().getStyle().set("cursor", "pointer");
         ContextMenu notificationMenu = new ContextMenu(notificationBell);
         notificationMenu.setOpenOnClick(true);
 
+        /**
+         * Benachrichtigungen werden aus dem Backend geholt und aktualisiert die Glocke.
+         */
         List<NotificationMessage> nachrichten = getNachrichten(username);
         if (nachrichten.isEmpty()) {
             notificationMenu.addItem("Keine neuen Benachrichtigungen.");
@@ -92,7 +123,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
         }
 
-        // Logout-Icon hinzufügen
+        /**
+         * Logout-Button zur Abmeldung des Benutzers.
+         */
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("cursor", "pointer");
         logoutButton.addClickListener(event -> {

@@ -2,6 +2,7 @@ package com.example.application.views;
 
 import com.example.application.service.ArbeitstageBerechnungsService;
 import com.example.application.views.banner.MainBanner;
+import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 
-@Route(value = "studentin/startseite", layout = MainBanner.class)
+@Route(value = "studentin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/startseite.css")
 @PageTitle("Studentin")
 
@@ -246,6 +247,7 @@ public class Studentin extends VerticalLayout {
 
 
         VerticalLayout kommentarContent = new VerticalLayout();
+        kommentarContent.addClassName("scrollable-comments");
         kommentarContent.setVisible(false);
 
         // Layout für bearbeiten/löschen und für abbrechen falls derzeit im praktikum
@@ -253,14 +255,24 @@ public class Studentin extends VerticalLayout {
         if ("Derzeit im Praktikum".equalsIgnoreCase(status)) {
             buttonLayout.add(praktikumAbbrechenButton);
         } else if ("Absolviert".equalsIgnoreCase(status)) {
+
+
+
+            VerticalLayout uploadContainer = new VerticalLayout();
             // "Poster hochladen" button
             Button posterHochladenButton = new Button("Poster hochladen");
+            posterHochladenButton.addClassName("poster-hochladen-button");
+
 
             // upload
             MemoryBuffer buffer = new MemoryBuffer();
             Upload upload = new Upload(buffer);
             upload.setAcceptedFileTypes("application/pdf"); // nur pdf dateien
             upload.setMaxFiles(1); // nur eine Datei auf einmal hochladen
+
+            // "Drop file here"-Text entfernen
+            upload.setDropAllowed(false);
+            upload.setUploadButton(new Button("Datei auswählen"));
 
             // balken mit uploadprogress
             ProgressBar progressBar = new ProgressBar();
@@ -333,10 +345,14 @@ public class Studentin extends VerticalLayout {
 
         List<String> notizen = getAntragNotiz(matrikelnummer);
         for (String notiz : notizen) {
+
+            String formattedNotiz = notiz.replaceFirst(":", ":<br>");
+
             VerticalLayout kommentarBox = new VerticalLayout();
             kommentarBox.addClassName("note-style");
 
             Span kommentarText = new Span(notiz);
+            kommentarText.getElement().setProperty("innerHTML", formattedNotiz);
 
             kommentarBox.add(kommentarText);
             kommentarContent.add(kommentarBox);

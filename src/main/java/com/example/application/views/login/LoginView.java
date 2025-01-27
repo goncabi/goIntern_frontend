@@ -1,6 +1,7 @@
 package com.example.application.views.login;
 
 import com.example.application.views.banner.MainBanner;
+import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -44,7 +45,12 @@ public class LoginView extends VerticalLayout {
         ComboBox<String> roleSelection = new ComboBox<>();
         roleSelection.setItems("Praktikumsbeauftragte*r", "Student*in");
         roleSelection.setPlaceholder("Wähle aus, wer du bist:");
+        roleSelection.setAllowCustomValue(false);
         roleSelection.addClassName("dropdown");
+        roleSelection.setAllowCustomValue(false);  // Keine eigenen Werte erlaubt
+        roleSelection.setPlaceholder("Wähle aus, wer du bist:");  // Platzhalter setzen
+        roleSelection.setClearButtonVisible(false);
+
 
         // Nutzername-Feld
         TextField usernameField = new TextField();
