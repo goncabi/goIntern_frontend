@@ -129,6 +129,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("cursor", "pointer");
         logoutButton.addClickListener(event -> {
+
+            /**
+             * öffnet ein Dialog zur Bestätigung des Logouts
+             */
             Dialog confirmDialog = createLogoutConfirmationDialog();
             confirmDialog.open();
 
@@ -137,15 +141,21 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         Div spacer = new Div();
         spacer.getStyle().set("flex-grow", "1");
 
-        // Header mit Titel, Nachrichtenglocke und Logout-Icon
+        /**
+         * Header mit Titel, Nachrichtenglocke und Logout-Icon
+         */
         HorizontalLayout header = new HorizontalLayout(title, spacer, notificationBell, logoutButton);
         header.setWidthFull();
         header.setAlignItems(Alignment.CENTER);
 
-        // Header hinzufügen
+        /**
+         * fügt den Header zur Ansicht hinzu.
+         */
         add(header);
 
-        // ComboBox für Statusfilter
+        /**
+         * Dropdown zur Filterung der Praktikumsanträge nach Status.
+         */
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPlaceholder("Nach Status filtern");
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
@@ -154,7 +164,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
 
 
-        // Renderer für individuelles Styling
+        /**
+         * Renderer zur individuellen Gestaltung der Dropdown-Optionen.
+         */
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
             Span span = new Span(item);
             if ("alle Anträge anzeigen".equals(item)) {
@@ -164,6 +176,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
             return span;
         }));
+
+        /**
+         * Listener zur Filterung des Grids basierend auf dem ausgewählten Status.
+         */
         comboBox.addValueChangeListener(e -> {
             if (e.getValue() != null) {
                 String selectedValue = e.getValue();
