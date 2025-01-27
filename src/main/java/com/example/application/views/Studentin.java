@@ -494,7 +494,7 @@ public class Studentin extends VerticalLayout {
 
 
         Span hintLabel = new Span("Hinweis: Hier kannst du deinen Praktikumsantrag anlegen und absenden.<br>"
-                + "Du kannst du Antrag auch zwischenspeichern, damit du ihn später weiterbearbeiten kannst.<br>"
+                + "Du kannst den Antrag auch zwischenspeichern, damit du ihn später weiterbearbeiten kannst.<br>"
                 + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
         hintLabel.getElement().setProperty("innerHTML", hintLabel.getText()); // Damit die <br> korrekt interpretiert werden
         hintLabel.addClassName("hint-label");
