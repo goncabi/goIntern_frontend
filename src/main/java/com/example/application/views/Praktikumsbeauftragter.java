@@ -196,7 +196,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
         });
 
-        // Suchleiste
+        /**
+         * Suchleiste zur Eingabe von Suchbegriffen für die Filterung der Anträge.
+         */
         TextField searchField = new TextField();
         searchField.setPlaceholder("Suchleiste");
         searchField.setClearButtonVisible(true);
@@ -204,7 +206,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
         searchField.setClearButtonVisible(true);
 
-        // Lupen-icon hinzugefügt
+        /**
+         * Lupen-Icons hinzugefügt zur Suchleiste
+         */
         Icon searchIcon = VaadinIcon.SEARCH.create();
         searchIcon.getStyle()
                 .set("color", "var(--lumo-secondary-text-color)")
@@ -213,7 +217,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.setPrefixComponent(searchIcon);
 
 
-        // Listener hinzufügen
+        /**
+         * Listener zur Filterung der Praktikumsanträge basierend auf dem Suchbegriff.
+         */
         searchField.addValueChangeListener(event -> {
             String searchTerm = event.getValue().toLowerCase();
             if (searchTerm.isEmpty()) {
@@ -230,7 +236,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 }
             }
         });
-// Suchleiste zur Anzeige hinzufügen
+        /**
+         * fügt die Suchleiste zur Benutzeroberfläche hinzu.
+         */
         add(searchField);
 
         // Statusfilter und Suchleiste nebeneinander
