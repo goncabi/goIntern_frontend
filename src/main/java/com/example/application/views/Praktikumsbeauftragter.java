@@ -241,7 +241,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
          */
         add(searchField);
 
-        // Statusfilter und Suchleiste nebeneinander
+        /**
+         * Statusfilter und Suchleiste nebeneinander in einem Layout.
+         */
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
         filterLayout.setAlignItems(Alignment.CENTER);
         filterLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
@@ -260,7 +262,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         badges = new HorizontalLayout();
         badges.getStyle().set("flex-wrap", "wrap");
 
-        // Datenmodell für Praktikumsanträge
+        /**
+         * Lädt die Daten der Praktikumsanträge und zeigt sie im Grid an.
+         */
         antraege = eingegangeneAntraegePreviewListe();
         if (antraege.isEmpty()) {
             Notification.show("Keine Anträge verfügbar.", 3000, Notification.Position.MIDDLE);
