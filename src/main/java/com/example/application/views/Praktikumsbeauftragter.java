@@ -22,7 +22,6 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-import jakarta.persistence.Embedded;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -34,16 +33,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import com.example.application.utils.DialogUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 /**
@@ -65,7 +59,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     /**
      * Gibt an, ob ein Antrag bereits genehmigt oder abgelehnt wurde.
      */
-    private volatile boolean bereitsGenehmigtOderAbgelehnt = false;
+    private boolean bereitsGenehmigtOderAbgelehnt = false;
     /**
      * HorizontalLayout zur Anzeige von Filter-Badges.
      */
