@@ -270,18 +270,38 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             Notification.show("Keine Anträge verfügbar.", 3000, Notification.Position.MIDDLE);
         }
 
-        // Grid zur Anzeige der Anträge
+        /**
+         * Grid zur Anzeige der Anträge.
+         * Das Grid zeigt die Inormationen der Praktikumsanträge wie Name und Matrikelnummer an.
+         * Es enthält zudem eine Spalte, die den Status des Antrags als Badges darstellt und eine Spalte mit einem
+         * Button, der es ermöglicht die vollständigen Details des Antrags anzuzeigen.
+         */
         grid = new Grid<>(Praktikumsantrag.class);
         grid.setHeight("600px");
+        /**
+         * legt die anzuzeigenden Spalten fest: Name und Matrikelnummer des Antragstellers.
+         */
         grid.setColumns("name", "matrikelnummer");
 
+        /**
+         * fügt eine Spalte hinzu, die den Status den Antrags mit einem farbigen Badge darstellt.
+         */
         grid.addComponentColumn(antrag -> createStatusBadge(antrag.getStatus()))
                 .setHeader("Status");
 
-        // Spalte für "Antrag anzeigen"
+        /**
+         * Fügt eine Spalte mit einem Button hinzu, der die vollständigen Details eines Antrags in einem Pop-Up anzeigt.
+         */
         grid.addComponentColumn(antrag -> {
+            /**
+             * Erstellt einen Button "Antrag anzeigen" mit einem Augensymbol.
+             */
             Button anzeigenButton = new Button("Antrag anzeigen", VaadinIcon.EYE.create());
             anzeigenButton.addClassName("antragAnzeigen-button3");
+
+            /**
+             * Fügt einen Click-Listener hinzu, der ein Pop-up mit den Antragsdetails öffnet.
+             */
             anzeigenButton.addClickListener(event -> {
                 vollstaendigenAntragAnzeigenImPopUp(antrag.getMatrikelnummer());
             });
