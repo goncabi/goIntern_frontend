@@ -180,16 +180,22 @@ public class Studentin extends VerticalLayout {
 
             if (antrag != null) {
                 try {
+                    //LocalDate startDatum = LocalDate.parse(antrag.getString("startdatum"));
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
                     LocalDate startDatum = LocalDate.parse(antrag.getString("startdatum"), formatter);
-                    LocalDate heutigesDatum = LocalDate.now();
+                    String isoDatum = startDatum.toString(); // Gibt "yyyy-MM-dd" zurück
+                    startDatum = LocalDate.parse(isoDatum);
 
+                    LocalDate heutigesDatum = LocalDate.now();
+                    // Überprüfen, ob das Praktikum im Ausland stattfindet
                     boolean imAusland = "Ja".equalsIgnoreCase(antrag.optString("imAusland", "Nein"));
 
                     int absolvierteTage;
                     if (imAusland) {
+                        // Berechnung ohne Feiertage, da Ausland
                         absolvierteTage = arbeitstageRechner.berechneArbeitstageOhneFeiertage(startDatum, heutigesDatum);
                     } else {
+                        // Berechnung mit Feiertagen für das angegebene Bundesland
                         String bundesland = antrag.getString("bundeslandPraktikumsstelle");
                         if (bundesland.isEmpty() || "keine Angabe notwendig".equalsIgnoreCase(bundesland)) {
                             throw new IllegalArgumentException("Kein gültiges Bundesland angegeben für ein inländisches Praktikum.");
@@ -197,7 +203,6 @@ public class Studentin extends VerticalLayout {
                         absolvierteTage = arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDatum, heutigesDatum, bundesland);
                     }
 
-                    // Mostrar mensaje de confirmación antes de borrar
                     Dialog confirmDialog = DialogUtils.createStandardDialog(
                             "Praktikum abbrechen",
                             null,
@@ -206,7 +211,7 @@ public class Studentin extends VerticalLayout {
                             "Abbrechen",
                             () -> {
                                 try {
-                                    // Enviar datos al backend antes de eliminar
+
                                     String abbruchDatum = heutigesDatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
                                     String notiz = "Das Praktikum wurde am " + abbruchDatum +
                                             " abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage;
@@ -215,7 +220,7 @@ public class Studentin extends VerticalLayout {
                                     HttpResponse<String> response = sendJsonToBackend(json, backendUrl + "arbeitstageNachricht");
 
                                     if (response.statusCode() == 200 || response.statusCode() == 201) {
-                                        // Eliminar el Antrag después de enviar los datos
+                                        // Antrag löschen nach Data senden
                                         deletePraktikumsantrag(matrikelnummer);
                                         Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
                                         UI.getCurrent().getPage().reload();
