@@ -503,13 +503,17 @@ public class Studentin extends VerticalLayout {
         // Kommentare holen und anzeigen falls vorhanden
         String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
         List<String> notizen = new ArrayList<>();
-
         if (matrikelnummer != null) {
             notizen = getAntragNotiz(matrikelnummer);
         }
 
+        // Nachricht Keine Kommentare vorhanden ausfiltern
+        notizen = notizen.stream()
+                .filter(notiz -> !notiz.equals("Keine Kommentare vorhanden."))
+                .toList();
+
         // Kommentare anzeigen, nur, wenn sie es gibt.
-        if (!notizen.isEmpty() && notizen.size() > 0) {
+        if (!notizen.isEmpty()) {
             Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
             kommentarToggle.addClassName("kommentar-button2");
             kommentarToggle.getStyle().set("margin-top", "10px");
