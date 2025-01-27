@@ -217,7 +217,7 @@ public class Studentin extends VerticalLayout {
                         Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
                         //Status auf "Abgebrochen" setzen
                         try {
-                            setAntragStatusAbgebrochen(matrikelnummer);
+                            deletePraktikumsantrag(matrikelnummer);
                             praktikumAbbrechenButton.setVisible(false);
                             UI.getCurrent().getPage().reload();
                         }
@@ -587,6 +587,21 @@ public class Studentin extends VerticalLayout {
             progressBar.setValue(progress); // Fortschrittsbalken aktualisieren
         }
     }
+
+    private void deletePraktikumsantrag(String matrikelnummer) {
+        String url = "http://localhost:3000/api/antrag/" + matrikelnummer;
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                Notification.show("Antrag erfolgreich gelöscht.");
+            } else {
+                Notification.show("Fehler beim Löschen des Antrags.");
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler: " + e.getMessage());
+        }
+    }
+
 
 }
 
