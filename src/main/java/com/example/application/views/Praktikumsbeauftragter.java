@@ -1,6 +1,5 @@
 package com.example.application.views;
 import com.example.application.service.ArbeitstageBerechnungsService;
-import com.example.application.views.banner.MainBanner;
 import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -22,13 +21,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinSession;
 import jakarta.persistence.Embedded;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.boot.autoconfigure.jms.artemis.ArtemisProperties;
-import org.springframework.core.io.ByteArrayResource;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -68,7 +65,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     /**
      * Gibt an, ob ein Antrag bereits genehmigt oder abgelehnt wurde.
      */
-    private boolean bereitsGenehmigtOderAbgelehnt = false;
+    private volatile boolean bereitsGenehmigtOderAbgelehnt = false;
     /**
      * HorizontalLayout zur Anzeige von Filter-Badges.
      */
@@ -432,6 +429,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
     private void vollstaendigenAntragAnzeigenImPopUp(String matrikelnummer) {
+        bereitsGenehmigtOderAbgelehnt = false; //wird neu auf false gesetzt, sodass es nicht auf true bleibt.
         try {
             RestTemplate restTemplate = new RestTemplate();
             String url = String.format("http://localhost:3000/api/antrag/getantrag/%s", matrikelnummer);
