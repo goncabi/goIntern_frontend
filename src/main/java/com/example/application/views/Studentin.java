@@ -27,7 +27,6 @@ import com.example.application.utils.DialogUtils;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.component.progressbar.ProgressBar;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -39,6 +38,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Die Klasse Studentin repräsentiert die Hauptansicht für StudentInnen in der Anwendung und verwaltet verschiedene
+ *Interaktionen im Zusammenhang mit Praktikumsanträgen und Benutzerverwaltung.
+ * Diese Vaadin-Ansicht bietet Funktionalitäten für:
+ *   - Benutzer-Abmeldung
+ *   - Anzeige des Praktikumsantragsstatus
+ *   - Verwaltung von Praktikumsanträgen (Bearbeiten, Löschen, Abbrechen)
+ *   - Handhabung von Datei-Uploads für Praktikumsplakate
+ * @author Maryam Mirza
+ */
+
+
+/**
+ *  @Route Navigiert zu "studentin/startseite" mit SubordinateBanner-Layout
+ *  @CssImport Importiert benutzerdefiniertes CSS für Styling
+ */
 
 @Route(value = "studentin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/startseite.css")
@@ -46,11 +61,24 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Studentin extends VerticalLayout {
 
-
-    //restTemplate sendet API Anfragen ans Backend. Es kann lesen und schreiben.
+    /**
+     * Basis-URL der Backend-API für HTTP-Anfragen.
+     * Wird für Kommunikation mit dem Server verwendet.
+     *
+     * RestTemplate für API-Anfragen an das Backend.
+     * Ermöglicht Lese- und Schreiboperationen. Das RestTemplate sendet API Anfragen ans Backend.
+     */
     private RestTemplate restTemplate = new RestTemplate();
     private final String backendUrl = "http://localhost:3000/api/";
 
+
+    /** Konstruktor für die Studentin-Ansicht.
+     * Initialisiert die Ansicht durch:
+     *     - Überprüfung der Benutzersitzung
+     *     - Erstellung des Logouts
+     *     - Anzeige eines neuen Antragsformulars oder vorhandener Antragsdetails
+     *       @throws IOException wenn während der Ansichtsinitialisierung ein Fehler auftritt.
+     */
     public Studentin() throws IOException {
         addClassName("startseite-view");
         String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
@@ -108,6 +136,19 @@ public class Studentin extends VerticalLayout {
         return false;
     }
 
+    /**
+     * Erstellt einen Container zur Anzeige des aktuellen Praktikumsantrags des Studenten.
+     *
+     * Bietet Funktionalitäten zum:
+     * - Anzeigen des Antragsstatus
+     * - Bearbeiten des Antrags
+     * - Löschen des Antrags
+     * - Abbrechen des laufenden Praktikums
+     *
+     * @param matrikelnummer Matrikelnummer des Studenten
+     * @return VerticalLayout mit Komponenten zur Antragsverwaltung
+     * @throws IOException wenn beim Erstellen des Containers ein Fehler auftritt
+     */
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
     private VerticalLayout createMeinAntragContainer(String matrikelnummer) throws IOException {
         VerticalLayout container = new VerticalLayout();
