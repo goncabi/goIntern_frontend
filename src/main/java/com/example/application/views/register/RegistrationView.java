@@ -1,6 +1,5 @@
 package com.example.application.views.register;
 
-import com.example.application.views.banner.MainBanner;
 import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -17,16 +16,50 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.server.VaadinSession;
 
 
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+/**
+ * RegistrationView stellt die Benutzeroberfläche für die Registrierung bereit.
+ * <p>
+ * Diese Klasse bietet ein interaktives Formular, in dem Benutzer ihre Matrikelnummer,
+ * ein Passwort und eine Sicherheitsfrage angeben müssen, um sich erfolgreich zu registrieren.
+ * Sie prüft die Eingaben und zeigt hilfreiche Fehlermeldungen an, wenn die Validierung fehlschlägt.
+ * </p>
+ *
+ * <h3>Funktionen:</h3>
+ * <ul>
+ *   <li>Eingabe der Matrikelnummer mit Validierung.</li>
+ *   <li>Passwortfeld mit mehreren Sicherheitsprüfungen.</li>
+ *   <li>Sicherheitsfrage und Antwort mit Validierung.</li>
+ *   <li>Backend-Kommunikation zur Registrierung von Benutzern.</li>
+ * </ul>
+ *
+ * <h3>Verwendete Technologien:</h3>
+ * <ul>
+ *   <li>Vaadin Flow-Komponenten für die Benutzeroberfläche.</li>
+ *   <li>HTTP-Client für die Kommunikation mit dem Backend.</li>
+ *   <li>VaadinSession zur Speicherung der Benutzerdaten.</li>
+ * </ul>
+ *
+ * @author Beyza Nur Acikgöz
+ * @version 1.0
+ */
+
 @Route(value = "register", layout = SubordinateBanner.class)
 @CssImport("./styles/styles.css")
 public class RegistrationView extends VerticalLayout {
+
+    /**
+     * Konstruktor der RegistrationView.
+     * <p>
+     * Initialisiert die Benutzeroberfläche mit allen Formularfeldern und Layouts.
+     * Enthält Logik zur Validierung und Registrierung von Benutzern.
+     * </p>
+     */
 
     public RegistrationView() {
         // Hauptcontainer mit einer zentrierten Ansicht
@@ -194,6 +227,12 @@ public class RegistrationView extends VerticalLayout {
         add(formContainer);
     }
 
+    /**
+     * Erstellt eine Hintergrundanimation (SVG-Zacken).
+     *
+     * @return Ein {@link Span} mit der SVG-Animation.
+     */
+
     private Span createAnimatedLine() {
         String svgAnimation = """
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" preserveAspectRatio="none"
@@ -210,9 +249,30 @@ public class RegistrationView extends VerticalLayout {
         return span;
     }
 
+    /**
+     * Erstellt einen JSON-String für den Registrierungs-Request.
+     *
+     * @param username   Die Matrikelnummer des Benutzers.
+     * @param password   Das Passwort des Benutzers.
+     * @param passwordConfirm Die Passwortbestätigung.
+     * @param frageId    Die ID der Sicherheitsfrage.
+     * @param answer     Die Antwort auf die Sicherheitsfrage.
+     * @return Der JSON-String mit den Registrierungsdaten.
+     */
+
     private String createRegisterJson(String username, String password, String passwordConfirm, String frageId, String answer) {
         return String.format("{\"username\": \"%s\", \"password\": \"%s\", \"passwordConfirm\": \"%s\", \"frageId\": \"%s\", \"answer\": \"%s\"}",username, password, passwordConfirm, frageId,  answer);
     }
+
+    /**
+     * Sendet die Registrierungsdaten im JSON-Format an das Backend.
+     *
+     * @param json Der JSON-String mit den Registrierungsdaten.
+     * @param url  Die URL des Backends.
+     * @return Die HTTP-Antwort des Backends.
+     * @throws IOException          Falls ein Netzwerkfehler auftritt.
+     * @throws InterruptedException Falls die Anfrage unterbrochen wird.
+     */
 
     private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
