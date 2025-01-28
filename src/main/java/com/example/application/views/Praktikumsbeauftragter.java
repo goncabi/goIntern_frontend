@@ -355,10 +355,19 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return nachrichten;
     }
 
-    //innere Klasse für die Nachrichten
+    /**
+     * Innere Klasse zur Darstellung einer Benachrichtigung.
+     * @param message Die Nachricht als String.
+     * @param date Das Datum der Nachricht.
+     */
     public record NotificationMessage(String message, String date) {
     }
-    //Methode, um Nachrichten zu löschen
+
+    /**
+     * Methode, um Nachrichten für einen Benutzer zu löschen.
+     * diese Methode sendet eine DELETE-Anfrage an das Backend, um alle Nachrichten für den angegebenen Benutzer zu löschen.
+     * @param username Der Benutzername, dessen Nachrichten gelöscht werden sollen.
+     */
     private void nachrichtenLoeschen(String username) {
         String url = "http://localhost:3000/api//nachrichtenLoeschen/" + username;
         try {
