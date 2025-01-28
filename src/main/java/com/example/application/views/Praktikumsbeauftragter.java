@@ -568,6 +568,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 Button ablehnen = new Button("Ablehnen");
                 ablehnen.addClassName("ablehnen-button3");
 
+
+                /**
+                 * Überprüft den Status des Antrags und deaktiviert Buttons zum Genehmigen oder Ablehnen, falls der Antrag nicht den Status "eingereicht" hat.Andernfalls wird die Funktionalität zum Genehmigen
+                 * oder Ablehnen aktiviert.
+                 */
                 String status = json.getString("statusAntrag");
                 if(!status.equalsIgnoreCase("antrag eingereicht")) {
                         genehmigen.setVisible(false);
@@ -656,6 +661,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
+    /**
+     * sendet eine Anfrage zum Ablehnen eines Praktikumsantrags an das Backend, inklusive eines Ablehngrunds.
+     * @param matrikelnummer Die Matrikelnummer des Antragstellers, dessen Antrag abgelehnt werden soll.
+     * @param kommentar Der Ablehnungsgrund, der mit dem Antrag gespeichert wird.
+     */
     private void ablehnenAntragMitKommentar(String matrikelnummer, String kommentar) {
         try {
             JSONObject jsonAntrag = new JSONObject();
@@ -687,6 +697,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
+    /**
+     * Sendet eine Anfrage zum Genehmigen eines Praktikumsantrags an das Backend.
+     * @param matrikelnummer Die Matrikelnummer des Antragsstellers, dessen Antrag genehmigt werden soll.
+     */
     private void genehmigenAntrag(String matrikelnummer) {
         try {
             JSONObject jsonAntrag = new JSONObject();
@@ -717,12 +731,18 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
-
+    /**
+     * Aktualisiert die Liste der Praktikumsanträge im Frontend.
+     * @param neueListe Die aktualisierte Liste der Praktikumsanträge, die im Grid angezeigt werden soll.
+     */
     private void aktualisiereAntraegeListeImFrontend(List<Praktikumsantrag> neueListe) {
         grid.setItems(neueListe);
     }
 
-
+    /**
+     * Öffnet ein Pop-up-Dialogfeld zur Anzeige eines Posters basierend auf der Matrikelnummer.
+     * @param matrikelnummer Die Matrikelnummer der Studentin, dessen Poster angezeigt werden soll.
+     */
     private void posterAnzeigenImPopUp(String matrikelnummer) {
         try {
             String url = "http://localhost:3000/api/poster/pdf/" + matrikelnummer;
@@ -786,7 +806,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
-
+    /**
+     * Erstellt ein Status-Badge zur Visualisierung des aktuellen Status eines Praktikumsantrags.
+     * @param status Der Status des Praktikumsantrags, z. B. "Antrag offen", "Abgelehnt", "Zugelassen".
+     * @return Ein {@link Span}-Element mit dem entsprechenden Status-Text.
+     */
     private Span createStatusBadge(String status) {
         String theme;
 
@@ -821,6 +845,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return badge;
     }
 
+    /**
+     * Erstellt ein Filter-Badge zur Anzeige eines aktiven Statusfilters mit der Möglichkeit, diesen zu entfernen.
+     * @param status Der Status, der im Filter-Badge angezeigt werden soll, z. B. "Zugelassen", "Abgelehnt".
+     * @return Ein {@link Span}-Element mit dem Filter-Status und einem Schließen-Button zum Entfernen des Filters.
+     */
     private Span createFilterBadge(String status) {
         Button clearButton = new Button(VaadinIcon.CLOSE_SMALL.create());
         clearButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST, ButtonVariant.LUMO_TERTIARY_INLINE);
@@ -837,12 +866,20 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return badge;
     }
 
-
+    /**
+     * Repräsentiert einen Praktikumsantrag mit den grundlegenden Informationen des Antragstellers und dem aktuellen Status des Antrags.
+     */
     public static class Praktikumsantrag {
         private String name;
         private String matrikelnummer;
         private String status;
 
+        /**
+         * Konstruktor zur Initialisierung eines Praktikumsantrags.
+         * @param name Der Name der Antragstellerin
+         * @param matrikelnummer  Die Matrikelnummer der Antragstellerin
+         * @param status Der Status des Antrags.
+         */
         public Praktikumsantrag(String name, String matrikelnummer, String status) {
             this.name = name;
             this.matrikelnummer = matrikelnummer;
@@ -862,11 +899,20 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
+    /**
+     * Repräsentiert ein Praktikumsposter und das Einreichungsdatum des Posters.
+     */
     public static class Praktikumsposter{
         private String name;
         private String matrikelnummer;
         private String eingegangenAm;
 
+        /**
+         * Konstruktor zur Initialisierung eines Praktikumsposters.
+         * @param name Der Name der Erstellerin
+         * @param matrikelnummer Die Matrikelnummer der Erstellerin
+         * @param eingegangenAm Das Datum der Einreichung des Posters
+         */
         public Praktikumsposter(String name, String matrikelnummer, String eingegangenAm) {
             this.name = name;
             this.matrikelnummer = matrikelnummer;
