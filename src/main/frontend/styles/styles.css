@@ -52,8 +52,9 @@ html, body {
 
 /* Button-Stile */
 .button {
-    width: 100%;
+    width: 420px !important;
     padding: 12px;
+    box-sizing: border-box;
     background-color: #2F5A83;
     border: none;
     color: #fff;
@@ -63,6 +64,51 @@ html, body {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
+
+.startseite-login-button {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #2F5A83;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.startseite-registrieren-button{
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #2F5A83;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/*lösungsvorschlag von intelliJ, damit padding nicht als
+Duplikat angezeigt wird*/
+.startseite-login-button {
+    padding: 12px;
+}
+
+.startseite-login-button:hover {
+    background-color: #8DC63F;
+}
+
+.startseite-registrieren-button:hover {
+    background-color: #8DC63F;
+}
+
+.startseite-registrieren-button {
+    padding: 12px;
+}
+
 
 .berechnen-button {
     background-color: #006a4e;
@@ -240,6 +286,7 @@ html, body {
 
 .form-container button {
     margin-top: 20px; /* Abstand nach oben */
+    width: 100%;
 }
 
 .svgContainer {

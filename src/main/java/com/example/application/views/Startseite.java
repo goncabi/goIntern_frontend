@@ -47,10 +47,10 @@ public class Startseite extends VerticalLayout {
         title.addClassName("form-title");
 
         Button loginButton = new Button("Login", event -> openLogin());
-        loginButton.addClassName("button");
+        loginButton.addClassName("startseite-login-button");
 
         Button registerButton = new Button("Registrieren", event -> openRegister());
-        registerButton.addClassName("button-behind");
+        registerButton.addClassName("startseite-registrieren-button");
 
         formContainer.add(title, loginButton, registerButton);
         add(formContainer);
