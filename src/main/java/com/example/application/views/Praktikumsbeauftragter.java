@@ -402,6 +402,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         );
     }
 
+    /**
+     * Holt die Liste der eingegangenen Praktikumsanträge zur Vorschau.
+     * Diese Methode ruft alle Praktikumsanträge vom Backend ab, die nicht den Status "gespeichert" haben.
+     * Sie erstellt eine Liste von Praktikumsantrag-Objekten und gibt diese zurück.
+     * @return eine Liste von Praktikumsanträgen zur Anzeige in der Vorschau.
+     */
     private List<Praktikumsantrag> eingegangeneAntraegePreviewListe() {
         List<Praktikumsantrag> antraege = new ArrayList<>();
         try {
