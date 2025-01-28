@@ -1,6 +1,5 @@
 package com.example.application.views;
 import com.example.application.service.ArbeitstageBerechnungsService;
-import com.example.application.views.banner.MainBanner;
 import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -22,13 +21,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinSession;
-import jakarta.persistence.Embedded;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.boot.autoconfigure.jms.artemis.ArtemisProperties;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,17 +31,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import com.example.application.utils.DialogUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 /**
@@ -93,16 +81,23 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
         addClassName("admin-startseite-view");
 
-        // Überschrift
+        /**
+         * Überschrift der Seite
+         */
         H1 title = new H1("Übersicht über Praktikumsanträge");
         title.getStyle().set("margin-top", "0").set("margin-bottom", "10px");
 
-        // Nachrichtenglocke
+        /**
+         * Erstellung einer Nachrichtenglocke zur Anzeige von Benachrichtigungen.
+         */
         Button notificationBell = new Button(VaadinIcon.BELL.create());
         notificationBell.getElement().getStyle().set("cursor", "pointer");
         ContextMenu notificationMenu = new ContextMenu(notificationBell);
         notificationMenu.setOpenOnClick(true);
 
+        /**
+         * Benachrichtigungen werden aus dem Backend geholt und aktualisiert die Glocke.
+         */
         List<NotificationMessage> nachrichten = getNachrichten(username);
         if (nachrichten.isEmpty()) {
             notificationMenu.addItem("Keine neuen Benachrichtigungen.");
@@ -116,10 +111,16 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
         }
 
-        // Logout-Icon hinzufügen
+        /**
+         * Logout-Button zur Abmeldung des Benutzers.
+         */
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("cursor", "pointer");
         logoutButton.addClickListener(event -> {
+
+            /**
+             * öffnet ein Dialog zur Bestätigung des Logouts
+             */
             Dialog confirmDialog = createLogoutConfirmationDialog();
             confirmDialog.open();
 
@@ -128,15 +129,21 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         Div spacer = new Div();
         spacer.getStyle().set("flex-grow", "1");
 
-        // Header mit Titel, Nachrichtenglocke und Logout-Icon
+        /**
+         * Header mit Titel, Nachrichtenglocke und Logout-Icon
+         */
         HorizontalLayout header = new HorizontalLayout(title, spacer, notificationBell, logoutButton);
         header.setWidthFull();
         header.setAlignItems(Alignment.CENTER);
 
-        // Header hinzufügen
+        /**
+         * fügt den Header zur Ansicht hinzu.
+         */
         add(header);
 
-        // ComboBox für Statusfilter
+        /**
+         * Dropdown zur Filterung der Praktikumsanträge nach Status.
+         */
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPlaceholder("Nach Status filtern");
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
@@ -145,7 +152,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
 
 
-        // Renderer für individuelles Styling
+        /**
+         * Renderer zur individuellen Gestaltung der Dropdown-Optionen.
+         */
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
             Span span = new Span(item);
             if ("alle Anträge anzeigen".equals(item)) {
@@ -155,6 +164,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
             return span;
         }));
+
+        /**
+         * Listener zur Filterung des Grids basierend auf dem ausgewählten Status.
+         */
         comboBox.addValueChangeListener(e -> {
             if (e.getValue() != null) {
                 String selectedValue = e.getValue();
@@ -171,7 +184,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             }
         });
 
-        // Suchleiste
+        /**
+         * Suchleiste zur Eingabe von Suchbegriffen für die Filterung der Anträge.
+         */
         TextField searchField = new TextField();
         searchField.setPlaceholder("Suchleiste");
         searchField.setClearButtonVisible(true);
@@ -179,7 +194,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
         searchField.setClearButtonVisible(true);
 
-        // Lupen-icon hinzugefügt
+        /**
+         * Lupen-Icons hinzugefügt zur Suchleiste
+         */
         Icon searchIcon = VaadinIcon.SEARCH.create();
         searchIcon.getStyle()
                 .set("color", "var(--lumo-secondary-text-color)")
@@ -188,7 +205,9 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.setPrefixComponent(searchIcon);
 
 
-        // Listener hinzufügen
+        /**
+         * Listener zur Filterung der Praktikumsanträge basierend auf dem Suchbegriff.
+         */
         searchField.addValueChangeListener(event -> {
             String searchTerm = event.getValue().toLowerCase();
             if (searchTerm.isEmpty()) {
@@ -205,10 +224,14 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 }
             }
         });
-// Suchleiste zur Anzeige hinzufügen
+        /**
+         * fügt die Suchleiste zur Benutzeroberfläche hinzu.
+         */
         add(searchField);
 
-        // Statusfilter und Suchleiste nebeneinander
+        /**
+         * Statusfilter und Suchleiste nebeneinander in einem Layout.
+         */
         HorizontalLayout filterLayout = new HorizontalLayout(comboBox, searchField);
         filterLayout.setAlignItems(Alignment.CENTER);
         filterLayout.setDefaultVerticalComponentAlignment(Alignment.CENTER);
@@ -227,35 +250,67 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         badges = new HorizontalLayout();
         badges.getStyle().set("flex-wrap", "wrap");
 
-        // Datenmodell für Praktikumsanträge
+        /**
+         * Lädt die Daten der Praktikumsanträge und zeigt sie im Grid an.
+         */
         antraege = eingegangeneAntraegePreviewListe();
         if (antraege.isEmpty()) {
             Notification.show("Keine Anträge verfügbar.", 3000, Notification.Position.MIDDLE);
         }
 
-        // Grid zur Anzeige der Anträge
+        /**
+         * Grid zur Anzeige der Anträge.
+         * Das Grid zeigt die Inormationen der Praktikumsanträge wie Name und Matrikelnummer an.
+         * Es enthält zudem eine Spalte, die den Status des Antrags als Badges darstellt und eine Spalte mit einem
+         * Button, der es ermöglicht die vollständigen Details des Antrags anzuzeigen.
+         */
         grid = new Grid<>(Praktikumsantrag.class);
         grid.setHeight("600px");
+        /**
+         * legt die anzuzeigenden Spalten fest: Name und Matrikelnummer des Antragstellers.
+         */
         grid.setColumns("name", "matrikelnummer");
 
+        /**
+         * fügt eine Spalte hinzu, die den Status den Antrags mit einem farbigen Badge darstellt.
+         */
         grid.addComponentColumn(antrag -> createStatusBadge(antrag.getStatus()))
                 .setHeader("Status");
 
-        // Spalte für "Antrag anzeigen"
+        /**
+         * Fügt eine Spalte mit einem Button hinzu, der die vollständigen Details eines Antrags in einem Pop-Up anzeigt.
+         */
         grid.addComponentColumn(antrag -> {
+            /**
+             * Erstellt einen Button "Antrag anzeigen" mit einem Augensymbol.
+             */
             Button anzeigenButton = new Button("Antrag anzeigen", VaadinIcon.EYE.create());
             anzeigenButton.addClassName("antragAnzeigen-button3");
+
+            /**
+             * Fügt einen Click-Listener hinzu, der ein Pop-up mit den Antragsdetails öffnet.
+             */
             anzeigenButton.addClickListener(event -> {
                 vollstaendigenAntragAnzeigenImPopUp(antrag.getMatrikelnummer());
             });
             return anzeigenButton;
         }).setHeader("");
 
-        //Spalte für Poster anzeigen
+        /**
+         * Spalte für "Poster anzeigen"
+         * Diese Spalte enthält Buttons, die das Poster eines abgeschlossenen Praktikums anzeigen.
+         * Wenn der Status des Antrags "absolviert" ist, wird ein Button angezeigt, andernfalls bleibt die Zeile leer.
+         */
         grid.addComponentColumn(praktikumsantrag -> {
             if ("absolviert".equalsIgnoreCase(praktikumsantrag.getStatus())) {
+                /**
+                 * Erstellt einen Button "Poster anzeigen"
+                 */
                 Button anzeigenButton = new Button("Poster anzeigen", VaadinIcon.EYE.create());
                 anzeigenButton.addClassName("posterAnzeigen-button3");
+                /**
+                 * Fügt einen Click-Listener hinzu, der ein Pop-Up öffnet, um das Poster anzuzeigen.
+                 */
                 anzeigenButton.addClickListener(event -> {
                     posterAnzeigenImPopUp(praktikumsantrag.getMatrikelnummer());
                 });
@@ -272,7 +327,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     }
 
 
-    //Methode, um Nachrichten aus Backend zu holen
+    /**
+     * Methode, um Nachrichten aus dem Backend zu holen.
+     * Diese Methode ruft Benachrichtigungen für einen bestimmten Benutzer vom Backend ab und gibt sie als Liste von NotificationMessafe-Objekt zurück.
+     * @param username Der Benutzername, für den die Nachrichten abgerufen weden sollen.
+     * @return eine Liste von NotificationMessage-Objekten
+     */
     private List<NotificationMessage> getNachrichten(String username) {
         List<NotificationMessage> nachrichten = new ArrayList<>();
         try {
@@ -295,10 +355,19 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return nachrichten;
     }
 
-    //innere Klasse für die Nachrichten
+    /**
+     * Innere Klasse zur Darstellung einer Benachrichtigung.
+     * @param message Die Nachricht als String.
+     * @param date Das Datum der Nachricht.
+     */
     public record NotificationMessage(String message, String date) {
     }
-    //Methode, um Nachrichten zu löschen
+
+    /**
+     * Methode, um Nachrichten für einen Benutzer zu löschen.
+     * diese Methode sendet eine DELETE-Anfrage an das Backend, um alle Nachrichten für den angegebenen Benutzer zu löschen.
+     * @param username Der Benutzername, dessen Nachrichten gelöscht werden sollen.
+     */
     private void nachrichtenLoeschen(String username) {
         String url = "http://localhost:3000/api//nachrichtenLoeschen/" + username;
         try {
@@ -375,6 +444,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
     private void vollstaendigenAntragAnzeigenImPopUp(String matrikelnummer) {
+        bereitsGenehmigtOderAbgelehnt = false; //wird neu auf false gesetzt, sodass es nicht auf true bleibt.
         try {
             RestTemplate restTemplate = new RestTemplate();
             String url = String.format("http://localhost:3000/api/antrag/getantrag/%s", matrikelnummer);

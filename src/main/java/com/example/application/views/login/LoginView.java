@@ -1,7 +1,6 @@
 package com.example.application.views.login;
 
 import com.example.application.views.banner.MainBanner;
-import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -87,7 +86,7 @@ public class LoginView extends VerticalLayout {
             }
             else{
                 try{
-                    String roleForBackend = roleSelection.getValue().replace("*", "").replace("/in", "in");
+                    String roleForBackend = roleSelection.getValue().replace("*", "");
                     String json = createLoginJson(roleForBackend, usernameField.getValue(), passwordField.getValue());
                     HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/login");
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
@@ -105,7 +104,7 @@ public class LoginView extends VerticalLayout {
                             } else {
                                 Notification.show("Username konnte nicht abgerufen werden.", 3000, Notification.Position.TOP_CENTER);
                             }
-                        } else if ("Student/in".equals(roleSelection.getValue())) {
+                        } else if ("Student*in".equals(roleSelection.getValue())) {
                             if (matrikelnummer != null) {
 
                                 VaadinSession.getCurrent().setAttribute("matrikelnummer", matrikelnummer);
@@ -160,3 +159,4 @@ public class LoginView extends VerticalLayout {
         return String.format("{\"role\": \"%s\", \"username\": \"%s\", \"password\": \"%s\"}", role, username, password);
     }
 }
+

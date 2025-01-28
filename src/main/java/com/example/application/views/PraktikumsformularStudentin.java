@@ -83,7 +83,7 @@ public class PraktikumsformularStudentin extends Div {
 
     public PraktikumsformularStudentin() {
         // Hauptüberschrift
-        add(new H1("PraktikumsformularStudentin"));
+        add(new H1("Praktikumsformular"));
 
         // Felder initialisieren
         nameStudentin = createTextField("Name der Studentin *");

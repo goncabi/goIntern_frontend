@@ -1,7 +1,6 @@
 package com.example.application.views;
 
 import com.example.application.service.ArbeitstageBerechnungsService;
-import com.example.application.views.banner.MainBanner;
 import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -28,7 +27,6 @@ import com.example.application.utils.DialogUtils;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.component.progressbar.ProgressBar;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -40,6 +38,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Die Klasse Studentin repräsentiert die Hauptansicht für StudentInnen in der Anwendung und verwaltet verschiedene
+ *Interaktionen im Zusammenhang mit Praktikumsanträgen und Benutzerverwaltung.
+ * Diese Vaadin-Ansicht bietet Funktionalitäten für:
+ *   - Benutzer-Abmeldung
+ *   - Anzeige des Praktikumsantragsstatus
+ *   - Verwaltung von Praktikumsanträgen (Bearbeiten, Löschen, Abbrechen)
+ *   - Handhabung von Datei-Uploads für Praktikumsplakate
+ * @author Maryam Mirza
+ */
+
+
+/**
+ *  @Route Navigiert zu "studentin/startseite" mit SubordinateBanner-Layout
+ *  @CssImport Importiert benutzerdefiniertes CSS für Styling
+ */
 
 @Route(value = "studentin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/startseite.css")
@@ -47,11 +61,24 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Studentin extends VerticalLayout {
 
-
-    //restTemplate sendet API Anfragen ans Backend. Es kann lesen und schreiben.
+    /**
+     * Basis-URL der Backend-API für HTTP-Anfragen.
+     * Wird für Kommunikation mit dem Server verwendet.
+     *
+     * RestTemplate für API-Anfragen an das Backend.
+     * Ermöglicht Lese- und Schreiboperationen. Das RestTemplate sendet API Anfragen ans Backend.
+     */
     private RestTemplate restTemplate = new RestTemplate();
     private final String backendUrl = "http://localhost:3000/api/";
 
+
+    /** Konstruktor für die Studentin-Ansicht.
+     * Initialisiert die Ansicht durch:
+     *     - Überprüfung der Benutzersitzung
+     *     - Erstellung des Logouts
+     *     - Anzeige eines neuen Antragsformulars oder vorhandener Antragsdetails
+     *       @throws IOException wenn während der Ansichtsinitialisierung ein Fehler auftritt.
+     */
     public Studentin() throws IOException {
         addClassName("startseite-view");
         String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
@@ -109,6 +136,19 @@ public class Studentin extends VerticalLayout {
         return false;
     }
 
+    /**
+     * Erstellt einen Container zur Anzeige des aktuellen Praktikumsantrags des Studenten.
+     *
+     * Bietet Funktionalitäten zum:
+     * - Anzeigen des Antragsstatus
+     * - Bearbeiten des Antrags
+     * - Löschen des Antrags
+     * - Abbrechen des laufenden Praktikums
+     *
+     * @param matrikelnummer Matrikelnummer des Studenten
+     * @return VerticalLayout mit Komponenten zur Antragsverwaltung
+     * @throws IOException wenn beim Erstellen des Containers ein Fehler auftritt
+     */
     // Buttons für Anzeigen, löschen und Bearbeiten vom Antrag
     private VerticalLayout createMeinAntragContainer(String matrikelnummer) throws IOException {
         VerticalLayout container = new VerticalLayout();
@@ -178,16 +218,16 @@ public class Studentin extends VerticalLayout {
         praktikumAbbrechenButton.addClickListener(event -> {
             ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
             JSONObject antrag = getPraktikumsAntrag(matrikelnummer);
+
             if (antrag != null) {
                 try {
-//                    LocalDate startDatum = LocalDate.parse(antrag.getString("startdatum"));
+                    //LocalDate startDatum = LocalDate.parse(antrag.getString("startdatum"));
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
                     LocalDate startDatum = LocalDate.parse(antrag.getString("startdatum"), formatter);
                     String isoDatum = startDatum.toString(); // Gibt "yyyy-MM-dd" zurück
                     startDatum = LocalDate.parse(isoDatum);
 
                     LocalDate heutigesDatum = LocalDate.now();
-
                     // Überprüfen, ob das Praktikum im Ausland stattfindet
                     boolean imAusland = "Ja".equalsIgnoreCase(antrag.optString("imAusland", "Nein"));
 
@@ -204,32 +244,36 @@ public class Studentin extends VerticalLayout {
                         absolvierteTage = arbeitstageRechner.berechneArbeitstageMitFeiertagen(startDatum, heutigesDatum, bundesland);
                     }
 
-                    // Kommentar und Datum speichern
-                    String abbruchDatum = heutigesDatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-                    String notiz = "Das Praktikum wurde am " + abbruchDatum +
-                            " abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage;
+                    Dialog confirmDialog = DialogUtils.createStandardDialog(
+                            "Praktikum abbrechen",
+                            null,
+                            "Du hast bisher " + absolvierteTage + " Arbeitstage absolviert. Möchtest du das Praktikum abbrechen?",
+                            "Ja",
+                            "Abbrechen",
+                            () -> {
+                                try {
 
-                    // Nachricht an Backend senden
-                    String json = createJsonNachricht(matrikelnummer, notiz, abbruchDatum);
-                    HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/arbeitstageNachricht");
-                    if (response.statusCode() == 200 || response.statusCode() == 201) {
-                        // Kurze Notification
-                        Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
-                        //Status auf "Abgebrochen" setzen
-                        try {
-                            setAntragStatusAbgebrochen(matrikelnummer);
-                            praktikumAbbrechenButton.setVisible(false);
-                            UI.getCurrent().getPage().reload();
-                        }
-                        catch (Exception e) {
-                            System.out.println("fehler beim abgebrochen status" + e.getMessage());
-                        }
+                                    String abbruchDatum = heutigesDatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+                                    String notiz = "Das Praktikum wurde am " + abbruchDatum +
+                                            " abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage;
 
+                                    String json = createJsonNachricht(matrikelnummer, notiz, abbruchDatum);
+                                    HttpResponse<String> response = sendJsonToBackend(json, backendUrl + "arbeitstageNachricht");
 
-                    }
-                    else{
-                        Notification.show("Systemfehler! Bitte erneut versuchen.", 5000, Notification.Position.MIDDLE);
-                    }
+                                    if (response.statusCode() == 200 || response.statusCode() == 201) {
+                                        // Antrag löschen nach Data senden
+                                        deletePraktikumsantrag(matrikelnummer);
+                                        Notification.show("Das Praktikum wurde abgebrochen. Bereits absolvierte Arbeitstage: " + absolvierteTage, 5000, Notification.Position.MIDDLE);
+                                        UI.getCurrent().getPage().reload();
+                                    } else {
+                                        Notification.show("Systemfehler! Bitte erneut versuchen.", 5000, Notification.Position.MIDDLE);
+                                    }
+                                } catch (Exception ex) {
+                                    Notification.show("Fehler beim Abbruch: " + ex.getMessage(), 5000, Notification.Position.MIDDLE);
+                                }
+                            }
+                    );
+                    confirmDialog.open();
 
                 } catch (Exception e) {
                     Notification.show("Fehler bei der Berechnung der absolvierten Tage: " + e.getMessage(), 5000, Notification.Position.MIDDLE);
@@ -238,6 +282,7 @@ public class Studentin extends VerticalLayout {
                 Notification.show("Praktikumsantrag konnte nicht abgerufen werden.", 5000, Notification.Position.MIDDLE);
             }
         });
+
 
 
         //Kommentare des PB bei Ablehnung
@@ -490,15 +535,57 @@ public class Studentin extends VerticalLayout {
 
 
         Span hintLabel = new Span("Hinweis: Hier kannst du deinen Praktikumsantrag anlegen und absenden.<br>"
-                + "Du kannst du Antrag auch zwischenspeichern, damit du ihn später weiterbearbeiten kannst.<br>"
+                + "Du kannst den Antrag auch zwischenspeichern, damit du ihn später weiterbearbeiten kannst.<br>"
                 + "Achtung: Du kannst immer nur einen einzigen Antrag anlegen.");
         hintLabel.getElement().setProperty("innerHTML", hintLabel.getText()); // Damit die <br> korrekt interpretiert werden
         hintLabel.addClassName("hint-label");
-
         card.add(title, newRequestButton, hintLabel);
+
+        // Kommentare holen und anzeigen falls vorhanden
+        String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
+        List<String> notizen = new ArrayList<>();
+        if (matrikelnummer != null) {
+            notizen = getAntragNotiz(matrikelnummer);
+        }
+
+        // Nachricht Keine Kommentare vorhanden ausfiltern
+        notizen = notizen.stream()
+                .filter(notiz -> !notiz.equals("Keine Kommentare vorhanden."))
+                .toList();
+
+        // Kommentare anzeigen, nur, wenn sie es gibt.
+        if (!notizen.isEmpty()) {
+            Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
+            kommentarToggle.addClassName("kommentar-button2");
+            kommentarToggle.getStyle().set("margin-top", "10px");
+
+            VerticalLayout kommentarContent = new VerticalLayout();
+            kommentarContent.addClassName("scrollable-comments");
+            kommentarContent.setVisible(false);
+
+            for (String notiz : notizen) {
+                String formattedNotiz = notiz.replaceFirst(":", ":<br>");
+                VerticalLayout kommentarBox = new VerticalLayout();
+                kommentarBox.addClassName("note-style");
+
+                Span kommentarText = new Span();
+                kommentarText.getElement().setProperty("innerHTML", formattedNotiz);
+
+                kommentarBox.add(kommentarText);
+                kommentarContent.add(kommentarBox);
+            }
+
+            kommentarToggle.addClickListener(event -> {
+                boolean isVisible = kommentarContent.isVisible();
+                kommentarContent.setVisible(!isVisible);
+                kommentarToggle.setText(isVisible ? "Kommentare >" : "Kommentare ∨");
+            });
+
+            card.add(kommentarToggle, kommentarContent);
+        }
+
         layout.add(card);
         return layout;
-
     }
 
      // Anbindung zum Backend
@@ -564,22 +651,6 @@ public class Studentin extends VerticalLayout {
         return null;
     }
 
-    // status aktualisieren im backend (fuer abgebrochen)
-    private void setAntragStatusAbgebrochen(String matrikelnummer) {
-        String url = backendUrl + "antrag/updateStatusAbgebrochen/" + matrikelnummer;
-        try {
-            JSONObject request = new JSONObject();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> entity = new HttpEntity<>(request.toString(), headers);
-
-            restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
-        } catch (Exception e) {
-            Notification.show("Fehler beim Aktualisieren des Status: " + e.getMessage());
-        }
-    }
-
     // Methode balkenaktualisierung
     private void updateProgressBar(ProgressBar progressBar, long bytesRead, long contentLength) {
         if (contentLength > 0) { // Division durch 0 vermeiden
@@ -587,6 +658,21 @@ public class Studentin extends VerticalLayout {
             progressBar.setValue(progress); // Fortschrittsbalken aktualisieren
         }
     }
+
+    private void deletePraktikumsantrag(String matrikelnummer) {
+        String url = "http://localhost:3000/api/antrag/" + matrikelnummer;
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                Notification.show("Antrag erfolgreich gelöscht.");
+            } else {
+                Notification.show("Fehler beim Löschen des Antrags.");
+            }
+        } catch (Exception e) {
+            Notification.show("Fehler: " + e.getMessage());
+        }
+    }
+
 
 }
 
