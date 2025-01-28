@@ -21,9 +21,43 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+/**
+ * LoginView ist die Benutzeroberfläche für den Login-Prozess.
+ * <p>
+ * Diese Klasse stellt ein Login-Formular bereit, in dem Benutzer ihre Anmeldedaten eingeben können.
+ * Abhängig von der gewählten Rolle ("Student*in" oder "Praktikumsbeauftragte*r")
+ * werden die Anmeldedaten überprüft und der Benutzer weitergeleitet.
+ * </p>
+ *
+ * <ul>
+ *   <li>Verwendet Vaadin-Komponenten, um eine interaktive Benutzeroberfläche zu erstellen.</li>
+ *   <li>Führt eine Backend-Kommunikation durch, um die Anmeldedaten zu überprüfen.</li>
+ *   <li>Stellt Benutzerrollen-Logik und Weiterleitung nach erfolgreichem Login bereit.</li>
+ * </ul>
+ *
+ * <h3>Funktionen:</h3>
+ * <ul>
+ *   <li>Auswahl der Benutzerrolle ("Praktikumsbeauftragte*r", "Student*in").</li>
+ *   <li>Eingabe des Benutzernamens und Passworts.</li>
+ *   <li>Anzeigen von Erfolgsmeldungen oder Fehlern.</li>
+ *   <li>Weiterleitung basierend auf der Benutzerrolle.</li>
+ * </ul>
+ *
+ * @author Beyza Nur Acikgöz
+ * @version 1.0
+ */
+
 @Route(value = "login", layout = MainBanner.class)
 @CssImport("./styles/styles.css")
 public class LoginView extends VerticalLayout {
+
+    /**
+     * Konstruktor der LoginView.
+     * <p>
+     * Initialisiert die Benutzeroberfläche mit einem Titel, Formularfeldern,
+     * einem Login-Button und einem Link "Passwort vergessen?".
+     * </p>
+     */
 
     public LoginView() {
         addClassName("view-container");
@@ -72,6 +106,15 @@ public class LoginView extends VerticalLayout {
         formContainer.add(title, roleSelection, usernameField, passwordField, loginButton, forgotPasswordLink);
         add(formContainer);
     }
+
+    /**
+     * Erstellt und konfiguriert den Login-Button.
+     *
+     * @param usernameField Das Feld für den Benutzernamen.
+     * @param passwordField Das Feld für das Passwort.
+     * @param roleSelection Die ComboBox zur Auswahl der Rolle.
+     * @return Der konfigurierte Login-Button.
+     */
 
     private Button getButton(TextField usernameField, PasswordField passwordField, ComboBox<String> roleSelection) {
         Button loginButton = new Button("Login");
@@ -141,7 +184,16 @@ public class LoginView extends VerticalLayout {
         return loginButton;
     }
 
-    //Methode zum Senden des JSON-Requests an das Backend
+    /**
+     * Sendet die Login-Daten im JSON-Format an das Backend.
+     *
+     * @param json Der JSON-String mit den Login-Daten.
+     * @param url  Die URL des Backends.
+     * @return Die HTTP-Antwort vom Backend.
+     * @throws IOException            Falls ein Netzwerkfehler auftritt.
+     * @throws InterruptedException   Falls die Anfrage unterbrochen wird.
+     */
+
     private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
 
@@ -154,7 +206,15 @@ public class LoginView extends VerticalLayout {
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    // Methode zur Erstellung des JSON-Strings für den Login-Request
+    /**
+     * Erstellt einen JSON-String für den Login-Request.
+     *
+     * @param role     Die Rolle des Benutzers.
+     * @param username Der Benutzername.
+     * @param password Das Passwort.
+     * @return Der JSON-String mit den Login-Daten.
+     */
+
     private String createLoginJson(String role, String username, String password) {
         return String.format("{\"role\": \"%s\", \"username\": \"%s\", \"password\": \"%s\"}", role, username, password);
     }
