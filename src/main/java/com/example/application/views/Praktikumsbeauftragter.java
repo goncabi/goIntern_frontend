@@ -384,6 +384,13 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
+    /**
+     * Erstellt einen Bestätigungsdialog für den Logout-Prozess.
+     *
+     * Diese Methode erstellt einen Dialog mit einer Sicherheitsnachricht und zwei Optionen: "Ja" und "Abbrechen".
+     * wenn "Ja" ausgewählt wird, wird der Benutzer zur Login-Seite navigiert.
+     * @return ein Dialog-Objekt, das die Logout-Bestätigung anzeigt.
+     */
     private Dialog createLogoutConfirmationDialog() {
         return DialogUtils.createStandardDialog(
                 "Logout bestätigen",
