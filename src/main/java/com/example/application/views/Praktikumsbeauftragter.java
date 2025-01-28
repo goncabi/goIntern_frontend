@@ -445,7 +445,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         return span;
     }
 
-    //methode zum formatieren der daten
+    /**
+     * Formatiert ein Datum im ISO-Format (yyyy-MM-dd) in das deutsche Format (dd.MM.yyyy).
+     * @param isoDate Das Datum im ISO-Format
+     * @return Das Datum im deutschen Format oder das Originaldatum bei einem Parsing-Fehler.
+     */
     private String formatDate(String isoDate) {
         try {
             LocalDate date = LocalDate.parse(isoDate); // ISO-Format (yyyy-MM-dd)
@@ -455,6 +459,11 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
+    /**
+     * Zeigt alle Details eines vollständigen Praktikumsantrags in einem Pop-Up an.
+     * Diese Methode ruft die Antragsdetails basierend auf der Matrikelnummer vom Backend ab undd zeigt sie in einem Dialogfenster an.
+     * @param matrikelnummer die Matrikelnummer des Studenten, dessen Antrag angezeigt werden soll.
+     */
 
     private void vollstaendigenAntragAnzeigenImPopUp(String matrikelnummer) {
         bereitsGenehmigtOderAbgelehnt = false; //wird neu auf false gesetzt, sodass es nicht auf true bleibt.
