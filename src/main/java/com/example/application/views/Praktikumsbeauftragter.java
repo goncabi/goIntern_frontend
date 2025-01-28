@@ -384,6 +384,13 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         }
     }
 
+    /**
+     * Erstellt einen Bestätigungsdialog für den Logout-Prozess.
+     *
+     * Diese Methode erstellt einen Dialog mit einer Sicherheitsnachricht und zwei Optionen: "Ja" und "Abbrechen".
+     * wenn "Ja" ausgewählt wird, wird der Benutzer zur Login-Seite navigiert.
+     * @return ein Dialog-Objekt, das die Logout-Bestätigung anzeigt.
+     */
     private Dialog createLogoutConfirmationDialog() {
         return DialogUtils.createStandardDialog(
                 "Logout bestätigen",
@@ -395,6 +402,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         );
     }
 
+    /**
+     * Holt die Liste der eingegangenen Praktikumsanträge zur Vorschau.
+     * Diese Methode ruft alle Praktikumsanträge vom Backend ab, die nicht den Status "gespeichert" haben.
+     * Sie erstellt eine Liste von Praktikumsantrag-Objekten und gibt diese zurück.
+     * @return eine Liste von Praktikumsanträgen zur Anzeige in der Vorschau.
+     */
     private List<Praktikumsantrag> eingegangeneAntraegePreviewListe() {
         List<Praktikumsantrag> antraege = new ArrayList<>();
         try {
