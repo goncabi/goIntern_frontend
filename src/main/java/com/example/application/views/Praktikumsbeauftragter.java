@@ -296,11 +296,21 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             return anzeigenButton;
         }).setHeader("");
 
-        //Spalte für Poster anzeigen
+        /**
+         * Spalte für "Poster anzeigen"
+         * Diese Spalte enthält Buttons, die das Poster eines abgeschlossenen Praktikums anzeigen.
+         * Wenn der Status des Antrags "absolviert" ist, wird ein Button angezeigt, andernfalls bleibt die Zeile leer.
+         */
         grid.addComponentColumn(praktikumsantrag -> {
             if ("absolviert".equalsIgnoreCase(praktikumsantrag.getStatus())) {
+                /**
+                 * Erstellt einen Button "Poster anzeigen"
+                 */
                 Button anzeigenButton = new Button("Poster anzeigen", VaadinIcon.EYE.create());
                 anzeigenButton.addClassName("posterAnzeigen-button3");
+                /**
+                 * Fügt einen Click-Listener hinzu, der ein Pop-Up öffnet, um das Poster anzuzeigen.
+                 */
                 anzeigenButton.addClickListener(event -> {
                     posterAnzeigenImPopUp(praktikumsantrag.getMatrikelnummer());
                 });
@@ -317,7 +327,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
     }
 
 
-    //Methode, um Nachrichten aus Backend zu holen
+    /**
+     * Methode, um Nachrichten aus dem Backend zu holen.
+     * Diese Methode ruft Benachrichtigungen für einen bestimmten Benutzer vom Backend ab und gibt sie als Liste von NotificationMessafe-Objekt zurück.
+     * @param username Der Benutzername, für den die Nachrichten abgerufen weden sollen.
+     * @return eine Liste von NotificationMessage-Objekten
+     */
     private List<NotificationMessage> getNachrichten(String username) {
         List<NotificationMessage> nachrichten = new ArrayList<>();
         try {
