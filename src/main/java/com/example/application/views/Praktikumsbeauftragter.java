@@ -528,7 +528,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(formatDate(json.getString("enddatum"))), "Enddatum des Praktikums:");
 
 
-                // Berechnung der Arbeitstage
                 LocalDate startDate;
                 LocalDate endDate;
 
@@ -539,6 +538,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 } catch (DateTimeParseException e) {
                     throw new RuntimeException("Fehler beim Parsen des Datums: " + e.getMessage());
                 }
+                /**
+                 * Berechnet die Arbeitstage des Praktikums, basierend auf Start- und Enddatum sowie dem Bundesland.
+                 * Berücksichtigt Feiertage, falls das Praktikum nicht im Ausland stattfindet.
+                 */
 
                 boolean auslandspraktikum = json.getBoolean("auslandspraktikum");
                 String bundesland = json.getString("bundeslandPraktikumsstelle");
@@ -552,6 +555,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 formLayout.addFormItem(new Span(String.valueOf(arbeitstage)), "Arbeitstage:");
 
 
+                /**
+                 * Erstellt Buttons zum Genehmigen, Ablehnen oder Abbrechen der Aktion.
+                 * Buttons werden deaktiviert, wenn der Antrag bereits bearbeitet wurde  oder den Status nicht "eingereicht" ist.
+                 */
                 Button abbrechen = new Button("Abbrechen", event -> dialog.close());
                 abbrechen.addClassName("abbrechen-button3");
 
