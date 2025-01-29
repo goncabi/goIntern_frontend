@@ -308,6 +308,10 @@ public class Studentin extends VerticalLayout {
             Button posterHochladenButton = new Button("Poster hochladen");
             posterHochladenButton.addClassName("poster-hochladen-button");
 
+            Span hinweisText = new Span("Hinweis: Das Poster kann nur im PDF-Format hochgeladen werden.");
+            hinweisText.getStyle().set("color", "gray");
+            hinweisText.getStyle().set("font-size", "12px");
+
 
             // upload
             MemoryBuffer buffer = new MemoryBuffer();
@@ -376,7 +380,7 @@ public class Studentin extends VerticalLayout {
 
             posterHochladenButton.addClickListener(e -> {
                 // Upload-Layout hinzufügen
-                VerticalLayout uploadLayout = new VerticalLayout(upload, progressBar);
+                VerticalLayout uploadLayout = new VerticalLayout(upload, hinweisText, progressBar);
                 container.add(uploadLayout);
             });
             buttonLayout.add(posterHochladenButton);
