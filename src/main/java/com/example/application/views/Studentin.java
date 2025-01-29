@@ -391,9 +391,18 @@ public class Studentin extends VerticalLayout {
         List<String> notizen = getAntragNotiz(matrikelnummer);
         for (String notiz : notizen) {
 
-            String formattedNotiz =
-                    "<div class='datum'>" + notiz.split(": ", 2)[0] + "</div>" +
-                            "<div class='nachricht'>" + notiz.split(": ", 2)[1] + "</div>";
+            String formattedNotiz;
+
+            if (notiz.contains(": ")) {
+                formattedNotiz =
+
+                        "<div style='font-size: 0.85em; color: gray; font-style: italic; margin-bottom: 5px;'>" +
+                                notiz.split(": ", 2)[0] + "</div>" +
+                                "<div>" + notiz.split(": ", 2)[1] + "</div>";
+            } else {
+                // Falls kein ":" gefunden wird, bleibt die gesamte Notiz im Nachrichtenteil
+                formattedNotiz = "<div class='nachricht'>" + notiz + "</div>";
+            }
 
             VerticalLayout kommentarBox = new VerticalLayout();
             kommentarBox.addClassName("note-style");
