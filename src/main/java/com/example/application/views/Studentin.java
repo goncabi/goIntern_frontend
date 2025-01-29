@@ -39,22 +39,27 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Die Klasse Studentin repräsentiert die Hauptansicht für StudentInnen in der Anwendung und verwaltet verschiedene
+ * Die Klasse Studentin repräsentiert die Hauptansicht für StudentInnen und verwaltet verschiedene
  *Interaktionen im Zusammenhang mit Praktikumsanträgen und Benutzerverwaltung.
+ *
  * Diese Vaadin-Ansicht bietet Funktionalitäten für:
  *   - Benutzer-Abmeldung
- *   - Anzeige des Praktikumsantragsstatus
- *   - Verwaltung von Praktikumsanträgen (Bearbeiten, Löschen, Abbrechen)
- *   - Handhabung von Datei-Uploads für Praktikumsplakate
+ *   - Anzeige und Verwaltung des Praktikumsantragsstatus (Das Praktikum kann auch abbgebrochen werden)
+ *   - Verwaltung von Praktikumsanträgen (Erstellen, Bearbeiten, Löschen, Abbrechen und Statusanzeige)
+ *   - Hochladen vom Praktikumposter
+ *   -Anzeige von Kommentaren des Praktikumsbeauftragten
+ *   -Die Klasse kommuniziert mit Methoden wie z.b. sendJsonToBackend, uploadFile, und getPraktikumsAntrag mit dem Backend.
+ *
  * @author Maryam Mirza
+ * @since 2025-01-29
  */
 
 
 /**
- *  @Route Navigiert zu "studentin/startseite" mit SubordinateBanner-Layout
- *  @CssImport Importiert benutzerdefiniertes CSS für Styling
+ *  @Route Navigiert zu "studentin/startseite" mit SubordinateBanner-Layout.
+ *  @CssImport Importiert benutzerdefiniertes CSS für Styling.
+ *  @PageTitle("Studentin") Der Titel des Browser Tabs ist hier mit Studentin festgelegt.
  */
-
 @Route(value = "studentin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/startseite.css")
 @PageTitle("Studentin")
@@ -121,6 +126,11 @@ public class Studentin extends VerticalLayout {
         add(header, content);
     }
 
+
+    /**
+     * Überprüft, ob ein Studierender bereits einen Antrag gestellt hat.
+     * @return true, wenn ein Antrag existiert, sonst false
+     */
     private boolean hasAntrag(String matrikelnummer) {
         String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
         try {
@@ -431,6 +441,17 @@ public class Studentin extends VerticalLayout {
 
     }
 
+
+
+    /**
+     * Sendet eine JSON-Nachricht an das Backend.
+     *
+     * @param json der zu sendende JSON-String
+     * @param url die Ziel-URL im Backend
+     * @return die HTTP-Antwort des Backends
+     * @throws IOException wenn ein Fehler bei der Übertragung auftritt
+     * @throws InterruptedException wenn der Vorgang unterbrochen wird
+     */
     // Methode, um Json ans Backend zu schicken
     private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException{
         HttpClient client = HttpClient.newHttpClient();
@@ -443,11 +464,29 @@ public class Studentin extends VerticalLayout {
 
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
+
+    /**
+     * Erstellt eine JSON-Nachricht für den Praktikumsabbruch.
+     *
+     * @param empfaenger die Matrikelnummer des Empfängers
+     * @param notiz der Nachrichtentext
+     * @param abbruchDatum das Datum des Abbruchs
+     * @return ein JSON-String mit der formatierten Nachricht
+     */
     // Verpackt die Nachricht mit den absolvierten Tagen bei Abbruch in ein Json
     private String createJsonNachricht(String empfaenger, String notiz, String abbruchDatum) {
         return String.format("{\"nachricht\": \"%s\", \"datum\": \"%s\", \"empfaenger\": \"%s\"}", notiz, abbruchDatum, empfaenger);
     }
 
+
+    /**
+     * Lädt eine Datei (Praktikumsposter) zum Backend hoch.
+     *
+     * @param fileBytes der Inhalt der Datei als Byte-Array
+     * @param fileName der Name der Datei
+     * @param matrikelnummer die Matrikelnummer des Studierenden
+     * @throws RuntimeException wenn ein Fehler beim Hochladen auftritt
+     */
     // Methode zum Hochladen des posters
     private void uploadFile(byte[] fileBytes, String fileName, String matrikelnummer) {
         RestTemplate restTemplate = new RestTemplate();
@@ -472,7 +511,12 @@ public class Studentin extends VerticalLayout {
         }
     }
 
-
+    /**
+     * Erstellt ein Statusabzeichen basierend auf dem Antragsstatus.
+     *
+     * @param status der aktuelle Status des Antrags
+     * @return ein Span-Element mit dem formatierten Statusabzeichen
+     */
     private Span createStatusBadge(String status) {
         String theme;
 
@@ -504,6 +548,11 @@ public class Studentin extends VerticalLayout {
         return badge;
     }
 
+    /**
+     * Löscht den Praktikumsantrag eines Studierenden.
+     *
+     * @param matrikelnummer die Matrikelnummer des Studierenden
+     */
     private void loeschenAntrag(String matrikelnummer) {
         String url = backendUrl + "antrag/" + matrikelnummer;
         try {
@@ -518,6 +567,11 @@ public class Studentin extends VerticalLayout {
         }
     }
 
+    /**
+     * Erstellt die Startseite für Studierende ohne aktiven Antrag.
+     *
+     * @return eine Komponente, die die Startseite darstellt
+     */
     private Component createStartseite() {
         VerticalLayout layout = new VerticalLayout();
         layout.setAlignItems(Alignment.CENTER);
@@ -604,6 +658,13 @@ public class Studentin extends VerticalLayout {
         return layout;
     }
 
+
+    /**
+     * Ruft den aktuellen Status des Praktikumsantrags ab.
+     *
+     * @param matrikelnummer die Matrikelnummer des Studierenden
+     * @return der Status des Antrags als String
+     */
      // Anbindung zum Backend
     //Erklärung: Die Methode getAntragStatus returnt einen String.
     //Im Backend haben die Controller den Endpunkt getAntrag() und da wird ein Praktikumsantrag zurückgegeben und dann ein JSONString gemacht.
@@ -624,6 +685,13 @@ public class Studentin extends VerticalLayout {
         return "nicht gefunden";
     }
 
+
+    /**
+     * Ruft die Notizen (Kommentare) zu einem Praktikumsantrag ab.
+     *
+     * @param matrikelnummer die Matrikelnummer des Studierenden
+     * @return eine Liste von Strings mit den Notizen
+     */
     private List<String> getAntragNotiz(String matrikelnummer) {
 
         String url = backendUrl + "nachrichten/" + matrikelnummer;
@@ -652,6 +720,16 @@ public class Studentin extends VerticalLayout {
         return notizen.isEmpty() ? List.of("Keine Kommentare vorhanden.") : notizen;
     }
 
+
+
+
+
+    /**
+     * Ruft die Details eines Praktikumsantrags ab.
+     *
+     * @param matrikelnummer die Matrikelnummer des Studierenden
+     * @return ein JSONObject mit den Antragsdaten oder null bei einem Fehler
+     */
     //Anbindung zum Backend AntragAnzeigen
     private JSONObject getPraktikumsAntrag(String matrikelnummer) {
         String url = backendUrl + "antrag/getantrag/" + matrikelnummer;
@@ -668,6 +746,13 @@ public class Studentin extends VerticalLayout {
         return null;
     }
 
+    /**
+     * Aktualisiert den Fortschrittsbalken beim Datei-Upload.
+     *
+     * @param progressBar der zu aktualisierende Fortschrittsbalken
+     * @param bytesRead die Anzahl der bereits gelesenen Bytes
+     * @param contentLength die Gesamtgröße der Datei in Bytes
+     */
     // Methode balkenaktualisierung
     private void updateProgressBar(ProgressBar progressBar, long bytesRead, long contentLength) {
         if (contentLength > 0) { // Division durch 0 vermeiden
@@ -676,6 +761,11 @@ public class Studentin extends VerticalLayout {
         }
     }
 
+    /**
+     * Löscht den Praktikumsantrag eines Studierenden im Backend.
+     *
+     * @param matrikelnummer die Matrikelnummer des Studierenden
+     */
     private void deletePraktikumsantrag(String matrikelnummer) {
         String url = "http://localhost:3000/api/antrag/" + matrikelnummer;
         try {
