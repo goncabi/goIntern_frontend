@@ -54,7 +54,7 @@ public class LoginView extends VerticalLayout {
     /**
      * Konstruktor der LoginView.
      * <p>
-     * Initialisiert die Benutzeroberfläche mit einem Titel, Formularfeldern,
+     * Initialisiert die Benutzeroberfläche mit einem Titel, Formularfeldern, Fehlermeldungen,
      * einem Login-Button und einem Link "Passwort vergessen?".
      * </p>
      */
@@ -84,26 +84,42 @@ public class LoginView extends VerticalLayout {
         roleSelection.setPlaceholder("Wähle aus, wer du bist:");  // Platzhalter setzen
         roleSelection.setClearButtonVisible(false);
 
+        Div roleError = new Div();
+        roleError.setText("Bitte wähle eine Rolle aus.");
+        roleError.addClassName("error-message");
+        roleError.setVisible(false);
+
 
         // Nutzername-Feld
         TextField usernameField = new TextField();
         usernameField.setPlaceholder("Nutzer*innenname");
         usernameField.addClassName("text-field");
 
+        Div usernameError = new Div();
+        usernameError.setText("Bitte gib einen gültigen Nutzernamen ein.");
+        usernameError.addClassName("error-message");
+        usernameError.setVisible(false);
+
         // Passwort-Feld
         PasswordField passwordField = new PasswordField();
         passwordField.setPlaceholder("Passwort");
         passwordField.addClassName("text-field");
 
+        Div passwordError = new Div();
+        passwordError.setText("Bitte gib ein gültiges Passwort ein.");
+        passwordError.addClassName("error-message");
+        passwordError.setVisible(false);
+
+
         // Login-Button
-        Button loginButton = getButton(usernameField, passwordField, roleSelection);
+        Button loginButton = getButton(usernameField, passwordField, roleSelection, usernameError, passwordError, roleError);
 
         // Link "Passwort vergessen?"
         Anchor forgotPasswordLink = new Anchor("passwort-vergessen", "Passwort vergessen?");
         forgotPasswordLink.addClassName("link");
 
         // Elemente hinzufügen in richtiger Reihenfolge
-        formContainer.add(title, roleSelection, usernameField, passwordField, loginButton, forgotPasswordLink);
+        formContainer.add(title, roleSelection, roleError,usernameField, usernameError, passwordField, passwordError, loginButton, forgotPasswordLink);
         add(formContainer);
     }
 
@@ -113,77 +129,102 @@ public class LoginView extends VerticalLayout {
      * @param usernameField Das Feld für den Benutzernamen.
      * @param passwordField Das Feld für das Passwort.
      * @param roleSelection Die ComboBox zur Auswahl der Rolle.
+     * @param usernameError Fehlermeldung für einen falschen Nutzernamen.
+     * @param passwordError Fehlermeldung für ein falsches Passwort.
+     * @param roleError Fehlermeldung, wenn der Nutzer keine Rolle auswählt.
+     *
      * @return Der konfigurierte Login-Button.
      */
 
-    private Button getButton(TextField usernameField, PasswordField passwordField, ComboBox<String> roleSelection) {
+    private Button getButton(TextField usernameField, PasswordField passwordField, ComboBox<String> roleSelection, Div usernameError, Div passwordError, Div roleError) {
         Button loginButton = new Button("Login");
         loginButton.addClassName("button");
 
         // Login-Logik
         loginButton.addClickListener(event -> {
-            boolean isValid;
-            if (roleSelection.isEmpty()) {
-                Notification.show("Bitte wähle eine Rolle aus!", 3000, Notification.Position.MIDDLE);
+            boolean isValid = true;
+
+            // Benutzername validieren (Studentennummer oder "Jörn Freiheit")
+            String username = usernameField.getValue().trim();
+            if (!(username.matches("s0\\d{6}") || username.equalsIgnoreCase("Jörn Freiheit"))) {
+                usernameError.setText("Ungültiger oder falscher Nutzername");
+                usernameError.setVisible(true);
+                usernameField.addClassName("invalid-field");
                 isValid = false;
+            } else {
+                usernameError.setVisible(false);
+                usernameField.removeClassName("invalid-field");
             }
-            else{
-                try{
+
+            // Passwort validieren (Nicht leer)
+            if (passwordField.getValue().trim().isEmpty()) {
+                passwordError.setText("Das Passwort darf nicht leer sein.");
+                passwordError.setVisible(true);
+                passwordField.addClassName("invalid-field");
+                isValid = false;
+            } else {
+                passwordError.setVisible(false);
+                passwordField.removeClassName("invalid-field");
+            }
+
+            // Rolle validieren
+            if (roleSelection.isEmpty()) {
+                roleError.setText("Bitte wähle eine Rolle aus.");
+                roleError.setVisible(true);
+                roleSelection.addClassName("invalid-field");
+                isValid = false;
+            } else {
+                roleError.setVisible(false);
+                roleSelection.removeClassName("invalid-field");
+            }
+
+            if (isValid) {
+                try {
                     String roleForBackend = roleSelection.getValue().replace("*", "");
-                    String json = createLoginJson(roleForBackend, usernameField.getValue(), passwordField.getValue());
+                    String json = createLoginJson(roleForBackend, username, passwordField.getValue());
                     HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/login");
+
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
-                        String responseBody = response.body();
-                        JSONObject jsonResponse = new JSONObject(responseBody);
-
+                        JSONObject jsonResponse = new JSONObject(response.body());
                         String matrikelnummer = jsonResponse.optString("matrikelnummer", null);
-                        // Rolle prüfen
+
                         if ("Praktikumsbeauftragte*r".equals(roleSelection.getValue())) {
-
-                            if (usernameField.getValue() != null) {
-
-                                VaadinSession.getCurrent().setAttribute("username", usernameField.getValue());
+                            if (username != null) {
+                                VaadinSession.getCurrent().setAttribute("username", username);
                                 Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
                             } else {
-                                Notification.show("Username konnte nicht abgerufen werden.", 3000, Notification.Position.TOP_CENTER);
+                                Notification.show("Fehler: Benutzername konnte nicht abgerufen werden.", 3000, Notification.Position.TOP_CENTER);
                             }
                         } else if ("Student*in".equals(roleSelection.getValue())) {
                             if (matrikelnummer != null) {
-
                                 VaadinSession.getCurrent().setAttribute("matrikelnummer", matrikelnummer);
                                 Notification.show("Login erfolgreich!", 3000, Notification.Position.TOP_CENTER);
                             } else {
-                                Notification.show("Matrikelnummer konnte nicht abgerufen werden.", 3000, Notification.Position.TOP_CENTER);
+                                Notification.show("Fehler: Matrikelnummer konnte nicht abgerufen werden.", 3000, Notification.Position.TOP_CENTER);
                             }
                         }
-                        isValid = true;
-                    } else if (response.statusCode() == 400 || response.statusCode() == 401) {
-                        Notification.show("Nutzer*innenname oder Passwort falsch.", 3000, Notification.Position.TOP_CENTER);
-                        isValid = false;
-                    }
-                    else{
-                        Notification.show("Fehler: " + response.body(), 3000, Notification.Position.TOP_CENTER);
-                        isValid = false;
-                    }
-                }
-                catch(Exception e){
-                    Notification.show("Ein Fehler ist aufgetreten: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
-                    isValid = false;
-                }
-            }
 
-            // Weiterleitung nach erfolgreicher Validierung
-            if (isValid) {
-                if ("Praktikumsbeauftragte*r".equals(roleSelection.getValue())) {
-                    getUI().ifPresent(ui -> ui.navigate("admin/startseite"));
-                } else if ("Student*in".equals(roleSelection.getValue())) {
-                    getUI().ifPresent(ui -> ui.navigate("/studentin/startseite"));
+                        // Weiterleitung nach erfolgreichem Login
+                        getUI().ifPresent(ui -> {
+                            if ("Praktikumsbeauftragte*r".equals(roleSelection.getValue())) {
+                                ui.navigate("admin/startseite");
+                            } else if ("Student*in".equals(roleSelection.getValue())) {
+                                ui.navigate("/studentin/startseite");
+                            }
+                        });
+
+                    } else {
+                        passwordError.setText("Fehlerhafte Anmeldedaten! Bitte überprüfe deine Eingaben.");
+                        passwordError.setVisible(true);
+                        passwordField.addClassName("invalid-field");
+                    }
+                } catch (Exception e) {
+                    Notification.show("Ein Fehler ist aufgetreten: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
                 }
             }
         });
         return loginButton;
     }
-
     /**
      * Sendet die Login-Daten im JSON-Format an das Backend.
      *
