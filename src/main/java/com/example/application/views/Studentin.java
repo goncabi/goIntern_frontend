@@ -375,6 +375,7 @@ public class Studentin extends VerticalLayout {
                     progressBar.setVisible(false); // Fortschrittsbalken ausblenden
                     posterHochladenButton.setVisible(false);
                     upload.setVisible(false);
+                    hinweisText.setVisible(false);
                 }
             });
 
