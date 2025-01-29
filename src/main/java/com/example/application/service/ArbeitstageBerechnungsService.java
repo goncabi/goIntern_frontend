@@ -11,10 +11,22 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Diese ServiceKlasse berechnet die Anzahl der Arbeitstage innerhalb eines angegebenen Zeitraums,
+ * unter Berücksichtigung von Wochenenden und Feiertagen durch die externe Api api.feiertage.de
+ *
+ * @author Merlind Pohl
+ * @since 29.01.2025
+ */
+
 public class ArbeitstageBerechnungsService {
 
 
-    //bundesländer lesbarer machen im drop-down menu
+    /**
+     * Mapping von Bundesland-Kürzeln zu vollständigen Bundesländernamen,
+     * um die Darstellung in einem Dropdown-Menü leserlicher zu gestalten.
+     */
+
     private static final Map<String, String> BUNDESLANDER_MAP = Map.ofEntries(
             Map.entry("bw", "Baden-Württemberg"),
             Map.entry("by", "Bayern"),
@@ -34,10 +46,22 @@ public class ArbeitstageBerechnungsService {
             Map.entry("th", "Thüringen")
     );
 
+    /**
+     * Gibt die Map der Bundesländer zurück.
+     * @return Eine Map mit Bundesland-Kürzeln als Schlüssel und deren vollständigen Namen als Werte.
+     */
     public Map<String, String> getBundeslaenderMap() {
         return BUNDESLANDER_MAP;
     }
 
+    /**
+     * Wandelt einen Bundesland-Namen in das entsprechende Kürzel um,
+     * um es für API-Anfragen zu verwenden.
+     *
+     * @param lesbaresBundesland Der vollständig ausgeschriebene Name des Bundeslandes.
+     * @return Das API-Kürzel für das Bundesland.
+     * @throws IllegalArgumentException Falls das ausgeschriebene Bundesland ungültig ist.
+     */
     public String mappeBundeslandFuerApiKommunikation(String lesbaresBundesland) {
         System.out.println("Input-Bundesland für Mapping: " + lesbaresBundesland);
         return BUNDESLANDER_MAP.entrySet()
@@ -49,6 +73,14 @@ public class ArbeitstageBerechnungsService {
     }
 
 
+    /**
+     * Berechnet die Anzahl der Arbeitstage (fünf Arbeitstage, Montag bis Freitag, ausgehend von einem Vollzeitpraktikum) innerhalb eines Zeitraums,
+     * ohne Berücksichtigung von Feiertagen - was wir benötigen sofern Auslandspraktikum true ist, da dann keine Feiertagsberechnung vorgenommen werden kann.
+     *
+     * @param startDate Startdatum des Zeitraums für das Praktikum.
+     * @param endDate   Enddatum des Zeitraums füt das Praktikum.
+     * @return Die Anzahl der Arbeitstage ohne Feiertage.
+     */
     public int berechneArbeitstageOhneFeiertage(LocalDate startDate, LocalDate endDate) {
         int arbeitstage = 0;
 
@@ -62,6 +94,15 @@ public class ArbeitstageBerechnungsService {
         return arbeitstage;
     }
 
+    /**
+     * Berechnet die Anzahl der Arbeitstage innerhalb eines Zeitraums unter Berücksichtigung
+     * von Feiertagen für ein bestimmtes Bundesland in Deutschland.
+     *
+     * @param startDate Startdatum des Zeitraums für das Praktikum.
+     * @param endDate   Enddatum des Zeitraums füt das Praktikum.
+     * @param bundesland Das Bundesland, für das die Feiertage berücksichtigt werden sollen.
+     * @return Die Anzahl der Arbeitstage unter Berücksichtigung der Feiertage.
+     */
     public int berechneArbeitstageMitFeiertagen(LocalDate startDate, LocalDate endDate, String bundesland) {
         // Feiertage abrufen
         Set<LocalDate> feiertage = fetchFeiertage(startDate, endDate, bundesland);
@@ -79,6 +120,14 @@ public class ArbeitstageBerechnungsService {
         return arbeitstage;
     }
 
+    /**
+     * Ruft Feiertage für ein bestimmtes Bundesland aus der API api-feiertage.de ab.
+     *
+     * @param startDate           Startdatum des Zeitraums.
+     * @param endDate             Enddatum des Zeitraums.
+     * @param lesbaresBundesland  Der vollständig lesbare Name des Bundeslandes.
+     * @return Eine Menge (Set) von Feiertagen, die im angegebenen Zeitraum enthalten sind.
+     */
     public Set<LocalDate> fetchFeiertage(LocalDate startDate, LocalDate endDate, String lesbaresBundesland) {
         String bundeslandKuerzel = mappeBundeslandFuerApiKommunikation(lesbaresBundesland); // Mapping auf API-Kürzel
         RestTemplate restTemplate = new RestTemplate();
