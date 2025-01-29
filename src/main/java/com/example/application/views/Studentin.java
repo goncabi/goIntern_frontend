@@ -27,6 +27,7 @@ import com.example.application.utils.DialogUtils;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.component.progressbar.ProgressBar;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -40,25 +41,26 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Die Klasse Studentin repräsentiert die Hauptansicht für StudentInnen und verwaltet verschiedene
- *Interaktionen im Zusammenhang mit Praktikumsanträgen und Benutzerverwaltung.
- *
+ * Interaktionen im Zusammenhang mit Praktikumsanträgen und Benutzerverwaltung.
+ * <p>
  * Diese Vaadin-Ansicht bietet Funktionalitäten für:
- *   - Benutzer-Abmeldung
- *   - Anzeige und Verwaltung des Praktikumsantragsstatus (Das Praktikum kann auch abbgebrochen werden)
- *   - Verwaltung von Praktikumsanträgen (Erstellen, Bearbeiten, Löschen, Abbrechen und Statusanzeige)
- *   - Hochladen vom Praktikumposter
- *   -Anzeige von Kommentaren des Praktikumsbeauftragten
- *   -Die Klasse kommuniziert mit Methoden wie z.b. sendJsonToBackend, uploadFile, und getPraktikumsAntrag mit dem Backend.
+ * <p>
+ * - Benutzer-Abmeldung <br>
+ * - Anzeige und Verwaltung des Praktikumsantragsstatus (Das Praktikum kann auch abgebrochen werden)<br>
+ * - Verwaltung von Praktikumsanträgen (Erstellen, Bearbeiten, Löschen, Abbrechen und Statusanzeige)<br>
+ * - Hochladen vom Praktikumsposter<br>
+ * -Anzeige von Kommentaren des Praktikumsbeauftragten<br>
+ * -Die Klasse kommuniziert mit Methoden wie z.b. sendJsonToBackend, uploadFile, und getPraktikumsAntrag mit dem Backend.<br>
+ * </p>
  *
  * @author Maryam Mirza
  * @since 2025-01-29
  */
 
-
-/**
- *  @Route Navigiert zu "studentin/startseite" mit SubordinateBanner-Layout.
- *  @CssImport Importiert benutzerdefiniertes CSS für Styling.
- *  @PageTitle("Studentin") Der Titel des Browser Tabs ist hier mit Studentin festgelegt.
+/*
+"@Route" Navigiert zu "studentin/startseite" mit SubordinateBanner-Layout.
+ @CssImport Importiert benutzerdefiniertes CSS für Styling.
+ @PageTitle("Studentin") Der Titel des Browser Tabs ist hier mit Studentin festgelegt.
  */
 @Route(value = "studentin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/startseite.css")
@@ -69,28 +71,34 @@ public class Studentin extends VerticalLayout {
     /**
      * Basis-URL der Backend-API für HTTP-Anfragen.
      * Wird für Kommunikation mit dem Server verwendet.
-     *
+     */
+    private final String backendUrl = "http://localhost:3000/api/";
+
+    /**
      * RestTemplate für API-Anfragen an das Backend.
      * Ermöglicht Lese- und Schreiboperationen. Das RestTemplate sendet API Anfragen ans Backend.
      */
     private RestTemplate restTemplate = new RestTemplate();
-    private final String backendUrl = "http://localhost:3000/api/";
 
-
-    /** Konstruktor für die Studentin-Ansicht.
-     * Initialisiert die Ansicht durch:
-     *     - Überprüfung der Benutzersitzung
-     *     - Erstellung des Logouts
-     *     - Anzeige eines neuen Antragsformulars oder vorhandener Antragsdetails
-     *       @throws IOException wenn während der Ansichtsinitialisierung ein Fehler auftritt.
+    /**
+     * Konstruktor für die Studentin-Ansicht<br><br>
+     *
+     *      Initialisiert die Ansicht durch:<br>
+     *       - Überprüfung ob Matrikelnummer vorhanden ist<br>
+     *       - Erstellung des Logouts<br>
+     *       - Anzeige eines neuen Antragsformulars<br>
+     *       -Anzeige des Antrag Erstellen Buttons<br>
+     *
+     * @throws IOException wenn bei der Kommunikation mit dem Backend ein Fehler auftritt.
      */
     public Studentin() throws IOException {
         addClassName("startseite-view");
+        //hier wird aus der Session die Matrikelnummer geholt.
         String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
 
         if (matrikelnummer == null) {
             Notification.show("Keine Matrikelnummer in der Sitzung gefunden. Bitte loggen Sie sich erneut ein.", 5000, Notification.Position.MIDDLE);
-            getUI().ifPresent(ui -> ui.navigate("login"));
+            getUI().ifPresent(ui -> ui.navigate("login")); //hier wird man zur loginseite navigiert, falls die matrikelnummer null ist.
             return;
         }
 
@@ -112,7 +120,6 @@ public class Studentin extends VerticalLayout {
             confirmDialog.open();
         });
 
-
         HorizontalLayout header = new HorizontalLayout(logoutButton);
         header.setWidthFull();
         header.setDefaultVerticalComponentAlignment(Alignment.CENTER);
@@ -126,9 +133,9 @@ public class Studentin extends VerticalLayout {
         add(header, content);
     }
 
-
     /**
-     * Überprüft, ob ein Studierender bereits einen Antrag gestellt hat.
+     * Überprüft, ob ein Studierender bereits einen Antrag gestellt hat.<br>
+     *
      * @return true, wenn ein Antrag existiert, sonst false
      */
     private boolean hasAntrag(String matrikelnummer) {
@@ -148,7 +155,7 @@ public class Studentin extends VerticalLayout {
 
     /**
      * Erstellt einen Container zur Anzeige des aktuellen Praktikumsantrags des Studenten.
-     *
+     * <p>
      * Bietet Funktionalitäten zum:
      * - Anzeigen des Antragsstatus
      * - Bearbeiten des Antrags
@@ -190,10 +197,10 @@ public class Studentin extends VerticalLayout {
         bearbeitenButton.setVisible("Gespeichert".equalsIgnoreCase(status) ||
                 "Abgelehnt".equalsIgnoreCase(status));
 
-            bearbeitenButton.addClickListener(event -> {
-                VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
-                getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
-            });
+        bearbeitenButton.addClickListener(event -> {
+            VaadinSession.getCurrent().setAttribute("neuerAntrag", false); // Indikator für Bearbeiten
+            getUI().ifPresent(ui -> ui.navigate("praktikumsformular"));
+        });
 
 
         //Löschen Button
@@ -205,21 +212,21 @@ public class Studentin extends VerticalLayout {
                         || "zugelassen".equalsIgnoreCase(status)
         );
 
-            loeschenButton.addClickListener(event -> {
-                Dialog confirmDialog = DialogUtils.createStandardDialog(
-                        "Antrag löschen",
-                        null,
-                        "Sind Sie sicher, dass Sie den Antrag löschen möchten?",
-                        "Ja",
-                        "Abbrechen",
-                        () -> {
-                            loeschenAntrag(matrikelnummer);
-                            Notification.show("Antrag gelöscht.");
-                            UI.getCurrent().getPage().reload();
-                        }
-                );
-                confirmDialog.open();
-            });
+        loeschenButton.addClickListener(event -> {
+            Dialog confirmDialog = DialogUtils.createStandardDialog(
+                    "Antrag löschen",
+                    null,
+                    "Sind Sie sicher, dass Sie den Antrag löschen möchten?",
+                    "Ja",
+                    "Abbrechen",
+                    () -> {
+                        loeschenAntrag(matrikelnummer);
+                        Notification.show("Antrag gelöscht.");
+                        UI.getCurrent().getPage().reload();
+                    }
+            );
+            confirmDialog.open();
+        });
 
 
         Button praktikumAbbrechenButton = new Button("Praktikum abbrechen");
@@ -294,7 +301,6 @@ public class Studentin extends VerticalLayout {
         });
 
 
-
         //Kommentare des PB bei Ablehnung
         Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
         kommentarToggle.addClassName("kommentar-button2");
@@ -310,7 +316,6 @@ public class Studentin extends VerticalLayout {
         if ("Derzeit im Praktikum".equalsIgnoreCase(status)) {
             buttonLayout.add(praktikumAbbrechenButton);
         } else if ("Absolviert".equalsIgnoreCase(status)) {
-
 
 
             VerticalLayout uploadContainer = new VerticalLayout();
@@ -442,18 +447,17 @@ public class Studentin extends VerticalLayout {
     }
 
 
-
     /**
      * Sendet eine JSON-Nachricht an das Backend.
      *
      * @param json der zu sendende JSON-String
-     * @param url die Ziel-URL im Backend
+     * @param url  die Ziel-URL im Backend
      * @return die HTTP-Antwort des Backends
-     * @throws IOException wenn ein Fehler bei der Übertragung auftritt
+     * @throws IOException          wenn ein Fehler bei der Übertragung auftritt
      * @throws InterruptedException wenn der Vorgang unterbrochen wird
      */
     // Methode, um Json ans Backend zu schicken
-    private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException{
+    private HttpResponse<String> sendJsonToBackend(String json, String url) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
 
         java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
@@ -468,8 +472,8 @@ public class Studentin extends VerticalLayout {
     /**
      * Erstellt eine JSON-Nachricht für den Praktikumsabbruch.
      *
-     * @param empfaenger die Matrikelnummer des Empfängers
-     * @param notiz der Nachrichtentext
+     * @param empfaenger   die Matrikelnummer des Empfängers
+     * @param notiz        der Nachrichtentext
      * @param abbruchDatum das Datum des Abbruchs
      * @return ein JSON-String mit der formatierten Nachricht
      */
@@ -482,8 +486,8 @@ public class Studentin extends VerticalLayout {
     /**
      * Lädt eine Datei (Praktikumsposter) zum Backend hoch.
      *
-     * @param fileBytes der Inhalt der Datei als Byte-Array
-     * @param fileName der Name der Datei
+     * @param fileBytes      der Inhalt der Datei als Byte-Array
+     * @param fileName       der Name der Datei
      * @param matrikelnummer die Matrikelnummer des Studierenden
      * @throws RuntimeException wenn ein Fehler beim Hochladen auftritt
      */
@@ -665,7 +669,7 @@ public class Studentin extends VerticalLayout {
      * @param matrikelnummer die Matrikelnummer des Studierenden
      * @return der Status des Antrags als String
      */
-     // Anbindung zum Backend
+    // Anbindung zum Backend
     //Erklärung: Die Methode getAntragStatus returnt einen String.
     //Im Backend haben die Controller den Endpunkt getAntrag() und da wird ein Praktikumsantrag zurückgegeben und dann ein JSONString gemacht.
     // In der Methode getAntragStatus möchte ich ja nur den Status sehen
@@ -721,9 +725,6 @@ public class Studentin extends VerticalLayout {
     }
 
 
-
-
-
     /**
      * Ruft die Details eines Praktikumsantrags ab.
      *
@@ -749,8 +750,8 @@ public class Studentin extends VerticalLayout {
     /**
      * Aktualisiert den Fortschrittsbalken beim Datei-Upload.
      *
-     * @param progressBar der zu aktualisierende Fortschrittsbalken
-     * @param bytesRead die Anzahl der bereits gelesenen Bytes
+     * @param progressBar   der zu aktualisierende Fortschrittsbalken
+     * @param bytesRead     die Anzahl der bereits gelesenen Bytes
      * @param contentLength die Gesamtgröße der Datei in Bytes
      */
     // Methode balkenaktualisierung
