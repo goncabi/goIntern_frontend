@@ -624,7 +624,8 @@ public class Studentin extends VerticalLayout {
                 for (int i = 0; i < jsonarray.length(); i++) {
                     JSONObject jsonObject = jsonarray.getJSONObject(i);
                     String nachricht = jsonObject.getString("nachricht");
-                    notizen.add(nachricht);
+                    String datum = jsonObject.getString("datum");
+                    notizen.add(datum + ": " + nachricht);
 
                 }
             }
