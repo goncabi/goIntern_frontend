@@ -78,7 +78,7 @@ html, body {
     transition: background-color 0.3s ease;
 }
 
-.startseite-registrieren-button{
+.startseite-registrieren-button {
     width: 100%;
     box-sizing: border-box;
     background-color: #2F5A83;
@@ -378,6 +378,29 @@ Duplikat angezeigt wird*/
     padding-top: 40px;
     display: flex;
     flex-direction: column;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+vaadin-grid {
+    display: block;
+    width: auto !important;
+    min-width: 100%;
+    overflow-x: auto !important;
+}
+
+vaadin-grid-cell-content {
+    overflow: visible !important;
+    white-space: nowrap !important;
+}
+
+/* Container für "Antrag anzeigen" sorgt für genug Platz */
+.antragAnzeigen-button-container {
+    display: flex;
+    justify-content: center;
+    overflow: visible;
+    white-space: nowrap;
 }
 
 .register-view .banner {
@@ -474,6 +497,7 @@ vaadin-vertical-layout[theme~="spacing"] {
 
 .antragAnzeigen-button3 {
     background-color: #F7F7F7;
+    min-width: 160px !important;
     color: #2F5A83;
     border-radius: 15px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -493,6 +517,7 @@ vaadin-vertical-layout[theme~="spacing"] {
     color: #8DC63F;
     border-radius: 15px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    white-space: nowrap !important;
 
 }
 

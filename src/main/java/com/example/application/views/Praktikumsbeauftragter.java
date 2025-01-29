@@ -226,7 +226,20 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         //Grid zur Anzeige der Anträge.
         grid = new Grid<>(Praktikumsantrag.class);
+        grid.setWidthFull();
+        grid.setMinWidth("800px"); // Mindestbreite setzen, damit es nicht zu schmal wird
         grid.setHeight("600px");
+
+        // Verhindert das Abschneiden von Spalten
+        grid.setColumnReorderingAllowed(true);
+        grid.getColumns().forEach(column -> {
+            column.setAutoWidth(true); // Automatische Spaltenbreite
+            column.setFlexGrow(1); // Spalten können sich flexibel anpassen
+        });
+
+
+        grid.getStyle().set("overflow-x", "auto");
+
 
         grid.setColumns("name", "matrikelnummer");
 
@@ -245,7 +258,13 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 vollstaendigenAntragAnzeigenImPopUp(antrag.getMatrikelnummer());
             });
             return anzeigenButton;
-        }).setHeader("");
+        }).setHeader("")
+                .setAutoWidth(true)
+                .setFlexGrow(0)
+                .setWidth("180px");
+
+
+
 
         //Spalte für "Poster anzeigen"
         grid.addComponentColumn(praktikumsantrag -> {
@@ -260,7 +279,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 return anzeigenButton;
             }
             return new Span(); // Platzhalter für leere Zellen, falls noch kein poster vorhanden
-        }).setHeader("");
+        }).setHeader("")
+                .setAutoWidth(true)
+                .setFlexGrow(0)
+                .setWidth("180px");
 
 
         grid.setItems(antraege);
