@@ -391,7 +391,9 @@ public class Studentin extends VerticalLayout {
         List<String> notizen = getAntragNotiz(matrikelnummer);
         for (String notiz : notizen) {
 
-            String formattedNotiz = notiz.replaceFirst(":", ":<br>");
+            String formattedNotiz =
+                    "<div class='datum'>" + notiz.split(": ", 2)[0] + "</div>" +
+                            "<div class='nachricht'>" + notiz.split(": ", 2)[1] + "</div>";
 
             VerticalLayout kommentarBox = new VerticalLayout();
             kommentarBox.addClassName("note-style");
@@ -624,7 +626,8 @@ public class Studentin extends VerticalLayout {
                 for (int i = 0; i < jsonarray.length(); i++) {
                     JSONObject jsonObject = jsonarray.getJSONObject(i);
                     String nachricht = jsonObject.getString("nachricht");
-                    notizen.add(nachricht);
+                    String datum = jsonObject.getString("datum");
+                    notizen.add(datum + ": " + nachricht);
 
                 }
             }
