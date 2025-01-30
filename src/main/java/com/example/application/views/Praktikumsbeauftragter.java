@@ -155,7 +155,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 } else {
                     badges.removeAll();
                     Span filterBadge = createFilterBadge(e.getValue());
-                    badges.add(filterBadge);
+
                     filterGridByStatus(e.getValue());
 
                 }
