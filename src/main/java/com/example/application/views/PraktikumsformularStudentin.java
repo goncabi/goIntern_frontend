@@ -557,6 +557,13 @@ public class PraktikumsformularStudentin extends Div {
         return true;
     }
 
+    /**
+     * Validiert ein NumberField, indem überprüft wird, ob es leer ist.
+     * Falls das Feld leer ist, wird es visuell hervorgehoben.
+     *
+     * @param field Das zu validierende NumberField
+     * @return true, wenn das Feld nicht leer ist, sonst false
+     */
     private boolean validateField(NumberField field) {
         if (field.isEmpty()) {
             field.addClassName("mandatory-field");
@@ -566,6 +573,13 @@ public class PraktikumsformularStudentin extends Div {
         return true;
     }
 
+    /**
+     * Validiert ein EmailField, indem überprüft wird, ob es leer ist.
+     * Falls das Feld leer ist, wird es visuell hervorgehoben.
+     *
+     * @param field Das zu validierende EmailField
+     * @return true, wenn das Feld nicht leer ist, sonst false
+     */
     private boolean validateField(EmailField field) {
         if (field.isEmpty()) {
             field.addClassName("mandatory-field");
@@ -575,6 +589,13 @@ public class PraktikumsformularStudentin extends Div {
         return true;
     }
 
+    /**
+     * Validiert ein DatePicker-Feld, indem überprüft wird, ob es leer ist.
+     * Falls das Feld leer ist, wird es visuell hervorgehoben.
+     *
+     * @param field Das zu validierende DatePicker-Feld
+     * @return true, wenn das Feld nicht leer ist, sonst false
+     */
     private boolean validateField(DatePicker field) {
         if (field.isEmpty()) {
             field.addClassName("mandatory-field");
@@ -584,6 +605,13 @@ public class PraktikumsformularStudentin extends Div {
         return true;
     }
 
+    /**
+     * Validiert ein TextArea-Feld, indem überprüft wird, ob es leer ist.
+     * Falls das Feld leer ist, wird es visuell hervorgehoben.
+     *
+     * @param field Das zu validierende TextArea-Feld
+     * @return true, wenn das Feld nicht leer ist, sonst false
+     */
     private boolean validateField(TextArea field) {
         if (field.isEmpty()) {
             field.addClassName("mandatory-field");
