@@ -3,7 +3,7 @@
 
 
 ## 📃 Projektbeschreibung
-Dieses Projekt ist eine Webanwendung, die mit Vaadin, React, Spring Boot und Maven entwickelt wurde. Es enthält sowohl Frontend- als auch Backend-Komponenten zur Verwaltung von Praktikumsinformationen.
+Dieses Projekt ist eine Webanwendung, die mit Vaadin, Version 21, Spring Boot 3, Version 3.3.5 und Maven entwickelt wurde. Es enthält sowohl Frontend- als auch Backend-Komponenten sowie eine Anbindung zur Datenbank postgreSQL zur Verwaltung von Praktikumsanträgen.
 
 
 # 📋 Inhaltsverzeichnis
@@ -18,11 +18,8 @@ Dieses Projekt ist eine Webanwendung, die mit Vaadin, React, Spring Boot und Mav
 # 🛠️ Installation
 ## Voraussetzungen:
 
-* Java JDK 23
-
-* Node.js & npm
-
-* Maven
+* Java JDK 23 im Frontend
+* Java JDK 21 im Backend
 
 # 🚀 Verwendung und Hauptfunktionen
 ## Schritte zur Installation
@@ -30,27 +27,45 @@ Dieses Projekt ist eine Webanwendung, die mit Vaadin, React, Spring Boot und Mav
 ## Repository klonen
 
 1. git clone https://gitlab.rz.htw-berlin.de/Mira.Khreis/team1.frontend1
+2. git clone https://gitlab.rz.htw-berlin.de/Mira.Khreis/backend_team1
 
 2. In das Projektverzeichnis wechseln:
 
 * cd team1.frontend1
+* cd backend_team1
 
 ## Abhängigkeiten installieren
 
 1. mvn clean install
-2. npm install
+2. npm install (nur Frontend)
 
 ## Anwendung starten
 
+Frontend und Backend gleichzeitig ausführen (run):
 mvn spring-boot:run
 
 Die Anwendung ist unter http://localhost:8080 erreichbar.
 
-Das Projekt kann auch in eine IDE deiner Wahl importiert werden, wie es bei jedem Maven-Projekt üblich ist. Weitere Informationen dazu findest du in der [Vaadin-Dokumentation] (https://vaadin.com/docs/latest/guide/step-by-step/importing) (Eclipse, IntelliJ IDEA, NetBeans, and VS Code)., die Anleitungen für Eclipse, IntelliJ IDEA, NetBeans und VS Code enthält.
+Das Projekt kann auch in eine IDE deiner Wahl importiert werden, wie es bei jedem Maven-Projekt üblich ist. 
+Weitere Informationen dazu findest du in der [Vaadin-Dokumentation] (https://vaadin.com/docs/latest/guide/step-by-step/importing) (Eclipse, IntelliJ IDEA, NetBeans, and VS Code)., die Anleitungen für Eclipse, IntelliJ IDEA, NetBeans und VS Code enthält.
 
 
 ## ✨ Hauptfunktionen
-Nach der Registration, kannst du dich mit deinen erstellten Zugangsdaten anmelden. Hier kannst du durch verschiedene Abschnitte wie Login, Poster und weitere navigieren. Das System ermöglicht die Verwaltung und das Anzeigen von Praktikumsinformationen. Es gibt eine getrennte Ansicht für Studenten und Praktikumsbeauftragte. Der Student kann ihr Praktikumsformular mit ihren persönlichen und Praktikumsdaten ausfüllen, speichern und abschicken. Der Praktikumsbeauftragte sieht die Anträge in einer Tabelle und kann diese mit einer Begründung ablehnen oder zulassen. Zusätzlich kann die Studentin nach dem Praktikum ein Poster hochladen, welches der Praktikumsbeauftragte sich anschauen kann. Zu den Hauptfunktionen gehören die Benutzerregistrierung und Authentifizierung, die Verwaltung von Aufgaben und Praktikumsdaten, ein responsives Design für verschiedene Endgeräte sowie eine zuverlässige Datenbankanbindung über Spring Boot.
+
+Zu den Hauptfunktionen gehören die Registrierung und Authentifizierung (Login), die Verwaltung von Praktikumsanträgen und das Hochladen von Praktikumspostern.
+Nach der Registrierung, kann sich die Studentin mit ihren erstellten Zugangsdaten anmelden.
+Das System ermöglicht das Verwalten und das Anzeigen von Praktikumsinformationen.
+Es gibt eine getrennte Ansicht für Studentinnen und Praktikumsbeauftragte.
+Die Studentin kann ihr Praktikumsformular mit ihren persönlichen Daten und den Praktikumsdaten ausfüllen, zwischenspeichern, löschen und abschicken.
+Sie kann sich zudem die Arbeitstage für ihren angegeben Praktikumszeitraum berechnen lassen und überprüfen, ob diese ausreichen. 
+Der Praktikumsbeauftragte sieht die Anträge in einer Tabelle, und kann die Anträge genehmigen oder mit einer Begründung ablehnen. 
+Diese Begründung wird der jeweiligen Studentin angezeigt. 
+Er kann einzelne Anträge nach Namen und Matrikelnummern suchen oder konkret nach Status filtern. 
+Die Anträge können jeweils verschiedene Status haben: Antrag offen, Zugelassen, Abgelehnt, Derzeit im Praktikum, Absolviert
+Wenn ein Antrag durch die Studentin nachträglich zurückgezogen oder ein laufendes Praktikum abgebrochen wird, erhält der Praktikumsbeauftragte eine Nachricht in seiner Ansicht darüber. 
+Bei Abbruch werden die bereits absolvierten Praktikumstage angezeigt.
+Zusätzlich kann die Studentin, nachdem sie das Praktikum absolviert haben, ein Poster hochladen, welches sich der Praktikumsbeauftragte anschauen kann. 
+
 
 
 
@@ -70,7 +85,29 @@ team1.frontend1/
 |   |   |   |-- themes/          # UI-Themen
 |   |   |-- java/
 |   |   |   |-- com.example.application/
-|   |   |   |   |-- service/     # Backend-Services
+|   |   |   |   |-- service/     # Services
+|   |   |   |   |-- utils/       # Dienstprogramme
+|   |   |   |   |-- views/       # UI-Komponenten
+|-- resources/
+|-- pom.xml                     # Maven Build Datei
+|-- package.json                # npm Abhängigkeiten
+
+
+backend_team1/
+|-- .idea/                     # IntelliJ IDEA Konfigurationsdateien
+|-- .mvn/                      # Maven Wrapper
+|-- src/
+|   |-- main/
+|   |   |-- frontend/           # Frontend Bundle Dateien
+|   |   |-- java/               
+|   |   |-- frontend/
+|   |   |   |-- generated/     # Automatisch generierter Code
+|   |   |   |-- styles/          # CSS-Dateien
+|   |   |   |-- themes/          # UI-Themen
+|   |   |-- java/
+|   |   |   |-- com.example.application/
+|   |   |   |   |-- service/     # Services
+|   |   |   |   |-- utils/       # Dienstprogramme
 |   |   |   |   |-- views/       # UI-Komponenten
 |-- resources/
 |-- pom.xml                     # Maven Build Datei
