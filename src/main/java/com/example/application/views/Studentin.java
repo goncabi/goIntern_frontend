@@ -305,7 +305,9 @@ public class Studentin extends VerticalLayout {
         Button kommentarToggle = new Button("Kommentare >", VaadinIcon.COMMENTS.create());
         kommentarToggle.addClassName("kommentar-button2");
         kommentarToggle.getStyle().set("margin-top", "10px");
-
+        if ("Absolviert".equalsIgnoreCase(status)) {
+            kommentarToggle.setVisible(false);
+        }
 
         VerticalLayout kommentarContent = new VerticalLayout();
         kommentarContent.addClassName("scrollable-comments");
