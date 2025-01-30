@@ -125,6 +125,7 @@
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     padding: 10px;
     line-height: 1.5; /* Zeilenabstand */
+    margin-top: 10px;
     margin-bottom: 10px;
     width: 100%; /* Anpassung an den verfügbaren Platz */
     max-width: 500px; /* Maximalbreite */
@@ -134,8 +135,11 @@
     max-height: 300px;  /* Höhe des Kommentarbereichs */
     overflow-y: auto;   /* Scrollbalken für vertikales Scrollen */
     border: 1px solid #ddd; /* Rahmen für bessere Darstellung */
-    padding: 10px;
-    background-color: #f9f9f9; /* Hintergrundfarbe */
+    border-radius: 10px;
+    margin: 15px auto;
+    padding: 5px 10px;
+    align-items: center;
+    background-color: transparent; /* Hintergrundfarbe */
 }
 
 .startseite-view {
