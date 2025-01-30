@@ -230,7 +230,7 @@ public class Studentin extends VerticalLayout {
 
 
         Button praktikumAbbrechenButton = new Button("Praktikum abbrechen");
-        praktikumAbbrechenButton.addClassName("abbrechen-button2");
+        praktikumAbbrechenButton.addClassName("abbrechen-button4");
         praktikumAbbrechenButton.setVisible("Derzeit im Praktikum".equalsIgnoreCase(status)); // nur sichtbar, falls im Praktikum
         praktikumAbbrechenButton.addClickListener(event -> {
             ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();

@@ -536,3 +536,24 @@ vaadin-vertical-layout[theme~="spacing"] {
 .dropdown::part(toggle-button) {
     pointer-events: auto; /* Erlaubt Dropdown-Öffnung */
 }
+
+.abbrechen-button4 {
+    background-color: #E74C3C;
+    color: #FFFFFF;
+    font-size: 14px;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.abbrechen-button4:hover {
+    background-color: #c0392b;
+}
+
