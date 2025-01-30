@@ -38,11 +38,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Die Klasse PraktikumsformularStudentin stellt das Formular zur Beantragung des Praktikums bereit.
+ * Sie es Studierenden, ihre persönlichen Daten sowie die Daten der Praktikumsstelle einzugeben.
+ * Zusätzlich ermöglicht sie die Berechnung der Arbeitstage unter Berücksichtigung von Feiertagen (im Falle von Praktikum in Deutschland)
+ * und ohne Feiertage (falls Praktikum im Ausland).
+ */
 
 @Route("praktikumsformular") //  der Anwendung
 @CssImport("./styles.css")
 public class PraktikumsformularStudentin extends Div {
 
+    /** Service zur Berechnung der Arbeitstage aus ServiceKlasse. */
     ArbeitstageBerechnungsService arbeitstageRechner = new ArbeitstageBerechnungsService();
 
     // Studentendaten
@@ -77,10 +84,14 @@ public class PraktikumsformularStudentin extends Div {
     private DatePicker startdatum;
     private DatePicker enddatum;
 
+    /** Gibt an, ob der Antrag gespeichert wurde. */
     private boolean gespeichert = false; // Standardwert: nicht gespeichert
+    /** REST-Client zur Kommunikation mit dem Backend. */
     private final RestTemplate restTemplate = new RestTemplate();
 
-
+    /**
+     * Konstruktor der Klasse. Initialisiert das Formular und seine Felder.
+     */
     public PraktikumsformularStudentin() {
         // Hauptüberschrift
         add(new H1("Praktikumsformular"));
@@ -386,11 +397,19 @@ public class PraktikumsformularStudentin extends Div {
             }
         });
 
+        /**
+         * Container für die Buttons "Abbrechen", "Speichern" und "Absenden".
+         */
         Div buttonContainer = new Div(abbrechenButton,
                 speichernButton,
                 absendenButton);
         buttonContainer.addClassName("button-container1"); //hinzufügen aus css
 
+        /**
+         * Fügt eine Click-Listener-Logik für den "Absenden"-Button hinzu.
+         * Falls alle Felder validiert sind, wird der Antrag als JSON an das Backend gesendet.
+         * Falls nicht, wird eine Benachrichtigung angezeigt.
+         */
         absendenButton.addClickListener(e -> {
             if (validateAllFields()) {
                 pflichtfeldHinweis.setVisible(false);
@@ -413,6 +432,9 @@ public class PraktikumsformularStudentin extends Div {
             }
         });
 
+        /**
+         * Erstellt einen Hinweistext für Pflichtfelder.
+         */
         Paragraph sternchenHinweis = new Paragraph("Hinweis: Felder mit * sind Pflichtfelder, die vor dem Absenden ausgefüllt werden müssen. Sie können den Antrag jedoch auch speichern, ohne alle Pflichtfelder auszufüllen.");
 
         sternchenHinweis.getStyle()
@@ -428,6 +450,10 @@ public class PraktikumsformularStudentin extends Div {
                 buttonContainer);
     }
 
+    /**
+     * Überprüft, ob alle Pflichtfelder ausgefüllt wurden.
+     * @return true, wenn alle Felder valide sind, sonst false.
+     */
     private boolean validateAllFields() {
         boolean isValid = true;
 
@@ -471,26 +497,56 @@ public class PraktikumsformularStudentin extends Div {
         return isValid;
     }
 
+    /**
+     * Erstellt ein Textfeld mit einem gegebenen Label.
+     * @param label Die Bezeichnung des Textfelds
+     * @return Ein TextField-Objekt mit dem angegebenen Label
+     */
     private TextField createTextField(String label) {
         return new TextField(label);
     }
 
+    /**
+     * Erstellt ein Zahlenfeld mit einem gegebenen Label.
+     * @param label Die Bezeichnung des Zahlenfelds
+     * @return Ein NumberField-Objekt mit dem angegebenen Label
+     */
     private NumberField createNumberField(String label) {
         return new NumberField(label);
     }
 
+    /**
+     * Erstellt ein E-Mail-Feld mit einem gegebenen Label.
+     * @param label Die Bezeichnung des E-Mail-Felds
+     * @return Ein EmailField-Objekt mit dem angegebenen Label
+     */
     private EmailField createEmailField(String label) {
         return new EmailField(label);
     }
 
+    /**
+     * Erstellt ein Datumsauswahlfeld mit einem gegebenen Label.
+     * @param label Die Bezeichnung des Datumsauswahlfelds
+     * @return Ein DatePicker-Objekt mit dem angegebenen Label
+     */
     private DatePicker createDatePicker(String label) {
         return new DatePicker(label);
     }
 
+    /**
+     * Erstellt ein Textbereichsfeld mit einem gegebenen Label.
+     * @param label Die Bezeichnung des Textbereichs
+     * @return Ein TextArea-Objekt mit dem angegebenen Label
+     */
     private TextArea createTextArea(String label) {
         return new TextArea(label);
     }
 
+    /**
+     * Validiert ein Eingabefeld.
+     * @param field ist das zu validierende Feld
+     * @return true, wenn das Feld nicht leer ist, sonst false
+     */
     // Validierungsmethoden für Pflichtfelder
     private boolean validateField(TextField field) {
         if (field.isEmpty()) {
@@ -501,6 +557,13 @@ public class PraktikumsformularStudentin extends Div {
         return true;
     }
 
+    /**
+     * Validiert ein NumberField, indem überprüft wird, ob es leer ist.
+     * Falls das Feld leer ist, wird es visuell hervorgehoben.
+     *
+     * @param field Das zu validierende NumberField
+     * @return true, wenn das Feld nicht leer ist, sonst false
+     */
     private boolean validateField(NumberField field) {
         if (field.isEmpty()) {
             field.addClassName("mandatory-field");
@@ -510,6 +573,13 @@ public class PraktikumsformularStudentin extends Div {
         return true;
     }
 
+    /**
+     * Validiert ein EmailField, indem überprüft wird, ob es leer ist.
+     * Falls das Feld leer ist, wird es visuell hervorgehoben.
+     *
+     * @param field Das zu validierende EmailField
+     * @return true, wenn das Feld nicht leer ist, sonst false
+     */
     private boolean validateField(EmailField field) {
         if (field.isEmpty()) {
             field.addClassName("mandatory-field");
@@ -519,6 +589,13 @@ public class PraktikumsformularStudentin extends Div {
         return true;
     }
 
+    /**
+     * Validiert ein DatePicker-Feld, indem überprüft wird, ob es leer ist.
+     * Falls das Feld leer ist, wird es visuell hervorgehoben.
+     *
+     * @param field Das zu validierende DatePicker-Feld
+     * @return true, wenn das Feld nicht leer ist, sonst false
+     */
     private boolean validateField(DatePicker field) {
         if (field.isEmpty()) {
             field.addClassName("mandatory-field");
@@ -528,6 +605,13 @@ public class PraktikumsformularStudentin extends Div {
         return true;
     }
 
+    /**
+     * Validiert ein TextArea-Feld, indem überprüft wird, ob es leer ist.
+     * Falls das Feld leer ist, wird es visuell hervorgehoben.
+     *
+     * @param field Das zu validierende TextArea-Feld
+     * @return true, wenn das Feld nicht leer ist, sonst false
+     */
     private boolean validateField(TextArea field) {
         if (field.isEmpty()) {
             field.addClassName("mandatory-field");
@@ -537,6 +621,11 @@ public class PraktikumsformularStudentin extends Div {
         return true;
     }
 
+    /**
+     * Validiert eine Radio-Button-Gruppe, indem überprüft wird, ob eine Option ausgewählt wurde.
+     * @param group Die zu validierende RadioButtonGroup
+     * @return true, wenn eine Option ausgewählt wurde, sonst false
+     */
     private boolean validateField(RadioButtonGroup<String> group) {
         if (group.isEmpty()) {
             group.addClassName("mandatory-field"); // Agrega estilo para resaltar
@@ -549,6 +638,11 @@ public class PraktikumsformularStudentin extends Div {
     }
 
 
+    /**
+     * Erstellt ein JSON-String mit den Antragsdaten.
+     * @param statusAntrag Der aktuelle Status des Antrags
+     * @return Ein JSON-String mit den Antragsdaten
+     */
     private String createJson(String statusAntrag) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
@@ -627,17 +721,33 @@ public class PraktikumsformularStudentin extends Div {
         );
     }
 
-// Hilfsmethoden
-
+    /**
+     * Gibt den Wert eines Eingabefelds als String zurück oder einen leeren String, falls der Wert null ist.
+     *
+     * @param field Das Eingabefeld
+     * @return Der Wert des Feldes als String oder "" falls null
+     */
     private String getValueOrEmpty(HasValue<?, ?> field) {
         return field != null && field.getValue() != null ? field.getValue().toString() : "";
     }
 
+    /**
+     * Gibt den Wert eines NumberField als Integer zurück oder 0, falls der Wert null ist.
+     *
+     * @param field Das NumberField
+     * @return Der Wert als Integer oder 0 falls null
+     */
     private int getIntValueOrZero(NumberField field) {
         return field != null && field.getValue() != null ? field.getValue().intValue() : 0;
     }
 
 
+    /**
+     * Sendet ein JSON-Objekt an das Backend.
+     * @param json Die JSON-Daten als String
+     * @param url Die Ziel-URL des Backends
+     * @param successMessage Die Erfolgsmeldung
+     */
     private void sendJsonToBackend(String json, String url, String successMessage)
             throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -664,6 +774,12 @@ public class PraktikumsformularStudentin extends Div {
         }
     }
 
+    /**
+     * Ruft einen Praktikumsantrag vom Backend ab.
+     *
+     * @param matrikelnummer Die Matrikelnummer der Student*in
+     * @return Ein JSONObject mit den Antragsdaten oder null, falls ein Fehler auftritt
+     */
     private JSONObject getPraktikumsantragFromBackend(String matrikelnummer) {
         String url = "http://localhost:3000/api/antrag/getantrag/" + matrikelnummer;
         try {
@@ -684,6 +800,11 @@ public class PraktikumsformularStudentin extends Div {
     }
 
 
+    /**
+     * Füllt die Formularfelder mit den Daten aus einem gegebenen JSONObject.
+     *
+     * @param antragJson Das JSONObject, das die Antragsdaten enthält
+     */
     private void fillFormFields(JSONObject antragJson) {
         try {
 
@@ -738,6 +859,13 @@ public class PraktikumsformularStudentin extends Div {
     }
 
 
+    /**
+     * Konvertiert ein Datum ins deutsche Format (dd.MM.yyyy) in ein LocalDate-Objekt.
+     *
+     * @param dateStr Das Datum als String im Format dd.MM.yyyy
+     * @return Ein LocalDate-Objekt, das das geparste Datum repräsentiert
+     * @throws IllegalArgumentException Falls das Datum nicht im erwarteten Format vorliegt
+     */
     private LocalDate parseDateFromGermanFormat(String dateStr) {
         DateTimeFormatter deutschesDatumFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         try {
