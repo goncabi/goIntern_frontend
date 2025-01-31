@@ -214,14 +214,14 @@ public class Studentin extends VerticalLayout {
 
         loeschenButton.addClickListener(event -> {
             Dialog confirmDialog = DialogUtils.createStandardDialog(
-                    "Antrag löschen",
+                    "Antrag zurückziehen",
                     null,
-                    "Sind Sie sicher, dass Sie den Antrag löschen möchten?",
+                    "Sind Sie sicher, dass Sie den Antrag zurückziehen möchten?",
                     "Ja",
                     "Abbrechen",
                     () -> {
                         loeschenAntrag(matrikelnummer);
-                        Notification.show("Antrag gelöscht.");
+                        Notification.show("Antrag zurückgezogen.");
                         UI.getCurrent().getPage().reload();
                     }
             );
@@ -588,7 +588,7 @@ public class Studentin extends VerticalLayout {
         card.setSizeFull();
         card.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
-        H2 title = new H2("Neuer Antrag");
+        H2 title = new H2("");
         title.getStyle().set("text-align", "center");
 
         Button newRequestButton = new Button("Antrag erstellen", VaadinIcon.PLUS.create(), event -> {
