@@ -97,14 +97,14 @@ public class PraktikumsformularStudentin extends Div {
         add(new H1("Praktikumsformular"));
 
         // Felder initialisieren
-        nameStudentin = createTextField("Name der Studentin *");
-        vornameStudentin = createTextField("Vorname der Studentin *");
+        nameStudentin = createTextField("Name der Student*in *");
+        vornameStudentin = createTextField("Vorname der Student*in *");
         gebDatumStudentin = CustomDatePicker.createGermanDatePicker("Geburtsdatum *");
-        strasseHausnummerStudentin = createTextField("Straße und Hausnummer der Studentin *");
-        plzStudentin = createNumberField("Postleitzahl der Studentin *");
-        ortStudentin = createTextField("Ort der Studentin *");
-        telefonnummerStudentin = createTextField("Telefonnummer der Studentin *");
-        emailStudentin = createEmailField("E-Mail-Adresse der Studentin *");
+        strasseHausnummerStudentin = createTextField("Straße und Hausnummer der Student*in *");
+        plzStudentin = createNumberField("Postleitzahl der Student*in *");
+        ortStudentin = createTextField("Ort der Student*in *");
+        telefonnummerStudentin = createTextField("Telefonnummer der Student*in *");
+        emailStudentin = createEmailField("E-Mail-Adresse der Student*in *");
         vorschlagPraktikumsbetreuerIn = createTextField("Vorgeschlagene*r Praktikumsbetreuer*in (an der HTW) *");
         praktikumssemester = createTextField("Praktikumssemester (SoSe / WiSe und Jahreszahl) *");
         studiensemester = createNumberField("Studiensemester (bitte als Zahl eingeben) *");
@@ -143,11 +143,11 @@ public class PraktikumsformularStudentin extends Div {
 
 
         landPraktikumsstelle = createTextField("Land der Praktikumsstelle *");
-        ansprechpartnerPraktikumsstelle = createTextField("Ansprechpartner der Praktikumsstelle *");
+        ansprechpartnerPraktikumsstelle = createTextField("Ansprechpartner*in der Praktikumsstelle *");
         telefonPraktikumsstelle = createTextField("Telefon der Praktikumsstelle *");
         emailPraktikumsstelle = createEmailField("E-Mail-Adresse der Praktikumsstelle *");
         abteilung = createTextField("Abteilung *");
-        taetigkeit = createTextArea("Tätigkeit der Praktikantin / des Praktikanten *");
+        taetigkeit = createTextArea("Tätigkeit als Praktikant*in *");
         startdatum = CustomDatePicker.createGermanDatePicker("Startdatum des Praktikums *");
         enddatum = CustomDatePicker.createGermanDatePicker("Enddatum des Praktikums *");
 
@@ -175,7 +175,7 @@ public class PraktikumsformularStudentin extends Div {
 
         if (neuerAntrag != null && neuerAntrag) {
             // Neuer Antrag stellen: Formular bleibt leer
-            Notification.show("Erstellen Sie einen neuen Antrag.",
+            Notification.show("Bitte erstelle einen neuen Antrag.",
                     3000,
                     Notification.Position.TOP_CENTER);
         } else {
@@ -386,7 +386,7 @@ public class PraktikumsformularStudentin extends Div {
                 Dialog confirmDialog = DialogUtils.createStandardDialog(
                 "Daten nicht gespeichert",
                 null,
-                "Möchten Sie die Eingabe wirklich verwerfen?",
+                "Möchtest du die Eingabe wirklich verwerfen?",
                         "Ja",
                         "Abbrechen",
                         () -> UI.getCurrent().getPage().setLocation("studentin/startseite"));
@@ -629,7 +629,7 @@ public class PraktikumsformularStudentin extends Div {
     private boolean validateField(RadioButtonGroup<String> group) {
         if (group.isEmpty()) {
             group.addClassName("mandatory-field"); // Agrega estilo para resaltar
-            Notification.show("Bitte wählen Sie eine Option für: " + group.getLabel(),
+            Notification.show("Bitte wähle eine Option für: " + group.getLabel(),
                     3000, Notification.Position.MIDDLE);
             return false;
         }
