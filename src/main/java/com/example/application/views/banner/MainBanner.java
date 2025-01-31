@@ -31,7 +31,7 @@ import com.vaadin.flow.router.RouterLayout;
             logoAndTitleRow.add(logoBeforeTitle, bannerTitle);
 
             // Slogan direkt unter der Überschrift
-            Span slogan = new Span("Dein Weg zum schnellen Praktikum");
+            Span slogan = new Span("Dein schneller Weg zum Praktikum");
             slogan.addClassName("banner-slogan");
 
             // Container für Logo und Überschrift
