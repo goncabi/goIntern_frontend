@@ -85,9 +85,18 @@ team1.frontend1/
 |   |   |   |-- themes/          # UI-Themen
 |   |   |-- java/
 |   |   |   |-- com.example.application/
-|   |   |   |   |-- service/     # Services
+|   |   |   |   |-- service/     # ServiceLayer und BusinessLogik
+|   |   |   |   |   |--ArbeitstageBerechnungsService
 |   |   |   |   |-- utils/       # Dienstprogramme
+|   |   |   |   |   |--CustomDatePicker
+|   |   |   |   |   |--DialosUtils
 |   |   |   |   |-- views/       # UI-Komponenten
+|   |   |   |   |   |--banner/
+|   |   |   |   |   |--login/
+|   |   |   |   |   |--poster/
+|   |   |   |   |   |--register/
+|   |   |   |   |   |--ResetPassword/
+|   |   |   |   |   |--subordinatebanner
 |-- resources/
 |-- pom.xml                     # Maven Build Datei
 |-- package.json                # npm Abhängigkeiten
@@ -110,11 +119,11 @@ backend_team1/
 |   |   |   |-- themes/          # UI-Themen
 |   |   |-- java/
 |   |   |   |-- com.example.application/
-|   |   |   |   |-- config   
+|   |   |   |   |-- config       #Konfiguration #Sicherheit #API
 |   |   |   |   |   |--CorsConfig 
 |   |   |   |   |   |--OpenApiConfig
 |   |   |   |   |   |--PosterUploadConfig
-|   |   |   |   |-- controller   
+|   |   |   |   |-- controller   #RESTController #APIEndpunkte
 |   |   |   |   |   |--BenachrichtigungController
 |   |   |   |   |   |--LoginController    
 |   |   |   |   |   |--PasswortVergessenController 
@@ -122,7 +131,7 @@ backend_team1/
 |   |   |   |   |   |--PosterController   
 |   |   |   |   |   |--PraktikumsantragController  
 |   |   |   |   |   |--RegistrierungController
-|   |   |   |   |-- models
+|   |   |   |   |-- models    #Datenmodelle #JPAEntities
 |   |   |   |   |   |--AppUserRole
 |   |   |   |   |   |--Benachrichtigung
 |   |   |   |   |   |--BenachrichtigungWichtigkeit
@@ -136,7 +145,7 @@ backend_team1/
 |   |   |   |   |   |--Sicherheitsfrage
 |   |   |   |   |   |--StatusAntrag
 |   |   |   |   |   |--Studentin
-|   |   |   |   |-- repositories
+|   |   |   |   |-- repositories  #Datenbankzugriff #JPARepositories
 |   |   |   |   |   |--BenachrichtigungRepository
 |   |   |   |   |   |--PBRepository
 |   |   |   |   |   |--PosterRepository
@@ -152,11 +161,11 @@ backend_team1/
 |   |   |   |   |   |--PBService
 |   |   |   |   |   |--RegistrierungService
 |   |   |   |   |   |--SicherheitsfragenService
-|   |   |--resources/
+|   |   |--resources/    #Konfigurationsdateien #Ressourcen
 |   |   |   |--META-INF.resources.icons
 |   |   |   |-- application.properties
 |   |   |   |--banner.txt
-|   |--test
+|   |--test      #UnitTests #ServiceTests
 |   |   |--java
 |   |   |   |--con.example.application.services
 |   |   |   |   |--BenachrichtigungServiceTest

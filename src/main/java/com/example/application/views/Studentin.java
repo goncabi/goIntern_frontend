@@ -37,6 +37,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -97,7 +99,7 @@ public class Studentin extends VerticalLayout {
         String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
 
         if (matrikelnummer == null) {
-            Notification.show("Keine Matrikelnummer in der Sitzung gefunden. Bitte loggen Sie sich erneut ein.", 5000, Notification.Position.MIDDLE);
+            Notification.show("Keine Matrikelnummer in der Sitzung gefunden. Bitte logge dich erneut ein.", 5000, Notification.Position.MIDDLE);
             getUI().ifPresent(ui -> ui.navigate("login")); //hier wird man zur loginseite navigiert, falls die matrikelnummer null ist.
             return;
         }
@@ -112,7 +114,7 @@ public class Studentin extends VerticalLayout {
             Dialog confirmDialog = DialogUtils.createStandardDialog(
                     "Logout bestätigen",
                     null,
-                    "Möchten Sie sich wirklich ausloggen?",
+                    "Möchtest du dich wirklich ausloggen?",
                     "Ja",
                     "Abbrechen",
                     () -> getUI().ifPresent(ui -> ui.navigate("login"))
@@ -159,7 +161,7 @@ public class Studentin extends VerticalLayout {
      * Bietet Funktionalitäten zum:
      * - Anzeigen des Antragsstatus
      * - Bearbeiten des Antrags
-     * - Löschen des Antrags
+     * - Zurückziehen des bereits eingereichten Antrags
      * - Abbrechen des laufenden Praktikums
      *
      * @param matrikelnummer Matrikelnummer des Studenten
@@ -204,25 +206,28 @@ public class Studentin extends VerticalLayout {
 
 
         //Löschen Button
-        Button loeschenButton = new Button("Löschen");
-        loeschenButton.addClassName("loeschen-button2");
-        loeschenButton.setVisible(
+        Button antragZurueckziehenButton = new Button("Antrag zurückziehen");
+        antragZurueckziehenButton.addClassName("loeschen-button2");
+        antragZurueckziehenButton.setVisible(
                 "Abgelehnt".equalsIgnoreCase(status) ||
                         "gespeichert".equalsIgnoreCase(status)
                         || "zugelassen".equalsIgnoreCase(status)
         );
 
-        loeschenButton.addClickListener(event -> {
+        antragZurueckziehenButton.addClickListener(event -> {
             Dialog confirmDialog = DialogUtils.createStandardDialog(
                     "Antrag zurückziehen",
                     null,
-                    "Sind Sie sicher, dass Sie den Antrag zurückziehen möchten?",
+                    "Bist du dir sicher, dass du den Antrag zurückziehen möchtest?",
                     "Ja",
                     "Abbrechen",
                     () -> {
                         loeschenAntrag(matrikelnummer);
-                        Notification.show("Antrag zurückgezogen.");
+                        Executors.newSingleThreadScheduledExecutor().schedule(() -> {
+                            UI.getCurrent().access(() -> UI.getCurrent().getPage().reload());
+                        }, 3, TimeUnit.SECONDS);
                         UI.getCurrent().getPage().reload();
+
                     }
             );
             confirmDialog.open();
@@ -403,7 +408,7 @@ public class Studentin extends VerticalLayout {
             });
             buttonLayout.add(posterHochladenButton);
         } else {
-            buttonLayout.add(bearbeitenButton, loeschenButton);
+            buttonLayout.add(bearbeitenButton, antragZurueckziehenButton);
         }
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
@@ -564,9 +569,9 @@ public class Studentin extends VerticalLayout {
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
-                Notification.show("Antrag erfolgreich gelöscht.");
+                Notification.show("Antrag wurde zurückgezogen.", 3000, Notification.Position.MIDDLE);
             } else {
-                Notification.show("Antrag nicht gefunden oder Fehler beim Löschen.");
+                Notification.show("Antrag nicht gefunden oder Fehler beim Zurückziehen.");
             }
         } catch (Exception e) {
             Notification.show("Fehler: " + e.getMessage());

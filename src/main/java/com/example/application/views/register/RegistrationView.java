@@ -127,7 +127,7 @@ public class RegistrationView extends VerticalLayout {
 
         // Fehlernachricht für die Sicherheitsfrage
         Div questionError = new Div();
-        questionError.setText("Bitte fülle das Feld aus!");
+        questionError.setText("Bitte füll das Feld aus!");
         questionError.addClassName("error-message");
         questionError.setVisible(false); // Standardmäßig unsichtbar
 
