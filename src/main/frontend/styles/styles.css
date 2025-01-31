@@ -207,23 +207,18 @@ Duplikat angezeigt wird*/
 }
 
 /* Gemeinsame Dropdown-Klasse */
-.dropdown {
+.dropdown .suchleiste {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+    margin: 10px !important;
     border: 1px solid #ddd;
-    border-radius: 4px;
+
     font-size: 16px;
     background-color: #fff;
-    color: #333;
+
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Hover und Fokus für Dropdown */
-.dropdown:hover, .dropdown:focus {
-    border-color: #2F5A83;
-    box-shadow: 0 0 5px #1C3650;
-}
+
 
 .banner {
     background-color: white;

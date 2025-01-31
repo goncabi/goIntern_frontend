@@ -167,7 +167,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.setPlaceholder("Suchleiste");
         searchField.setClearButtonVisible(true);
         searchField.setWidth("250px");
-        searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
+        searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "10px");
         searchField.setClearButtonVisible(true);
 
         //Lupe hinzugefügt
