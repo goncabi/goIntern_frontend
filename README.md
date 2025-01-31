@@ -99,19 +99,78 @@ backend_team1/
 |-- src/
 |   |-- main/
 |   |   |-- frontend/           # Frontend Bundle Dateien
-|   |   |-- java/               
+|   |   |   |-- generated/      # Automatisch generierter Code
+|   |   |   |-- themes/         
+|   |   |   |--|-- praktikumsapp/    
+|   |   |   |--|--|-- main-layout     
+|   |   |   |--|--|-- styles          # CSS-Dateien           
 |   |   |-- frontend/
-|   |   |   |-- generated/     # Automatisch generierter Code
+|   |   |   |-- generated/       # Automatisch generierter Code
 |   |   |   |-- styles/          # CSS-Dateien
 |   |   |   |-- themes/          # UI-Themen
 |   |   |-- java/
 |   |   |   |-- com.example.application/
-|   |   |   |   |-- service/     # Services
-|   |   |   |   |-- utils/       # Dienstprogramme
-|   |   |   |   |-- views/       # UI-Komponenten
-|-- resources/
+|   |   |   |   |-- config   
+|   |   |   |   |   |--CorsConfig 
+|   |   |   |   |   |--OpenApiConfig
+|   |   |   |   |   |--PosterUploadConfig
+|   |   |   |   |-- controller   
+|   |   |   |   |   |--BenachrichtigungController
+|   |   |   |   |   |--LoginController    
+|   |   |   |   |   |--PasswortVergessenController 
+|   |   |   |   |   |--PBController   
+|   |   |   |   |   |--PosterController   
+|   |   |   |   |   |--PraktikumsantragController  
+|   |   |   |   |   |--RegistrierungController
+|   |   |   |   |-- models
+|   |   |   |   |   |--AppUserRole
+|   |   |   |   |   |--Benachrichtigung
+|   |   |   |   |   |--BenachrichtigungWichtigkeit
+|   |   |   |   |   |--LoginAnfrage
+|   |   |   |   |   |--PasswortVergessenAnfrage
+|   |   |   |   |   |--Poster
+|   |   |   |   |   |--Praktikumsantrag
+|   |   |   |   |   |--Praktikumsbeautragter
+|   |   |   |   |   |--RegistrierungsAnfrage
+|   |   |   |   |   |--Sicherheitsantwort
+|   |   |   |   |   |--Sicherheitsfrage
+|   |   |   |   |   |--StatusAntrag
+|   |   |   |   |   |--Studentin
+|   |   |   |   |-- repositories
+|   |   |   |   |   |--BenachrichtigungRepository
+|   |   |   |   |   |--PBRepository
+|   |   |   |   |   |--PosterRepository
+|   |   |   |   |   |--PraktikumsantragRepository
+|   |   |   |   |   |--SicherheitsantwortRepository
+|   |   |   |   |   |--SicherheitsfrageRepository
+|   |   |   |   |   |--StudentinRepository
+|   |   |   |   |-- services    
+|   |   |   |   |   |--BenachrichtigungService
+|   |   |   |   |   |--LoginService
+|   |   |   |   |   |--MockDataService
+|   |   |   |   |   |--PasswortVergessenService
+|   |   |   |   |   |--PBService
+|   |   |   |   |   |--RegistrierungService
+|   |   |   |   |   |--SicherheitsfragenService
+|   |   |--resources/
+|   |   |   |--META-INF.resources.icons
+|   |   |   |-- application.properties
+|   |   |   |--banner.txt
+|   |--test
+|   |   |--java
+|   |   |   |--con.example.application.services
+|   |   |   |   |--BenachrichtigungServiceTest
+|   |   |   |   |--LoginServiceTest
+|   |   |   |   |--MockDataServiceTest
+|   |   |   |   |--PasswortVergessenServiceTest
+|   |   |   |   |--PBServiceTest
+|   |   |   |   |--PosterServiceTest
+|   |   |   |   |--PraktikumsantragServiceTest
+|   |   |   |   |--RegistrierungServceTest
+|   |   |   |   |--SicherheitsfragenServiceTest
+|   |   |   |   |
 |-- pom.xml                     # Maven Build Datei
-|-- package.json                # npm Abhängigkeiten
+
 ```
 
 
