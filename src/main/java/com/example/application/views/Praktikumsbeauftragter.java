@@ -130,7 +130,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         comboBox.setPlaceholder("Nach Status filtern");
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
         comboBox.setWidth("250px");
-        comboBox.addClassName("dropdown");
+        comboBox.addClassName("filterleiste");
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
 
 
