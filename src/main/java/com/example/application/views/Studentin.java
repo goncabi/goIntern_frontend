@@ -117,7 +117,15 @@ public class Studentin extends VerticalLayout {
                     "Möchtest du dich wirklich ausloggen?",
                     "Ja",
                     "Abbrechen",
-                    () -> getUI().ifPresent(ui -> ui.navigate("login"))
+                    () -> {
+                        VaadinSession session = VaadinSession.getCurrent();
+                        if (session != null) {
+                            session.getSession().invalidate();
+                            session.close(); // VaadinSession schließen
+                        }
+
+                        getUI().ifPresent(ui -> ui.getPage().setLocation("login"));
+                    }
             );
             confirmDialog.open();
         });
