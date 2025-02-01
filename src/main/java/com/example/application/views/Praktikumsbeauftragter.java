@@ -108,7 +108,6 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         logoutButton.getElement().getStyle().set("cursor", "pointer");
         logoutButton.addClickListener(event -> {
 
-
             Dialog confirmDialog = createLogoutConfirmationDialog();
             confirmDialog.open();
 
@@ -362,10 +361,16 @@ public class Praktikumsbeauftragter extends VerticalLayout {
                 "Möchten Sie sich wirklich ausloggen?",
                 "Ja",
                 "Abbrechen",
-                () -> getUI().ifPresent(ui -> ui.navigate("login"))
+                () -> {
+                    VaadinSession session = VaadinSession.getCurrent();
+                    if (session != null) {
+                        session.getSession().invalidate();
+                        session.close(); // VaadinSession schließen
+                    }
+                    UI.getCurrent().getPage().setLocation("login");
+                }
         );
     }
-
     /**
      * Holt die Liste der eingegangenen Praktikumsanträge zur Vorschau.
      * Diese Methode ruft alle Praktikumsanträge vom Backend ab, die nicht den Status "gespeichert" haben.
