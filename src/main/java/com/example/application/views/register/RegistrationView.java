@@ -214,7 +214,7 @@ public class RegistrationView extends VerticalLayout {
                 }
             }
             if(isValid){
-                getUI().ifPresent(ui -> ui.navigate("studentin/startseite"));
+                getUI().ifPresent(ui -> ui.navigate("login"));
             }
         });
 
