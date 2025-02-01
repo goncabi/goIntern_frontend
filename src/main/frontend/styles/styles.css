@@ -41,7 +41,7 @@ html, body {
 }
 
 /* Eingabefelder */
-.text-field, .role-selection {
+.text-field, .role-selection, .dropdown {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
@@ -206,8 +206,8 @@ Duplikat angezeigt wird*/
     background-size: 20px 20px;
 }
 
-/* Gemeinsame Dropdown-Klasse */
-.dropdown .suchleiste {
+/* Gemeinsame Dropdown-Klasse
+.dropdown {
     width: 100%;
     margin: 10px !important;
     border: 1px solid #ddd;
@@ -217,7 +217,7 @@ Duplikat angezeigt wird*/
 
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-
+*/
 
 
 .banner {
