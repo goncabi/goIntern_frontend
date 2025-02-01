@@ -46,6 +46,7 @@ html, body {
 .text-field, .role-selection, .dropdown {
     width: 100%;
     padding: 10px;
+    box-sizing: border-box !important;
     margin: 10px 0;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -54,9 +55,9 @@ html, body {
 
 /* Button-Stile */
 .button {
-    width: 420px !important;
+    width: 100% ;
     padding: 12px;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
     background-color: #2F5A83;
     border: none;
     color: #fff;
@@ -69,7 +70,7 @@ html, body {
 
 .startseite-login-button {
     width: 100%;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
     background-color: #2F5A83;
     border: none;
     color: #fff;
