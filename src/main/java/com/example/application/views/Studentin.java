@@ -1,6 +1,7 @@
 package com.example.application.views;
 
 import com.example.application.service.ArbeitstageBerechnungsService;
+import com.example.application.views.banner.MainBanner;
 import com.example.application.views.subordinatebanner.SubordinateBanner;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -64,7 +65,7 @@ import java.util.concurrent.atomic.AtomicLong;
  @CssImport Importiert benutzerdefiniertes CSS für Styling.
  @PageTitle("Studentin") Der Titel des Browser Tabs ist hier mit Studentin festgelegt.
  */
-@Route(value = "studentin/startseite", layout = SubordinateBanner.class)
+@Route(value = "studentin/startseite", layout = MainBanner.class)
 @CssImport("./styles/startseite.css")
 @PageTitle("Studentin")
 
