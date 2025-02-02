@@ -157,9 +157,8 @@
     background-color: #2F5A83;
     color: white;
     font-size: 14px;
-    font-weight: bold;
     padding: 10px 15px;
-    border-radius: 5px;
+    border-radius: 15px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -168,4 +167,16 @@
 .poster-hochladen-button:hover {
     background-color: #8DC63F;
     color: #FFFFFF
+}
+
+.datei-auswählen-button {
+    background-color: #FFFFFF;
+    color: #2F5A83;
+    border-radius: 15px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.datei-auswählen-button:hover {
+    background-color: #F9F9F9;
+    color: #8DC63F;
 }

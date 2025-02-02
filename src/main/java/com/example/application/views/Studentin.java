@@ -352,7 +352,9 @@ public class Studentin extends VerticalLayout {
 
             // "Drop file here"-Text entfernen
             upload.setDropAllowed(false);
-            upload.setUploadButton(new Button("Datei auswählen"));
+            Button uploadButton = new Button("Datei auswählen");
+            uploadButton.addClassName("datei-auswählen-button");
+            upload.setUploadButton(uploadButton);
 
             // balken mit uploadprogress
             ProgressBar progressBar = new ProgressBar();
