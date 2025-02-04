@@ -137,11 +137,14 @@ public class Studentin extends VerticalLayout {
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         header.getStyle().set("position", "relative");
 
+        Div spacer = new Div();
+        spacer.setHeight("20px");
+
         // Antrag anzeigen oder "Neuen Antrag erstellen"
         Component content = hasAntrag(matrikelnummer) ? createMeinAntragContainer(matrikelnummer) : createStartseite();
 
         // Elemente hinzufügen
-        add(header, content);
+        add(header, spacer, content);
     }
 
     /**
@@ -189,7 +192,6 @@ public class Studentin extends VerticalLayout {
         String status = getAntragStatus(matrikelnummer);
         Span statusLabel = createStatusBadge(status);
         statusLabel.addClassName("status-label");
-
 
         HorizontalLayout headerLayout = new HorizontalLayout(heading, statusLabel);
         headerLayout.setAlignItems(Alignment.CENTER);
