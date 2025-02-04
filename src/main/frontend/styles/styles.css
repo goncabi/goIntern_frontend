@@ -474,6 +474,7 @@ vaadin-vertical-layout[theme~="spacing"] {
 .abbrechen-button3, .genehmigen-button3, .ablehnen-button3 {
     border-radius: 15px;
     margin-top:15px;
+    margin-bottom: 15px;
 }
 
 .ablehnungs-abbrechen-button3, .ablehnungAbsenden-button3 {
@@ -555,5 +556,32 @@ vaadin-vertical-layout[theme~="spacing"] {
 
 .abbrechen-button4:hover {
     background-color: #c0392b;
+}
+
+.notification-button7 {
+    background-color: #FFFFFF;
+    font-size: 18px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.notification-button:hover {
+    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3);
+}
+
+.logout-button8 {
+    background-color: #FFFFFF;
+    color: #2F5A83;
+    font-size: 18px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logout-button8:hover {
+    background-color: #8dc63f;
+    color: #FFFFFF;
+    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3);
 }
 

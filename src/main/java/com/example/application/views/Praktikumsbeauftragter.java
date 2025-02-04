@@ -85,6 +85,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
         Button notificationBell = new Button(VaadinIcon.BELL.create());
+        notificationBell.addClassName("notification-button7");
         notificationBell.getElement().getStyle().set("cursor", "pointer");
         ContextMenu notificationMenu = new ContextMenu(notificationBell);
         notificationMenu.setOpenOnClick(true);
@@ -105,6 +106,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
+        logoutButton.addClassName("logout-button8");
         logoutButton.getElement().getStyle().set("cursor", "pointer");
         logoutButton.addClickListener(event -> {
 
