@@ -80,7 +80,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         addClassName("admin-startseite-view");
 
 
-        H1 title = new H1("Übersicht über Praktikumsanträge");
+        H1 title = new H1("Übersicht der Praktikumsanträge");
         title.getStyle().set("margin-top", "0").set("margin-bottom", "10px");
 
 
@@ -128,19 +128,23 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         //Filterleiste
         ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.setAllowCustomValue(false);
         comboBox.setPlaceholder("Nach Status filtern");
         comboBox.setItems("alle Anträge anzeigen", "Antrag offen", "Abgelehnt", "Zugelassen", "Derzeit im Praktikum", "Absolviert");
         comboBox.setWidth("250px");
         comboBox.addClassName("filterleiste");
         comboBox.getStyle().set("height", "40px").set("padding", "0").set("margin", "0");
 
-
+        comboBox.getElement().executeJs("this.inputElement.readOnly = true;");
+        comboBox.getElement().addEventListener("click", event -> {
+            comboBox.setOpened(true);
+        });
 
         comboBox.setRenderer(new ComponentRenderer<>(item -> {
             Span span = new Span(item);
             if ("alle Anträge anzeigen".equals(item)) {
                 span.getStyle()
-                        .set("color", "steelblue")
+                        .set("color", "#2F5A83")
                         .set("font-weight", "bold");
             }
             return span;

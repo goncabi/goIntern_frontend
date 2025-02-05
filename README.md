@@ -183,11 +183,6 @@ backend_team1/
 ```
 
 
-# 📚 Konfiguration
-
-* Konfigurationsdatei hier einfügen
-
-
 ## 📝 Lizenz
 Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen findest du in der LICENSE-Datei.
 
