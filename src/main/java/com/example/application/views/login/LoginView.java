@@ -142,6 +142,8 @@ public class LoginView extends VerticalLayout {
         Button loginButton = new Button("Login");
         loginButton.addClassName("button");
 
+        loginButton.addClickShortcut(com.vaadin.flow.component.Key.ENTER);
+
         // Login-Logik
         loginButton.addClickListener(event -> {
             boolean isValid = true;
