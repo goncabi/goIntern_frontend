@@ -9,6 +9,8 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.server.VaadinSession;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -88,10 +90,10 @@ public class ResetPasswordView extends VerticalLayout {
         button.addClassName("button");
 
         button.addClickListener(event -> {
-            boolean isValid = false;
+            boolean isValid = true;
             // Passwort Validierung
             passwordErrors.removeAll(); // Alle vorherigen Fehler entfernen
-            if (!passwordField.getValue().matches("(?=.*[A-Z])(?=.*\\d)(?=.*[!?§/'@#$%^&*()]).{8,}")) {
+            if (!passwordField.getValue().matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[!?§/'@#$%^&*()])[A-Za-z\\d!?§/'@#$%^&*()]{8,}$")) {
                 Div error1 = new Div();
                 error1.setText("Mindestens ein Großbuchstabe erforderlich.");
                 error1.addClassName("error-message"); // Gleicher Stil wie beim Nutzernamen
@@ -111,19 +113,20 @@ public class ResetPasswordView extends VerticalLayout {
                 passwordErrors.add(error1, error2, error3, error4);
                 passwordErrors.setVisible(true);
                 passwordField.addClassName("invalid-field");
+
+                isValid = false;
             } else {
                 passwordErrors.setVisible(false);
                 passwordField.removeClassName("invalid-field");
-                isValid = true;
             }
             // Sicherheitsfrage Antwort Validierung
             if (answerField.getValue().trim().isEmpty()) {
                 answerField.addClassName("invalid-field");
                 questionError.setVisible(true);
+                isValid = false;
             } else {
                 answerField.removeClassName("invalid-field");
                 questionError.setVisible(false);
-                isValid = true;
             }
 
             //Überprüfen der Antwort und Neusetzung des Passwortes
@@ -161,6 +164,7 @@ public class ResetPasswordView extends VerticalLayout {
                 }
 
                 if (isValid) {
+                    VaadinSession.getCurrent().setAttribute("matrikelnummer", matrikelnummer);
                     getUI().ifPresent(ui -> ui.navigate("/studentin/startseite"));
                 }
             }
