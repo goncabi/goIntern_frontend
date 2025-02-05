@@ -1,6 +1,6 @@
 package com.example.application.views;
 import com.example.application.service.ArbeitstageBerechnungsService;
-import com.example.application.views.subordinatebanner.SubordinateBanner;
+import com.example.application.views.banner.MainBanner;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -42,7 +42,7 @@ import java.util.List;
  * Zusätzlich können Anträge genehmigt oder abgelehnt werden.
  */
 
-@Route(value= "admin/startseite", layout = SubordinateBanner.class)
+@Route(value= "admin/startseite", layout = MainBanner.class)
 @CssImport("./styles/styles.css")
 public class Praktikumsbeauftragter extends VerticalLayout {
 
@@ -86,12 +86,12 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
 
         H1 title = new H1("Übersicht der Praktikumsanträge");
-        title.getStyle().set("margin-top", "0").set("margin-bottom", "10px");
+        title.getStyle().set("margin-top", "10px").set("margin-bottom", "10px");
 
 
         Button notificationBell = new Button(VaadinIcon.BELL.create());
         notificationBell.addClassName("notification-button7");
-        notificationBell.getElement().getStyle().set("cursor", "pointer");
+        notificationBell.getElement().getStyle().set("cursor", "pointer").set("margin-top", "10px");
         ContextMenu notificationMenu = new ContextMenu(notificationBell);
         notificationMenu.setOpenOnClick(true);
 
@@ -112,7 +112,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         Button logoutButton = new Button(VaadinIcon.SIGN_OUT.create());
         logoutButton.addClassName("logout-button8");
-        logoutButton.getElement().getStyle().set("cursor", "pointer");
+        logoutButton.getElement().getStyle().set("cursor", "pointer").set("margin-top", "10px");
         logoutButton.addClickListener(event -> {
 
             Dialog confirmDialog = createLogoutConfirmationDialog();
@@ -177,6 +177,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         searchField.setPlaceholder("Suchleiste");
         searchField.setClearButtonVisible(true);
         searchField.setWidth("250px");
+        comboBox.addClassName("suchleiste");
         searchField.getStyle().set("height", "40px").set("padding", "0").set("margin", "10px");
         searchField.setClearButtonVisible(true);
 
