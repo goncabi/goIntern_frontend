@@ -139,6 +139,7 @@ public class RegistrationView extends VerticalLayout {
         // Registrieren-Button
         Button registerButton = new Button("Registrieren");
         registerButton.addClassName("button");
+        registerButton.addClickShortcut(com.vaadin.flow.component.Key.ENTER);
 
         // Logik für den Registrieren-Button
         registerButton.addClickListener(event -> {
