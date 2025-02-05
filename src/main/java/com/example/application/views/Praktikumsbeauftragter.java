@@ -45,6 +45,7 @@ import java.util.List;
 @Route(value= "admin/startseite", layout = SubordinateBanner.class)
 @CssImport("./styles/styles.css")
 public class Praktikumsbeauftragter extends VerticalLayout {
+
     /**
      * Grid zur Anzeige der Praktikumsanträge.
      */
@@ -70,6 +71,10 @@ public class Praktikumsbeauftragter extends VerticalLayout {
      * Konstrukor der Klasse Praktikumsbeauftragter.
      */
     public Praktikumsbeauftragter() {
+
+        setSizeFull();
+        // Scrollen wieder aktivieren
+        UI.getCurrent().getElement().getStyle().set("overflow", "auto");
 
         String username = (String) VaadinSession.getCurrent().getAttribute("username");
         if (username == null) {

@@ -12,6 +12,7 @@
 }
 
 
+
 html, body {
     margin: 0;
     padding: 0;
@@ -585,3 +586,8 @@ vaadin-vertical-layout[theme~="spacing"] {
     box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3);
 }
 
+.no-scroll {
+    overflow: hidden !important;  /* Deaktiviert Scrollen */
+    height: 100vh !important;  /* Sorgt dafür, dass nichts überläuft */
+    width: 100vw !important;
+}
