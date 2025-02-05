@@ -80,9 +80,11 @@ public class LoginView extends VerticalLayout {
         roleSelection.setPlaceholder("Wähle aus, wer du bist:");
         roleSelection.setAllowCustomValue(false);
         roleSelection.addClassName("dropdown");
-        roleSelection.setAllowCustomValue(false);  // Keine eigenen Werte erlaubt
-        roleSelection.setPlaceholder("Wähle aus, wer du bist:");  // Platzhalter setzen
         roleSelection.setClearButtonVisible(false);
+
+        roleSelection.getElement().addEventListener("click", event -> {
+            roleSelection.setOpened(true); // Dropdown bleibt nach dem Klick offen
+        });
 
         Div roleError = new Div();
         roleError.setText("Bitte wähle eine Rolle aus.");
