@@ -1,7 +1,7 @@
 package com.example.application.views;
 
 import com.example.application.views.banner.MainBanner;
-import com.example.application.views.subordinatebanner.SubordinateBanner;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
@@ -33,7 +33,17 @@ public class Startseite extends VerticalLayout {
      * und ein Formular-Container mit Titel und Buttons
      */
     public Startseite() {
+
         addClassName("view-container"); // zentraler Container-Stil
+
+        setSizeFull();
+        setPadding(false);
+        setMargin(false);
+        setSpacing(false);
+
+        // Scrollen für diese Seite deaktivieren
+        UI.getCurrent().getElement().getStyle().set("overflow", "hidden");
+
 
         // Animierte Linie
         Span animatedLine = createAnimatedLine();
@@ -76,7 +86,7 @@ public class Startseite extends VerticalLayout {
      */
     private Span createAnimatedLine() {
         String svgAnimation = """
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" style="width: 100%; height: auto; position: absolute;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" style="width: 100%; height: auto; position: absolute; overflow: hidden;">
                 <path d="M0,300 L125,200 L250,300 L375,150 L425,200 L500,0"
                     style="fill:none;stroke:#8DC63F;stroke-width:14;opacity:0;">
                     <animate attributeName="opacity"

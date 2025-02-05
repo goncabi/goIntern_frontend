@@ -1,6 +1,7 @@
 package com.example.application.views.register;
 
 import com.example.application.views.subordinatebanner.SubordinateBanner;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
@@ -66,6 +67,10 @@ public class RegistrationView extends VerticalLayout {
         //addClassName("scrollable-view");
         addClassName("register-view");
 
+        setSizeFull();
+
+        // Scrollen wieder aktivieren
+        UI.getCurrent().getElement().getStyle().set("overflow", "auto");
 
         // Hintergrund-Animation (Zacken)
         Span backgroundAnimation = createAnimatedLine();

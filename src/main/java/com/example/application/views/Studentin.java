@@ -96,6 +96,12 @@ public class Studentin extends VerticalLayout {
      */
     public Studentin() throws IOException {
         addClassName("startseite-view");
+
+        setSizeFull();
+
+        // Scrollen wieder aktivieren
+        UI.getCurrent().getElement().getStyle().set("overflow", "auto");
+
         //hier wird aus der Session die Matrikelnummer geholt.
         String matrikelnummer = (String) VaadinSession.getCurrent().getAttribute("matrikelnummer");
 
