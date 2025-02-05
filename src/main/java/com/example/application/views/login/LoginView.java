@@ -82,7 +82,6 @@ public class LoginView extends VerticalLayout {
         roleSelection.addClassName("dropdown");
         roleSelection.setClearButtonVisible(false);
 
-        // Click-Listener auf das gesamte Feld setzen
         roleSelection.getElement().addEventListener("click", event -> {
             roleSelection.setOpened(true); // Dropdown bleibt nach dem Klick offen
         });
