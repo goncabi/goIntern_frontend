@@ -146,7 +146,7 @@ public class ResetPasswordView extends VerticalLayout {
                 else {
                     try {
                         String json = createAntwortJson(matrikelnummer, answer, password);
-                        HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/passwort-vergessen/frage");
+                        HttpResponse<String> response = sendJsonToBackend(json, "http://gointern.f4.htw-berlin.de:3000/api/auth/passwort-vergessen/frage");
                         if (response.statusCode() == 200 || response.statusCode() == 201) {
                             isValid = true;
                             Notification.show("Passwort wurde neu gesetzt.", 3000, Notification.Position.TOP_CENTER);
@@ -183,7 +183,7 @@ public class ResetPasswordView extends VerticalLayout {
             boolean isValid = false;
             try{
                 String matrikelnummer = matrikelnummerField.getValue();
-                HttpResponse<String> response = sendJsonToBackend(matrikelnummer, "http://localhost:3000/api/auth/passwort-vergessen");
+                HttpResponse<String> response = sendJsonToBackend(matrikelnummer, "http://gointern.f4.htw-berlin.de:3000/api/auth/passwort-vergessen");
                 if (response.statusCode() == 200 || response.statusCode() == 201) {
                     isValid = true;
                     securityQuestionField.setValue(response.body());

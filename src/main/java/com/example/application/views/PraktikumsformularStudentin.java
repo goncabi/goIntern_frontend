@@ -357,7 +357,7 @@ public class PraktikumsformularStudentin extends Div {
             try {
                 String json = createJson("Gespeichert");
                 sendJsonToBackend(json,
-                        "http://localhost:3000/api/antrag/speichern",
+                        "http://gointern.f4.htw-berlin.de:3000/api/antrag/speichern",
                         "Antrag erfolgreich gespeichert!");
                 gespeichert = true; // Daten wurden gespeichert
                 UI.getCurrent().navigate("studentin/startseite"); // Navigiere nach "Startseite"
@@ -416,7 +416,7 @@ public class PraktikumsformularStudentin extends Div {
                 try {
                     String json = createJson("Antrag eingereicht");
                     sendJsonToBackend(json,
-                            "http://localhost:3000/api/antrag/uebermitteln",
+                            "http://gointern.f4.htw-berlin.de:3000api/antrag/uebermitteln",
                             "Antrag erfolgreich eingereicht!");
                     UI.getCurrent().getPage().setLocation("studentin/startseite");// Navigiere nach "Startseite"
                 } catch (Exception ex) {
@@ -781,7 +781,7 @@ public class PraktikumsformularStudentin extends Div {
      * @return Ein JSONObject mit den Antragsdaten oder null, falls ein Fehler auftritt
      */
     private JSONObject getPraktikumsantragFromBackend(String matrikelnummer) {
-        String url = "http://localhost:3000/api/antrag/getantrag/" + matrikelnummer;
+        String url = "http://gointern.f4.htw-berlin.de:3000api/antrag/getantrag/" + matrikelnummer;
         try {
             ResponseEntity<String> response = restTemplate.exchange(url,
                     HttpMethod.GET,

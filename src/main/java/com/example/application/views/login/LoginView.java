@@ -186,7 +186,7 @@ public class LoginView extends VerticalLayout {
                 try {
                     String roleForBackend = roleSelection.getValue().replace("*", "");
                     String json = createLoginJson(roleForBackend, username, passwordField.getValue());
-                    HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/login");
+                    HttpResponse<String> response = sendJsonToBackend(json, "http://gointern.f4.htw-berlin.de:3000/api/auth/login");
 
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
                         JSONObject jsonResponse = new JSONObject(response.body());

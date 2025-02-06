@@ -313,7 +313,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         List<NotificationMessage> nachrichten = new ArrayList<>();
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:3000/api/nachrichten/" + username;
+            String url = "http://gointern.f4.htw-berlin.de:3000/api/nachrichten/" + username;
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
@@ -345,7 +345,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
      * @param username Der Benutzername, dessen Nachrichten gelöscht werden sollen.
      */
     private void nachrichtenLoeschen(String username) {
-        String url = "http://localhost:3000/api//nachrichtenLoeschen/" + username;
+        String url = "http://gointern.f4.htw-berlin.de:3000/api//nachrichtenLoeschen/" + username;
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
@@ -393,7 +393,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         List<Praktikumsantrag> antraege = new ArrayList<>();
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:3000/api/antrag/alle";
+            String url = "http://gointern.f4.htw-berlin.de:3000/api/antrag/alle";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
@@ -450,7 +450,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
         bereitsGenehmigtOderAbgelehnt = false; //wird neu auf false gesetzt, sodass es nicht auf true bleibt.
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String url = String.format("http://localhost:3000/api/antrag/getantrag/%s", matrikelnummer);
+            String url = String.format("http://gointern.f4.htw-berlin.de:3000/api/antrag/getantrag/%s", matrikelnummer);
 
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
@@ -644,7 +644,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             jsonAntrag.put("kommentar", kommentar); //Hier kommt der Kommentar rein, zb. "Kaffe kochen ist kein Informatik"
 
             //hier wird es ans Backend gesendet
-            String backendUrl = String.format("http://localhost:3000/pb/antrag/ablehnen/%s", matrikelnummer);
+            String backendUrl = String.format("http://gointern.f4.htw-berlin.de:3000/pb/antrag/ablehnen/%s", matrikelnummer);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> request = new HttpEntity<>(jsonAntrag.toString(), headers);
@@ -678,7 +678,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
             jsonAntrag.put("matrikelnummer", matrikelnummer);
             jsonAntrag.put("statusAntrag", "ZUGELASSEN");
 
-            String backendUrl = "http://localhost:3000/pb/antrag/genehmigen";
+            String backendUrl = "http://gointern.f4.htw-berlin.de:3000/pb/antrag/genehmigen";
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> request = new HttpEntity<>(jsonAntrag.toString(), headers);
@@ -716,7 +716,7 @@ public class Praktikumsbeauftragter extends VerticalLayout {
      */
     private void posterAnzeigenImPopUp(String matrikelnummer) {
         try {
-            String url = "http://localhost:3000/api/poster/pdf/" + matrikelnummer;
+            String url = "http://gointern.f4.htw-berlin.de:3000/api/poster/pdf/" + matrikelnummer;
 
             Dialog dialog = new Dialog();
             dialog.setWidth("100%");

@@ -75,7 +75,7 @@ public class Studentin extends VerticalLayout {
      * Basis-URL der Backend-API für HTTP-Anfragen.
      * Wird für Kommunikation mit dem Server verwendet.
      */
-    private final String backendUrl = "http://localhost:3000/api/";
+    private final String backendUrl = "http://gointern.f4.htw-berlin.de:3000/api/";
 
     /**
      * RestTemplate für API-Anfragen an das Backend.
@@ -533,7 +533,7 @@ public class Studentin extends VerticalLayout {
         body.add("file", byteArrayResource);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        String url = String.format("http://localhost:3000/api/poster/upload/%s", matrikelnummer);
+        String url = String.format("http://gointern.f4.htw-berlin.de:3000/api/poster/upload/%s", matrikelnummer);
 
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
         if (!response.getStatusCode().is2xxSuccessful()) {
@@ -794,7 +794,7 @@ public class Studentin extends VerticalLayout {
      * @param matrikelnummer die Matrikelnummer des Studierenden
      */
     private void deletePraktikumsantrag(String matrikelnummer) {
-        String url = "http://localhost:3000/api/antrag/" + matrikelnummer;
+        String url = "http://gointern.f4.htw-berlin.de:3000/api/antrag/" + matrikelnummer;
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
             if (response.getStatusCode().is2xxSuccessful()) {

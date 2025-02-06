@@ -201,7 +201,7 @@ public class RegistrationView extends VerticalLayout {
                 try{
                     String json = createRegisterJson(usernameField.getValue(), passwordField.getValue(),
                             confirmPasswordField.getValue(), frageId, answerField.getValue());
-                    HttpResponse<String> response = sendJsonToBackend(json, "http://localhost:3000/api/auth/registrieren");
+                    HttpResponse<String> response = sendJsonToBackend(json, "http://gointern.f4.htw-berlin.de:3000/api/auth/registrieren");
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
                         Notification.show("Registrierung erfolgreich!", 3000, Notification.Position.TOP_CENTER);
                     }
