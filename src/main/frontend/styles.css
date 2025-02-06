@@ -23,7 +23,6 @@ h1 {
     align-items: center; /* Zentriert den Inhalt horizontal */
     height: 100vh; /* Höhe des Viewports */
     overflow-y: auto; /* Ermöglicht Scrollen nur in eine Richtung */
-   /* background: linear-gradient(to right, #ff0080, #ff80bf); /* Beibehaltung des Designs */
     padding: 20px;
     box-sizing: border-box;
 }

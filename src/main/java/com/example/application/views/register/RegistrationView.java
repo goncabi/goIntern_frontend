@@ -1,6 +1,6 @@
 package com.example.application.views.register;
 
-import com.example.application.views.subordinatebanner.SubordinateBanner;
+import com.example.application.views.banner.MainBanner;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -50,7 +50,7 @@ import java.net.http.HttpResponse;
  * @version 1.0
  */
 
-@Route(value = "register", layout = SubordinateBanner.class)
+@Route(value = "register", layout = MainBanner.class)
 @CssImport("./styles/styles.css")
 public class RegistrationView extends VerticalLayout {
 
@@ -71,11 +71,6 @@ public class RegistrationView extends VerticalLayout {
 
         // Scrollen wieder aktivieren
         UI.getCurrent().getElement().getStyle().set("overflow", "auto");
-
-        // Hintergrund-Animation (Zacken)
-        Span backgroundAnimation = createAnimatedLine();
-        backgroundAnimation.addClassName("background-animation");
-
 
         // Formularcontainer
         Div formContainer = new Div();
@@ -228,8 +223,7 @@ public class RegistrationView extends VerticalLayout {
         formContainer.add(title, usernameField, usernameError, passwordField, passwordErrors,
                 confirmPasswordField, securityQuestionsTitle, questionSelection, answerField, questionError,registerButton);
 
-
-        add(backgroundAnimation);
+        
         add(formContainer);
     }
 
