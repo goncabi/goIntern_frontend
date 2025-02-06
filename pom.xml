@@ -15,7 +15,7 @@
     <groupId>com.example.application</groupId>
     <artifactId>my-app</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <name>my-app</name>
     <description>Demo project for Spring Boot</description>
 
@@ -138,6 +138,10 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
             </plugin>
         </plugins>
     </build>
