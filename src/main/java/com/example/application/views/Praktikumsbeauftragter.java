@@ -279,20 +279,19 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         //Spalte für "Poster anzeigen"
         grid.addComponentColumn(praktikumsantrag -> {
-            if ("absolviert".equalsIgnoreCase(praktikumsantrag.getStatus())) {
+                    if (istPosterVorhanden(praktikumsantrag.getMatrikelnummer())) {
+                        Button anzeigenButton = new Button("Poster anzeigen", VaadinIcon.EYE.create());
+                        anzeigenButton.addClassName("posterAnzeigen-button3");
 
-                Button anzeigenButton = new Button("Poster anzeigen", VaadinIcon.EYE.create());
-                anzeigenButton.addClassName("posterAnzeigen-button3");
-
-                anzeigenButton.addClickListener(event -> {
-                    posterAnzeigenImPopUp(praktikumsantrag.getMatrikelnummer());
-                });
-                return anzeigenButton;
-            }
-            return new Span(); // Platzhalter für leere Zellen, falls noch kein poster vorhanden
-        }).setHeader("")
+                        anzeigenButton.addClickListener(event -> {
+                            posterAnzeigenImPopUp(praktikumsantrag.getMatrikelnummer());
+                        });
+                        return anzeigenButton;
+                    }
+                    return new Span(); // Platzhalter für leere Zellen, falls noch kein Poster vorhanden ist
+                }).setHeader("")
                 .setAutoWidth(true)
-                .setFlexGrow(0)
+                .setFlexGrow(1)
                 .setWidth("180px");
 
 
@@ -836,6 +835,19 @@ public class Praktikumsbeauftragter extends VerticalLayout {
 
         return badge;
     }
+    private boolean istPosterVorhanden(String matrikelnummer) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "http://localhost:3000/api/poster/exists/" + matrikelnummer;
+            ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
+
+            return response.getStatusCode().is2xxSuccessful() && Boolean.TRUE.equals(response.getBody());
+        } catch (Exception e) {
+            Notification.show("Fehler beim Überprüfen des Posters: " + e.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            return false;
+        }
+    }
+
 
     /**
      * Repräsentiert einen Praktikumsantrag mit den grundlegenden Informationen des Antragstellers und dem aktuellen Status des Antrags.
