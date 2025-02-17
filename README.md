@@ -17,9 +17,10 @@ Contact
 
 ### Requirements:
 
-Java JDK 23 (Frontend)
-Java JDK 21 (Backend)
-Installation Steps
+* Java JDK 23 (Frontend)
+* Java JDK 21 (Backend)
+
+### Installation Steps
 
 ### Clone the repositories:
 
@@ -28,18 +29,18 @@ git clone https://github.com/goncabi/goIntern_backend
 
 ### Navigate to the project directories:
 
-cd goIntern_frontend
-cd goIntern_backend
+* cd goIntern_frontend
+* cd goIntern_backend
 
 ### Install Dependencies
 
 #### Backend:
 
-mvn clean install
+* mvn clean install
 
 #### Frontend:
 
-npm install
+* npm install
 
 ### Run the Application
 
@@ -55,6 +56,7 @@ The project can also be imported into your preferred IDE (Eclipse, IntelliJ IDEA
 
 ### Key Features
 Registration and Authentication (Login): Students can register and log in to the system.
+
 Internship Management: Allows students to fill in internship details, save drafts, delete, and submit applications.
 Workdays Calculation: Students can calculate their required internship days and verify if they meet the requirements.
 Approval Process: Internship coordinators can view applications in a table, approve or reject them, and provide reasons for rejections.
