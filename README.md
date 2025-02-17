@@ -55,13 +55,12 @@ The project can also be imported into your preferred IDE (Eclipse, IntelliJ IDEA
 ## 🚀 Usage and Main Features
 
 ### Key Features
-Registration and Authentication (Login): Students can register and log in to the system.
-
-Internship Management: Allows students to fill in internship details, save drafts, delete, and submit applications.
-Workdays Calculation: Students can calculate their required internship days and verify if they meet the requirements.
-Approval Process: Internship coordinators can view applications in a table, approve or reject them, and provide reasons for rejections.
-Status Management: Applications have different statuses (Open, Approved, Rejected, In Progress, Completed).
-Poster Upload: After completing the internship, students can upload a poster for verification by the internship coordinator.
+* Registration and Authentication (Login): Students can register and log in to the system.
+* Internship Management: Allows students to fill in internship details, save drafts, delete, and submit applications.
+* Workdays Calculation: Students can calculate their required internship days and verify if they meet the requirements.
+* Approval Process: Internship coordinators can view applications in a table, approve or reject them, and provide reasons for rejections.
+* Status Management: Applications have different statuses (Open, Approved, Rejected, In Progress, Completed).
+* Poster Upload: After completing the internship, students can upload a poster for verification by the internship coordinator.
 
 ## 🔬 Project Structure
 
@@ -105,10 +104,10 @@ This project is licensed under the MIT License. For more details, please refer t
 ## 📞 Contact
 If you have any questions, feel free to contact us at:
 
-Mira.Khreis@Student.HTW-Berlin.de
-Angela.Barzaeva@Student.HTW-Berlin.de
-Beyza.Acikgoez@Student.HTW-Berlin.de
-Merlind.Pohl@Student.HTW-Berlin.de
-Noa.Sauter@Student.HTW-Berlin.de
-Gabriela.GoncalvezMontero@Student.HTW-Berlin.de
+Mira.Khreis@Student.HTW-Berlin.de<br>
+Angela.Barzaeva@Student.HTW-Berlin.de<br>
+Beyza.Acikgoez@Student.HTW-Berlin.de<br>
+Merlind.Pohl@Student.HTW-Berlin.de<br>
+Noa.Sauter@Student.HTW-Berlin.de<br>
+Gabriela.GoncalvezMontero@Student.HTW-Berlin.de<br>
 Maryam.Mirza@Student.HTW-Berlin.de
