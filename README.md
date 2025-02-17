@@ -1,198 +1,113 @@
 # GoIntern
 
+## 📃 Project Description
 
+This project is a web application developed using Vaadin 21, Spring Boot 3 (version 3.3.5), and Maven. It includes both frontend and backend components, as well as an integration with a PostgreSQL database to manage internship applications.
 
-## 📃 Projektbeschreibung
-Dieses Projekt ist eine Webanwendung, die mit Vaadin, Version 21, Spring Boot 3, Version 3.3.5 und Maven entwickelt wurde. Es enthält sowohl Frontend- als auch Backend-Komponenten sowie eine Anbindung zur Datenbank postgreSQL zur Verwaltung von Praktikumsanträgen.
+## 📋 Table of Contents
 
+Installation
+Usage and Main Features
+Project Structure
+Configuration
+License
+Contact
 
-# 📋 Inhaltsverzeichnis
-1. [Installation](#🛠️-installation)
-2. [Verwendung und Hauptfunktionen](#🚀-verwendung-und-hauptfunktionen)
-3. [Projektstruktur](#🔬-projektstruktur)
-4. [Konfiguration](#📚-konfigurationn)
-5. [Lizenz](#📝-lizenz)
-6. [Kontakt](#📞-kontakt)
+## 🛠️ Installation
 
+### Requirements:
 
-# 🛠️ Installation
-## Voraussetzungen:
+Java JDK 23 (Frontend)
+Java JDK 21 (Backend)
+Installation Steps
 
-* Java JDK 23 im Frontend
-* Java JDK 21 im Backend
+### Clone the repositories:
 
-# 🚀 Verwendung und Hauptfunktionen
-## Schritte zur Installation
+git clone https://github.com/goncabi/goIntern_frontend
+git clone https://github.com/goncabi/goIntern_backend
 
-## Repository klonen
+### Navigate to the project directories:
 
-1. git clone https://gitlab.rz.htw-berlin.de/Mira.Khreis/team1.frontend1
-2. git clone https://gitlab.rz.htw-berlin.de/Mira.Khreis/backend_team1
+cd goIntern_frontend
+cd goIntern_backend
 
-2. In das Projektverzeichnis wechseln:
+### Install Dependencies
 
-* cd team1.frontend1
-* cd backend_team1
+#### Backend:
 
-## Abhängigkeiten installieren
+mvn clean install
 
-1. mvn clean install
-2. npm install (nur Frontend)
+#### Frontend:
 
-## Anwendung starten
+npm install
 
-Frontend und Backend gleichzeitig ausführen (run):
+### Run the Application
+
+#### To run both frontend and backend simultaneously:
+
 mvn spring-boot:run
 
-Die Anwendung ist unter http://localhost:8080 erreichbar.
+The application will be available at http://localhost:8080.
 
-Das Projekt kann auch in eine IDE deiner Wahl importiert werden, wie es bei jedem Maven-Projekt üblich ist. 
-Weitere Informationen dazu findest du in der [Vaadin-Dokumentation] (https://vaadin.com/docs/latest/guide/step-by-step/importing) (Eclipse, IntelliJ IDEA, NetBeans, and VS Code)., die Anleitungen für Eclipse, IntelliJ IDEA, NetBeans und VS Code enthält.
+The project can also be imported into your preferred IDE (Eclipse, IntelliJ IDEA, NetBeans, or VS Code). For more details, check the Vaadin Documentation.
 
+## 🚀 Usage and Main Features
 
-## ✨ Hauptfunktionen
+### Key Features
+Registration and Authentication (Login): Students can register and log in to the system.
+Internship Management: Allows students to fill in internship details, save drafts, delete, and submit applications.
+Workdays Calculation: Students can calculate their required internship days and verify if they meet the requirements.
+Approval Process: Internship coordinators can view applications in a table, approve or reject them, and provide reasons for rejections.
+Status Management: Applications have different statuses (Open, Approved, Rejected, In Progress, Completed).
+Poster Upload: After completing the internship, students can upload a poster for verification by the internship coordinator.
 
-Zu den Hauptfunktionen gehören die Registrierung und Authentifizierung (Login), die Verwaltung von Praktikumsanträgen und das Hochladen von Praktikumspostern.
-Nach der Registrierung, kann sich die Studentin mit ihren erstellten Zugangsdaten anmelden.
-Das System ermöglicht das Verwalten und das Anzeigen von Praktikumsinformationen.
-Es gibt eine getrennte Ansicht für Studentinnen und Praktikumsbeauftragte.
-Die Studentin kann ihr Praktikumsformular mit ihren persönlichen Daten und den Praktikumsdaten ausfüllen, zwischenspeichern, löschen und abschicken.
-Sie kann sich zudem die Arbeitstage für ihren angegeben Praktikumszeitraum berechnen lassen und überprüfen, ob diese ausreichen. 
-Der Praktikumsbeauftragte sieht die Anträge in einer Tabelle, und kann die Anträge genehmigen oder mit einer Begründung ablehnen. 
-Diese Begründung wird der jeweiligen Studentin angezeigt. 
-Er kann einzelne Anträge nach Namen und Matrikelnummern suchen oder konkret nach Status filtern. 
-Die Anträge können jeweils verschiedene Status haben: Antrag offen, Zugelassen, Abgelehnt, Derzeit im Praktikum, Absolviert
-Wenn ein Antrag durch die Studentin nachträglich zurückgezogen oder ein laufendes Praktikum abgebrochen wird, erhält der Praktikumsbeauftragte eine Nachricht in seiner Ansicht darüber. 
-Bei Abbruch werden die bereits absolvierten Praktikumstage angezeigt.
-Zusätzlich kann die Studentin, nachdem sie das Praktikum absolviert haben, ein Poster hochladen, welches sich der Praktikumsbeauftragte anschauen kann. 
+## 🔬 Project Structure
 
+´´´
 
-
-
-# 🔬 Projektstruktur
-
-```
-team1.frontend1/
-|-- .idea/                     # IntelliJ IDEA Konfigurationsdateien
+goIntern_frontend/
+|-- .idea/                     # IntelliJ IDEA config files
 |-- .mvn/                      # Maven Wrapper
 |-- src/
 |   |-- main/
-|   |   |-- bundles/           # Frontend Bundle Dateien
-|   |   |-- README.md          # Projektdokumentation
+|   |   |-- bundles/           # Frontend bundle files
+|   |   |-- README.md          # Project documentation
 |   |   |-- frontend/
-|   |   |   |-- generated/     # Automatisch generierter Code
-|   |   |   |-- styles/          # CSS-Dateien
-|   |   |   |-- themes/          # UI-Themen
+|   |   |   |-- generated/     # Automatically generated code
+|   |   |   |-- styles/        # CSS files
+|   |   |   |-- themes/        # UI themes
 |   |   |-- java/
 |   |   |   |-- com.example.application/
-|   |   |   |   |-- service/     # ServiceLayer und BusinessLogik
-|   |   |   |   |   |--ArbeitstageBerechnungsService
-|   |   |   |   |-- utils/       # Dienstprogramme
-|   |   |   |   |   |--CustomDatePicker
-|   |   |   |   |   |--DialosUtils
-|   |   |   |   |-- views/       # UI-Komponenten
-|   |   |   |   |   |--banner/
-|   |   |   |   |   |--login/
-|   |   |   |   |   |--poster/
-|   |   |   |   |   |--register/
-|   |   |   |   |   |--ResetPassword/
-|   |   |   |   |   |--subordinatebanner
-|-- resources/
-|-- pom.xml                     # Maven Build Datei
-|-- package.json                # npm Abhängigkeiten
+|   |   |   |   |-- service/   # Service layer and business logic
+|   |   |   |   |-- views/     # UI components
+|-- pom.xml                    # Maven build file
+|-- package.json               # npm dependencies
 
-
-backend_team1/
-|-- .idea/                     # IntelliJ IDEA Konfigurationsdateien
+goIntern_backend/
+|-- .idea/                     # IntelliJ IDEA config files
 |-- .mvn/                      # Maven Wrapper
 |-- src/
 |   |-- main/
-|   |   |-- frontend/           # Frontend Bundle Dateien
-|   |   |   |-- generated/      # Automatisch generierter Code
-|   |   |   |-- themes/         
-|   |   |   |--|-- praktikumsapp/    
-|   |   |   |--|--|-- main-layout     
-|   |   |   |--|--|-- styles          # CSS-Dateien           
-|   |   |-- frontend/
-|   |   |   |-- generated/       # Automatisch generierter Code
-|   |   |   |-- styles/          # CSS-Dateien
-|   |   |   |-- themes/          # UI-Themen
 |   |   |-- java/
 |   |   |   |-- com.example.application/
-|   |   |   |   |-- config       #Konfiguration #Sicherheit #API
-|   |   |   |   |   |--CorsConfig 
-|   |   |   |   |   |--OpenApiConfig
-|   |   |   |   |   |--PosterUploadConfig
-|   |   |   |   |-- controller   #RESTController #APIEndpunkte
-|   |   |   |   |   |--BenachrichtigungController
-|   |   |   |   |   |--LoginController    
-|   |   |   |   |   |--PasswortVergessenController 
-|   |   |   |   |   |--PBController   
-|   |   |   |   |   |--PosterController   
-|   |   |   |   |   |--PraktikumsantragController  
-|   |   |   |   |   |--RegistrierungController
-|   |   |   |   |-- models    #Datenmodelle #JPAEntities
-|   |   |   |   |   |--AppUserRole
-|   |   |   |   |   |--Benachrichtigung
-|   |   |   |   |   |--BenachrichtigungWichtigkeit
-|   |   |   |   |   |--LoginAnfrage
-|   |   |   |   |   |--PasswortVergessenAnfrage
-|   |   |   |   |   |--Poster
-|   |   |   |   |   |--Praktikumsantrag
-|   |   |   |   |   |--Praktikumsbeautragter
-|   |   |   |   |   |--RegistrierungsAnfrage
-|   |   |   |   |   |--Sicherheitsantwort
-|   |   |   |   |   |--Sicherheitsfrage
-|   |   |   |   |   |--StatusAntrag
-|   |   |   |   |   |--Studentin
-|   |   |   |   |-- repositories  #Datenbankzugriff #JPARepositories
-|   |   |   |   |   |--BenachrichtigungRepository
-|   |   |   |   |   |--PBRepository
-|   |   |   |   |   |--PosterRepository
-|   |   |   |   |   |--PraktikumsantragRepository
-|   |   |   |   |   |--SicherheitsantwortRepository
-|   |   |   |   |   |--SicherheitsfrageRepository
-|   |   |   |   |   |--StudentinRepository
-|   |   |   |   |-- services    
-|   |   |   |   |   |--BenachrichtigungService
-|   |   |   |   |   |--LoginService
-|   |   |   |   |   |--MockDataService
-|   |   |   |   |   |--PasswortVergessenService
-|   |   |   |   |   |--PBService
-|   |   |   |   |   |--RegistrierungService
-|   |   |   |   |   |--SicherheitsfragenService
-|   |   |--resources/    #Konfigurationsdateien #Ressourcen
-|   |   |   |--META-INF.resources.icons
-|   |   |   |-- application.properties
-|   |   |   |--banner.txt
-|   |--test      #UnitTests #ServiceTests
-|   |   |--java
-|   |   |   |--con.example.application.services
-|   |   |   |   |--BenachrichtigungServiceTest
-|   |   |   |   |--LoginServiceTest
-|   |   |   |   |--MockDataServiceTest
-|   |   |   |   |--PasswortVergessenServiceTest
-|   |   |   |   |--PBServiceTest
-|   |   |   |   |--PosterServiceTest
-|   |   |   |   |--PraktikumsantragServiceTest
-|   |   |   |   |--RegistrierungServceTest
-|   |   |   |   |--SicherheitsfragenServiceTest
-|   |   |   |   |
-|-- pom.xml                     # Maven Build Datei
+|   |   |   |   |-- controller   # REST Controllers
+|   |   |   |   |-- models       # Data models
+|   |   |   |   |-- repositories # Database access
+|   |   |   |   |-- services     # Service layer
+|-- pom.xml                    # Maven build file
 
-```
+´´´
 
+## 📝 License
+This project is licensed under the MIT License. For more details, please refer to the LICENSE file.
 
-## 📝 Lizenz
-Dieses Projekt steht unter der MIT-Lizenz. Weitere Informationen findest du in der LICENSE-Datei.
+## 📞 Contact
+If you have any questions, feel free to contact us at:
 
-## 📞 Kontakt
-Falls du Fragen hast, kontaktiere uns unter:
-
-Mira.Khreis@Student.HTW-Berlin.de<br>
-Angela.Barzaeva@Student.HTW-Berlin.de<br>
-Beyza.Acikgoez@Student.HTW-Berlin.de<br>
-Merlind.Pohl@Student.HTW-Berlin.de<br>
-Noa.Sauter@Student.HTW-Berlin.de<br>
-Gabriela.GoncalvezMontero@Student.HTW-Berlin.de<br>
+Mira.Khreis@Student.HTW-Berlin.de
+Angela.Barzaeva@Student.HTW-Berlin.de
+Beyza.Acikgoez@Student.HTW-Berlin.de
+Merlind.Pohl@Student.HTW-Berlin.de
+Noa.Sauter@Student.HTW-Berlin.de
+Gabriela.GoncalvezMontero@Student.HTW-Berlin.de
 Maryam.Mirza@Student.HTW-Berlin.de
