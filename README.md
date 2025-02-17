@@ -63,8 +63,7 @@ Poster Upload: After completing the internship, students can upload a poster for
 
 ## 🔬 Project Structure
 
-´´´
-
+```
 goIntern_frontend/
 |-- .idea/                     # IntelliJ IDEA config files
 |-- .mvn/                      # Maven Wrapper
@@ -96,7 +95,7 @@ goIntern_backend/
 |   |   |   |   |-- services     # Service layer
 |-- pom.xml                    # Maven build file
 
-´´´
+```
 
 ## 📝 License
 This project is licensed under the MIT License. For more details, please refer to the LICENSE file.
